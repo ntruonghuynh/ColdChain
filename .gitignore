@@ -1,0 +1,62 @@
+# ---- Secrets and local configuration ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# ---- Node / frontend ----
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---- Hardhat / Solidity ----
+blockchain/artifacts/
+blockchain/cache/
+blockchain/typechain-types/
+blockchain/coverage/
+blockchain/coverage.json
+blockchain/deployments/local/
+
+# ---- Data, models and evaluation scratch output ----
+# Canonical released artifacts (data/release/, ml/registry/<version>/, docs/evaluation/runs/)
+# are tracked on purpose; only scratch output is ignored.
+data/generated/
+ml/scratch/
+scripts/eval/scratch/
+
+# ---- Packaging (root-level output only; data/release/ is tracked) ----
+/release/
+*.zip
+
+# ---- Logs ----
+*.log
+logs/
