@@ -5,8 +5,9 @@ Academic full-stack prototype: monitoring + ML + LLM/RAG + blockchain + web dash
 
 ## Current status
 
-- Milestone 0 (requirements, architecture, plan, skeleton) is the latest completed milestone.
-- **Nothing is implemented yet.** There are no build, run or test commands until Milestone 1 adds them. Add them to the "Commands" section below when they exist.
+- Milestone 0 accepted. **Milestone 1** (Docker, PostgreSQL schema + migrations, FastAPI skeleton, React shell) is implemented and awaiting the owner's acceptance.
+- Not implemented: ingestion, gap/excursion detection, ML, LLM, blockchain, authentication. Their UI pages must keep saying "Not implemented yet" until the owning milestone delivers them, and `backend/app/api/system.py` `FEATURES` must stay truthful.
+- Approved teaching policy (2026-11-14) lives in `backend/app/seed/data/policies/POL-CHILL-01_v1.0.json`. Policy versions are immutable; never edit that file's values — publish a new version file after owner approval.
 
 ## Read before you change anything
 
@@ -47,7 +48,22 @@ Academic full-stack prototype: monitoring + ML + LLM/RAG + blockchain + web dash
 
 ## Commands
 
-None yet. Milestone 1 will add start, stop, reset and test commands here.
+Run from the repository root unless noted. `.env` must exist (`cp .env.example .env`).
+
+| Task | Command |
+|---|---|
+| Start stack and wait until healthy | `docker compose up -d --build --wait` |
+| Stop (keeps data) | `docker compose down` — never add `-v` without explicit owner approval (deletes all data) |
+| Backend tests (in Docker, uses `*_test` databases) | `docker compose --profile test run --rm --build backend-tests` |
+| Frontend tests / type-check / build | `cd frontend && npm test && npm run typecheck && npm run build` |
+| Full-stack smoke test (startup, proxy, outage, shutdown, persistence) | `python3 scripts/smoke_test.py` |
+| Migration status | `docker compose run --rm migrate alembic current` |
+| New migration | edit `backend/app/db/models/`, then `docker compose run --rm -v "$PWD/backend/migrations:/app/migrations" --user root migrate alembic revision --autogenerate -m "..."`; review the file by hand; tests fail if models and migrations differ |
+| Recompile pinned Python deps | `cd backend && uv pip compile pyproject.toml --python-version 3.12 --python-platform linux -o requirements.txt` (and `--extra dev -o requirements-dev.txt`) |
+
+App: http://localhost:3000 · API docs: http://localhost:3000/api/docs · Only port 3000 is published; backend and database are internal to the Docker network.
+
+User-facing start/stop scripts: `start.command` / `stop.command` (macOS, LF, executable) and `start.bat` / `stop.bat` (Windows, CRLF). They must never delete data.
 
 ## Milestone report template
 

@@ -1,18 +1,20 @@
 # backend/
 
-**Status: not implemented.** Scheduled from Milestone 1 (skeleton, schema), then M3 (ingestion, gaps, threshold baseline), M5 (dispositions, release gate, outbox worker, chain gateway, signed audit log) and M6 (LLM adapter, evidence package).
-
-Planned layout (see `docs/architecture.md` §3.2):
+FastAPI service. **Milestone 1:** application skeleton, database schema and migrations, reference data, health checks and read-only endpoints. Business logic (ingestion, detection, dispositions, release gate, chain integration) arrives in Milestones 3, 5 and 6.
 
 | Path | Purpose |
 |---|---|
-| `app/api/` | FastAPI routes and Pydantic schemas, no business logic |
-| `app/domain/` | Pure business rules (BR-02 to BR-15) |
-| `app/services/` | Use cases combining rules and storage |
-| `app/db/` | SQLAlchemy models, repositories |
-| `app/integrations/` | ML, LLM, chain and audit-log adapters |
-| `app/worker/` | Outbox relay, retries, reconciliation jobs |
-| `migrations/` | Alembic migrations |
-| `tests/` | pytest unit, integration and e2e tests |
+| `app/main.py` | Application factory; all routes under `/api`; request-ID middleware; OpenAPI at `/api/docs` |
+| `app/core/config.py` | Centralized settings from environment variables (pydantic-settings) |
+| `app/core/errors.py` | Error envelope `{"error": {code, message, details, request_id}}` and exception handlers |
+| `app/api/` | Routes: `health` (live/ready), `system` (info + truthful feature status), `reference` (policies, organizations), `shipments` (read-only) |
+| `app/db/` | SQLAlchemy base and naming conventions, `UTCDateTime` type (rejects naive timestamps), session management, models |
+| `app/db/models/` | 20 tables: reference, shipment, telemetry, workflow, ledger (see `docs/architecture.md` §5) |
+| `app/seed/` | Idempotent reference-data loader (`python -m app.seed`) and its JSON data, including the approved teaching policy |
+| `migrations/` | Alembic environment and revisions (`0001_initial_schema.py`) |
+| `tests/` | pytest suite (45 tests): config, types, health, errors, API, migrations, seed, database constraints |
+| `requirements.txt`, `requirements-dev.txt` | Pinned dependencies compiled from `pyproject.toml` with `uv pip compile` |
 
-Main requirements: FR-01 to FR-26, BC-09, BC-10, NFR-04, NFR-07.
+Planned layers (later milestones): `app/domain/` (pure business rules), `app/services/`, `app/integrations/`, `app/worker/`.
+
+Run the tests: `docker compose --profile test run --rm --build backend-tests` (from the repository root).

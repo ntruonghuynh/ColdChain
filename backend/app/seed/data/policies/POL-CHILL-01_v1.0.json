@@ -1,0 +1,33 @@
+{
+  "product": {
+    "product_id": "PRD-CHILL-01",
+    "name": "Chilled biologic (teaching category)",
+    "category": "CHILLED_2_8C",
+    "description": "Single product category used by the teaching prototype. Not a real product."
+  },
+  "policy": {
+    "policy_code": "POL-CHILL-01",
+    "policy_version": "1.0",
+    "status": "ACTIVE",
+    "limits": {
+      "min_temp_c": 2.0,
+      "max_temp_c": 8.0
+    },
+    "duration_rule": {
+      "high_excursion_min_duration_min": 30,
+      "low_excursion_min_duration_min": 15,
+      "semantics": "High excursion: temperature strictly above max_temp_c for at least high_excursion_min_duration_min minutes. Low excursion: temperature strictly below min_temp_c for at least low_excursion_min_duration_min minutes."
+    },
+    "missing_data_rule": {
+      "gap_unknown_after_min": 15,
+      "gap_review_at_min": 30,
+      "semantics": "A gap between readings longer than gap_unknown_after_min minutes is UNKNOWN (never treated as safe). A gap of at least gap_review_at_min minutes requires quality review."
+    },
+    "release_authority_role": "QUALITY",
+    "procedure_version": "SOP-EXC v1.0",
+    "effective_from": "2026-11-14T00:00:00Z",
+    "is_teaching_policy": true,
+    "disclaimer": "Simulated teaching rule, not a regulatory safety standard. No ML output establishes product safety.",
+    "approval_reference": "Approved by the project owner in the Milestone 1 instructions (2026-11-14): 2-8 C range; above 8 C for at least 30 min; below 2 C for at least 15 min; gap > 15 min UNKNOWN; gap >= 30 min quality review; only the authorized Quality Officer approves release."
+  }
+}

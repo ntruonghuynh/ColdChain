@@ -4,7 +4,7 @@
 |---|---|
 | Source document | `docs/requirements/03_cold_chain_monitoring_and_excursion_response.pdf` (IT in Logistics, Final project 03, "Reviewed 8 November 2026", 3 pages) |
 | Source SHA-256 | `a75ce184abfa1cf53870d063ec5cbfb26ba8d1048d5210858688254fd7915499` |
-| Document status | Milestone 0 baseline — **proposed**, awaiting team approval |
+| Document status | Milestone 0 baseline accepted. Policy decisions approved 2026-11-14 are recorded in §13.1; all other BR/A/D items remain proposals |
 | Last updated | 2026-11-14 |
 
 This document turns the assignment brief into numbered, testable requirements. Every requirement says where it comes from, how it will be checked, and which milestone delivers it (see `docs/implementation-plan.md`).
@@ -228,9 +228,19 @@ The workflow in Figure 1 has six steps: (1) operational inputs → (2) AI/ML ana
 
 ---
 
-## 13. Proposed business rules (need approval)
+## 13. Business rules
 
-The brief does not give policy numbers, gap definitions or release rules. The rules below are **proposals**. Once approved, they become fixed and may only change through an explicit, recorded decision (see `CLAUDE.md`). All values are teaching values, not clinical or regulatory limits.
+The brief does not give policy numbers, gap definitions or release rules. The rules below started as **proposals**. Approved parts are fixed and may only change through an explicit, recorded decision (see `CLAUDE.md`). All values are teaching values, not clinical or regulatory limits.
+
+### 13.1 Decision record
+
+| Date | Decided by | Decision | Affects |
+|---|---|---|---|
+| 2026-11-14 | Project owner (Milestone 1 instructions) | **Approved:** temperature range 2–8 °C; high excursion = above 8 °C for at least 30 minutes; low excursion = below 2 °C for at least 15 minutes; a missing-data gap longer than 15 minutes is UNKNOWN; a gap of at least 30 minutes requires quality review; only the authorized Quality Officer can approve shipment release. Values are simulated teaching rules, implemented as configurable policy data (`backend/app/seed/data/policies/POL-CHILL-01_v1.0.json`), not hardcoded in frontend components. | BR-01 (range), BR-02, BR-03 (gap threshold only), BR-04 (review threshold), BR-10 (release authority) |
+
+**Still proposed (not approved):** the identifiers `PRD-CHILL-01`, `POL-CHILL-01 v1.0`, `SOP-EXC v1.0` (used as working names); the 5-minute expected sampling interval in BR-03 (therefore *not* stored in the policy); the mechanism "a gap ≥ 30 min opens a `DATA_GAP` incident" in BR-04; the decision values and "must reference every open incident" part of BR-10; and BR-05 to BR-09, BR-11 to BR-15.
+
+### 13.2 Rules
 
 | ID | Proposed rule | Supports |
 |---|---|---|
@@ -270,7 +280,7 @@ The brief does not give policy numbers, gap definitions or release rules. The ru
 
 | ID | Decision | Proposal | Blocks |
 |---|---|---|---|
-| D-01 | Approve teaching policy values BR-01 to BR-05 | As proposed in section 13 | M2, M3 |
+| D-01 | Approve teaching policy values BR-01 to BR-05 | **Partly approved 2026-11-14** (see §13.1). Open: 5-minute sampling interval, BR-05 | M2, M3 |
 | D-02 | Data source | Synthetic generator written by the team (no external data licence needed) | M2 |
 | D-03 | Default LLM provider and model | Anthropic API, `claude-opus-5-5` (configurable). Without an API key the LLM feature reports "not configured". A local model provider (for example Ollama) is optional and only added on request. | M6 |
 | D-04 | Who pays for and holds the LLM API key during evaluation | Team decision; key goes in a local `.env`, never in Git | M6, M9 |

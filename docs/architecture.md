@@ -2,9 +2,9 @@
 
 | Item | Value |
 |---|---|
-| Status | Milestone 0 design — **proposed**, nothing below is implemented yet |
+| Status | Milestone 0 design. **Milestone 1 implemented** the database schema (§5) and the infrastructure (§8); everything else is still design |
 | Inputs | `docs/requirements-analysis.md` (requirement IDs referenced in brackets, e.g. [FR-24]) |
-| Last updated | 2026-11-14 |
+| Last updated | 2026-11-14 (Milestone 1) |
 
 ---
 
@@ -154,7 +154,9 @@ erDiagram
     DISPOSITION }o--o{ INCIDENT : closes
     SHIPMENT ||--o{ CUSTODY_EVENT : has
     SHIPMENT ||--o| WAREHOUSE_RELEASE : "released by"
+    BUSINESS_EVENT ||--|| OUTBOX_ENTRY : "delivered via"
     BUSINESS_EVENT ||--o| CHAIN_RECORD : "anchored as"
+    USER_ROLE ||--o{ DISPOSITION : "authorizes (QUALITY)"
 
     READING {
         uuid reading_id PK
@@ -168,7 +170,7 @@ erDiagram
     CONTEXT_READING {
         uuid context_id PK
         text shipment_id
-        text device_id
+        text sensor_id
         timestamptz event_at
         timestamptz received_at
         text door_state
@@ -176,12 +178,17 @@ erDiagram
         numeric ambient_temperature_c
     }
     POLICY {
-        text policy_id PK
-        text product_id
+        uuid policy_id PK
+        text policy_code
         text policy_version
-        numeric min_c
-        numeric max_c
-        jsonb duration_rule
+        text product_id FK
+        numeric min_temp_c
+        numeric max_temp_c
+        int high_excursion_min_duration_min
+        int low_excursion_min_duration_min
+        int gap_unknown_after_min
+        int gap_review_at_min
+        text release_authority_role
         text procedure_version
     }
     INCIDENT {
@@ -197,21 +204,31 @@ erDiagram
         uuid disposition_id PK
         text business_ref UK
         text decision
-        uuid decided_by FK
+        uuid decided_by_user_id FK
+        text decided_by_role FK
         text rationale
-        text evidence_hash
+        text evidence_sha256
     }
     BUSINESS_EVENT {
         uuid event_id PK
         text business_ref UK
         text event_type
-        text payload_hash
-        text outbox_status
+        jsonb payload
+        text payload_sha256
+    }
+    OUTBOX_ENTRY {
+        uuid event_id PK
+        text status
         int attempts
+        timestamptz next_attempt_at
     }
 ```
 
-Further tables (not drawn): `detection` (source `BASELINE`/`ML`, model version, window, class, score), `data_gap` (start, end, status `UNKNOWN`), `llm_draft` (prompt version, provider, model, source IDs, status, tokens, latency, cost), `chain_record` (tx hash, block, confirmed at), `audit_log` (hash-chained, signed entries for the comparison in EVAL-03), and `ground_truth_*` tables kept in a **separate schema** that detection code cannot read [DATA-09].
+**Implemented in Milestone 1** (migration `0001`, models in `backend/app/db/models/`): `organization`, `app_user`, `user_role`, `product`, `policy`, `shipment`, `sensor`, `sensor_assignment`, `ingest_batch`, `reading`, `context_reading`, `rejected_record`, `incident`, `disposition`, `disposition_incident`, `custody_event`, `warehouse_release`, `business_event`, `outbox_entry`, `chain_record`.
+
+Change from the M0 design: the mutable delivery state (`status`, `attempts`, `next_attempt_at`, `last_error`) moved from `business_event` to a separate `outbox_entry` table, so `business_event` stays an immutable fact as required by the append-only rule below.
+
+**Added in later milestones** (not drawn as implemented): `detection` (source `BASELINE`/`ML`, model version, window, class, score) and `data_gap` (start, end, status `UNKNOWN`) in M3–M4, `llm_draft` (prompt version, provider, model, source IDs, status, tokens, latency, cost) in M6, `audit_log` (hash-chained, signed entries for the comparison in EVAL-03) in M5, and `ground_truth_*` tables kept in a **separate schema** that detection code cannot read [DATA-09] in M2.
 
 Rules for the schema:
 
@@ -219,7 +236,22 @@ Rules for the schema:
 - Unit suffixes in column names: `_c`, `_pct`, `_min` [NFR-06].
 - Readings unique on `(sensor_id, event_at)` [BR-07]. Business references unique per table and globally across `business_event` [BR-13].
 - Readings, decisions and business events are append-only. Corrections are new rows that reference the old ones.
+- Enumerations are stored as `VARCHAR` with a `CHECK` constraint (not native PostgreSQL enums) so values can be added with simple migrations.
+- `NULL` in a context field means "not reported", never a default value.
 
+Integrity rules enforced **by the database** (tested in `backend/tests/test_data_model_constraints.py`):
+
+| Rule | Mechanism |
+|---|---|
+| Only the QUALITY role can record a disposition (BC-05, approved 2026-11-14) | Composite FK `disposition(decided_by_user_id, decided_by_role)` → `user_role(user_id, role)` plus `CHECK decided_by_role = 'QUALITY'` |
+| A warehouse release needs a RELEASE disposition of the same shipment | Composite FK `warehouse_release(disposition_id, shipment_id, disposition_decision)` → `disposition`, plus `CHECK disposition_decision = 'RELEASE'` |
+| A disposition can only reference incidents of its own shipment | Composite FKs from `disposition_incident` with `shipment_id` |
+| A shipment's policy belongs to the shipment's product | Composite FK `shipment(policy_id, product_id)` → `policy` |
+| One ACTIVE policy per product; release authority is QUALITY; min < max; review gap ≥ unknown gap | Partial unique index and `CHECK` constraints on `policy` |
+| Business references unique | `UNIQUE (business_ref)` on every business table |
+| Timestamps must carry a timezone | Application type `UTCDateTime` rejects naive datetimes before they reach the database |
+
+Role grants are revoked by setting `user_role.revoked_at`, never deleted, because past dispositions keep a foreign key to the grant they were made under. Checking `revoked_at` at decision time is application logic (M5).
 ## 6. ML pipeline design
 
 ```mermaid
@@ -390,21 +422,26 @@ Outage simulation for tests uses `docker compose pause chain` / `unpause`, which
 
 ## 8. Infrastructure
 
-Planned Compose services (built in M1 and extended per milestone):
+Compose services (`docker-compose.yml`). Services marked M1 exist now; the others are added by their milestone.
 
-| Service | Image / build | Port (host) | Notes |
-|---|---|---|---|
-| `db` | `postgres:16` | not published by default | Named volume `pgdata` |
-| `chain` | built from `blockchain/` (Node LTS + Hardhat) | 8545 | In-memory chain; reset together with `db` |
-| `chain-deploy` | same as `chain` | — | One-shot: deploy, grant roles, write `deployment.json` to shared volume |
-| `backend` | built from `backend/` (Python 3.12; installs `ml/` and `llm/` packages) | 8000 | Runs migrations, then API |
-| `worker` | same image as `backend` | — | Outbox relay and scheduled jobs |
-| `frontend` | multi-stage: Vite build → nginx | 8080 | nginx proxies `/api` to `backend` |
+| Service | Image / build | Host port | Health / completion | Notes |
+|---|---|---|---|---|
+| `db` (M1) | `postgres:16-alpine` | none | `pg_isready` | Named volume `coldchain_pgdata`; session timezone UTC |
+| `migrate` (M1) | `backend/` image, target `runtime` | none | exits 0 | One-shot: `alembic upgrade head && python -m app.seed` (idempotent reference data) |
+| `backend` (M1) | same image as `migrate` | none | `GET /api/health` (DB reachable and schema at head) | Starts only after `migrate` completed successfully |
+| `frontend` (M1) | multi-stage: `node:24-alpine` build → `nginx:1.28-alpine` | `127.0.0.1:3000` → 8080 | `GET /healthz` | Serves the SPA; reverse-proxies `/api/` to `backend:8000` |
+| `backend-tests` (M1, profile `test`) | `backend/` image, target `test` | none | pytest exit code | Uses separate `*_test` databases |
+| `chain` (M5) | built from `blockchain/` (Node LTS + Hardhat) | 8545 | — | In-memory chain; reset together with `db` |
+| `chain-deploy` (M5) | same as `chain` | none | — | One-shot: deploy, grant roles, write `deployment.json` |
+| `worker` (M5) | same image as `backend` | none | — | Outbox relay and scheduled jobs |
 
-- One start command for students: `docker compose up --build` (wrapped by `scripts/start.sh` and `scripts/start.ps1`/`.bat`). Demo data is seeded on first start.
-- Health checks on every service; `depends_on` with `condition: service_healthy` or `service_completed_successfully`.
-- Shell scripts use LF line endings (`.gitattributes`) so they run inside Linux containers when the repo is checked out on Windows.
-- Configuration comes from `.env` (copied from `.env.example`). No secret has a working default outside local development.
+- **Startup order:** `db` healthy → `migrate` completed successfully → `backend` healthy → `frontend`. `docker compose up -d --build --wait` returns only when all are healthy (verified in M1).
+- **One port:** only the frontend is published, on `127.0.0.1:${FRONTEND_PORT:-3000}` (`FRONTEND_BIND_ADDRESS` can widen it). The browser calls `/api/...` on the same origin, so no backend hostname or port is built into the frontend.
+- **Reverse proxy:** nginx resolves `backend` at request time through Docker's DNS (`resolver 127.0.0.11`), so the UI still loads when the backend is down and the proxy answers with a JSON error `{"error": {"code": "api_unreachable", ...}}` (HTTP 502). Backend responses, including its own 503 health report, pass through unchanged. nginx forwards or generates `X-Request-ID`.
+- **API conventions:** every route is under `/api`; success bodies are `{"data": ..., "meta": ...}`, errors are `{"error": {"code", "message", "details", "request_id"}}`. OpenAPI at `/api/openapi.json`, Swagger UI at `/api/docs`.
+- **Start/stop for non-technical users:** `start.command` / `stop.command` (macOS) and `start.bat` / `stop.bat` (Windows) at the repository root. They check Docker, create `.env` if missing, refuse to start if another program holds the port, run `up --wait`, verify `/api/health` through the proxy, and never delete data (`down` without `-v`).
+- **Line endings:** `.sh`, `.command`, `.py` and `Dockerfile` are LF; `.bat` is CRLF (`.gitattributes`).
+- **Configuration** comes from `.env` (copied from `.env.example`). Compose refuses to start without `POSTGRES_PASSWORD`; no secret is written into `docker-compose.yml`.
 
 ## 9. Security model
 

@@ -1,0 +1,17 @@
+{
+  "_note": "Demo organizations and users for the teaching prototype. Users have no credentials in Milestone 1; authentication is a later milestone.",
+  "organizations": [
+    {"org_id": "ORG-SHIPPER", "name": "Shipper (demo organization)", "org_type": "SHIPPER"},
+    {"org_id": "ORG-CARRIER", "name": "Refrigerated carrier (demo organization)", "org_type": "CARRIER"},
+    {"org_id": "ORG-RECEIVER", "name": "Receiving organization (demo)", "org_type": "RECEIVER"},
+    {"org_id": "ORG-PLATFORM", "name": "Platform operator (demo)", "org_type": "PLATFORM"}
+  ],
+  "users": [
+    {"username": "shipper.demo", "display_name": "Shipper user (demo)", "org_id": "ORG-SHIPPER", "roles": ["SHIPPER"]},
+    {"username": "carrier.demo", "display_name": "Carrier user (demo)", "org_id": "ORG-CARRIER", "roles": ["CARRIER"]},
+    {"username": "quality.demo", "display_name": "Quality Officer (demo)", "org_id": "ORG-RECEIVER", "roles": ["QUALITY"]},
+    {"username": "warehouse.demo", "display_name": "Warehouse operator (demo)", "org_id": "ORG-RECEIVER", "roles": ["WAREHOUSE"]},
+    {"username": "monitor.service", "display_name": "Monitoring service account (demo)", "org_id": "ORG-RECEIVER", "roles": ["MONITOR"]},
+    {"username": "platform.admin", "display_name": "Platform administrator (demo)", "org_id": "ORG-PLATFORM", "roles": ["ADMIN"]}
+  ]
+}
