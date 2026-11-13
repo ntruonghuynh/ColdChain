@@ -1,0 +1,103 @@
+# Cold Chain Monitoring and Excursion Response — local stack (Milestone 1)
+#
+#   docker compose up -d --build --wait     start everything and wait until healthy
+#   docker compose down                     stop (data in the "pgdata" volume is kept)
+#   docker compose --profile test run --rm backend-tests    run backend tests
+#
+# Values come from .env (copy .env.example). Required secrets have no defaults here.
+
+name: ${COMPOSE_PROJECT_NAME:-coldchain}
+
+x-backend-env: &backend-env
+  APP_ENV: ${APP_ENV:-local}
+  TZ: UTC
+  POSTGRES_HOST: db
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: ${POSTGRES_DB:-coldchain}
+  POSTGRES_USER: ${POSTGRES_USER:-coldchain}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is not set. Copy .env.example to .env first.}
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-coldchain}
+      POSTGRES_USER: ${POSTGRES_USER:-coldchain}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is not set. Copy .env.example to .env first.}
+      TZ: UTC
+      PGTZ: UTC
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    restart: unless-stopped
+    # Not published to the host. Use `docker compose exec db psql -U coldchain coldchain`.
+
+  migrate:
+    # One-shot job: apply Alembic migrations, then load reference data (policy, organizations).
+    build:
+      context: ./backend
+      target: runtime
+    image: coldchain-backend:local
+    environment: *backend-env
+    command: ["sh", "-c", "alembic upgrade head && python -m app.seed"]
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  backend:
+    image: coldchain-backend:local
+    pull_policy: never
+    environment: *backend-env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=4).status == 200 else 1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+    restart: unless-stopped
+    # Not published: the browser reaches it through the frontend proxy at /api.
+
+  frontend:
+    build:
+      context: ./frontend
+    image: coldchain-frontend:local
+    ports:
+      - "${FRONTEND_BIND_ADDRESS:-127.0.0.1}:${FRONTEND_PORT:-3000}:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 5s
+    restart: unless-stopped
+
+  backend-tests:
+    profiles: ["test"]
+    build:
+      context: ./backend
+      target: test
+    image: coldchain-backend:test
+    environment:
+      <<: *backend-env
+      APP_ENV: test
+      # Tests create and drop this separate database; the main database is never touched.
+      TEST_POSTGRES_DB: ${POSTGRES_DB:-coldchain}_test
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+volumes:
+  pgdata:
