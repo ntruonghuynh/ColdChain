@@ -2,7 +2,7 @@
 
 | Item | Value |
 |---|---|
-| Status | Milestone 0 plan — **proposed** |
+| Status | M0 accepted · **M1 implemented, awaiting acceptance** (2026-11-14) |
 | Inputs | `docs/requirements-analysis.md`, `docs/architecture.md` |
 | Course window | 8 to 10 weeks (brief, page 1) |
 | Last updated | 2026-11-14 |
@@ -54,10 +54,11 @@ Suggested timing for a 10-week course (adjust to the team): week 1 M0–M1, week
 | Field | Content |
 |---|---|
 | Objectives | Running Docker Compose stack with PostgreSQL, a FastAPI backend with health check and migrations, and an empty frontend shell. Core schema for organizations, users, products, policies, shipments, sensors, readings, context, ingest batches, business events. Seed the teaching policy (after D-01 approval) and demo users. |
-| Files / modules | `docker-compose.yml`; `backend/pyproject.toml`, `backend/Dockerfile`, `backend/app/{main.py, core/config.py, db/models.py, db/session.py}`, `backend/migrations/`, `backend/app/api/health.py`, `backend/app/seed/`; `frontend/package.json`, `frontend/vite.config.ts`, `frontend/tailwind` config, `frontend/src/main.tsx`, `frontend/Dockerfile`, `frontend/nginx.conf`; `scripts/start.sh`, `scripts/start.ps1`, `scripts/stop.*`, `scripts/reset.*` |
+| Files / modules | `docker-compose.yml`; `backend/pyproject.toml`, `backend/requirements*.txt`, `backend/Dockerfile`, `backend/alembic.ini`, `backend/migrations/` (revision `0001`), `backend/app/{main.py, core/, db/, api/, seed/}`, `backend/tests/`; `frontend/package.json`, `frontend/package-lock.json`, `frontend/vite.config.ts`, `frontend/tsconfig.json`, `frontend/src/`, `frontend/Dockerfile`, `frontend/nginx.conf`; root `start.command`, `stop.command`, `start.bat`, `stop.bat`; `scripts/smoke_test.py` |
+| Owner changes at M1 start (2026-11-14) | App served at `http://localhost:3000` (not 8080); start/stop scripts are root-level `.command`/`.bat` files (not `scripts/start.sh`/`.ps1`); no `reset` script (deleting data is a deliberate manual step, `docker compose down -v`); teaching policy values approved (requirements analysis §13). |
 | Dependencies | M0 accepted; decision D-01 (policy values) for the seed |
-| Acceptance criteria | `docker compose up --build` starts `db`, `backend`, `frontend` healthy from a clean clone with only `.env` copied from `.env.example`; `GET /api/health` reports DB connectivity; migrations create the schema; timestamps are `timestamptz`; `(sensor_id, event_at)` is unique on readings; frontend shows a page that calls the health endpoint and displays the real result. |
-| Tests | pytest: migration up/down on a test database; model constraints (unique reading key, non-null `event_at`/`received_at`, UTC storage); health endpoint. Frontend: build and type-check pass. |
+| Acceptance criteria | `docker compose up --build` starts `db`, `backend`, `frontend` healthy from a clean clone with only `.env` copied from `.env.example`; `GET /api/health` reports DB connectivity; migrations create the schema; timestamps are `timestamptz`; `(sensor_id, event_at)` is unique on readings; frontend shows a page that calls the health endpoint and displays the real result; the app is reachable at `http://localhost:3000` and reaches the backend through the `/api` reverse proxy; data persists across `down`/`up`; pages for later milestones say "Not implemented yet". |
+| Tests | pytest: migration up/down on a test database; models match migrations; model constraints (unique reading key, non-null `event_at`/`received_at`, UTC storage, QUALITY-only dispositions, RELEASE-only warehouse release); seed values, idempotency and immutability; health endpoint (ok and 503); error envelope. Frontend: Vitest component tests, type-check, production build. Stack: `scripts/smoke_test.py` (startup, proxy, backend outage, shutdown, persistence). |
 | Deliverables | Running skeleton stack; schema diagram updated if it changed; M1 report. |
 | Closes | SC-01, FR-02 (IDs in schema), FR-05 (schema part), FR-06 (storage), DATA-01 to DATA-03 (schema), NFR-05, NFR-06 |
 
@@ -162,7 +163,7 @@ Suggested timing for a 10-week course (adjust to the team): week 1 M0–M1, week
 | Field | Content |
 |---|---|
 | Objectives | ZIP package that a non-technical student can run with Docker Desktop; student guide; demo video script; final submission checklist. |
-| Files / modules | `scripts/package_zip.sh`, `scripts/start.*`, `docs/student-guide.md` (with screenshots), `docs/demo-script.md`, `docs/submission-checklist.md`, final `README.md` |
+| Files / modules | `scripts/package_zip.sh`, root `start.*`/`stop.*` (from M1), `docs/student-guide.md` (with screenshots), `docs/demo-script.md`, `docs/submission-checklist.md`, final `README.md` |
 | Dependencies | M1 to M9 |
 | Acceptance criteria | On a clean machine with only Docker Desktop: unzip, copy `.env.example` to `.env` (or let the start script do it), run one start command, open the dashboard, run all four demo scenarios. ZIP contains no `.env`, keys, `node_modules`, caches or generated scratch data. Demo script fits 6–8 minutes and covers DEMO-01 to DEMO-04. Checklist maps every SUB-xx to a file. |
 | Tests | Fresh-clone and fresh-unzip run on macOS and Windows (manually recorded); script that lists ZIP contents and fails on forbidden files. |
