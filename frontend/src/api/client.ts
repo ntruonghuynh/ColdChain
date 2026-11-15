@@ -2,11 +2,15 @@ import type {
   Envelope,
   ErrorBody,
   HealthReport,
+  Incident,
+  IncidentDetail,
   ListEnvelope,
+  MonitoringSummary,
   Organization,
   Policy,
   Shipment,
   SystemInfo,
+  Telemetry,
 } from './types';
 
 /** Same-origin base path. nginx (Docker) or the Vite dev proxy forwards it to the backend. */
@@ -136,4 +140,25 @@ export const api = {
     const qs = query.toString();
     return apiGet<ListEnvelope<Shipment>>(`/shipments${qs ? `?${qs}` : ''}`, opts);
   },
+  telemetry: (shipmentId: string, asOf?: string, opts?: RequestOptions) =>
+    apiGet<Envelope<Telemetry>>(
+      `/shipments/${encodeURIComponent(shipmentId)}/telemetry${asOf ? `?as_of=${encodeURIComponent(asOf)}` : ''}`,
+      opts,
+    ),
+  incidents: (
+    params: { status?: string; category?: string; shipmentId?: string; limit?: number; offset?: number } = {},
+    opts?: RequestOptions,
+  ) => {
+    const query = new URLSearchParams();
+    if (params.status) query.set('status', params.status);
+    if (params.category) query.set('category', params.category);
+    if (params.shipmentId) query.set('shipment_id', params.shipmentId);
+    if (params.limit !== undefined) query.set('limit', String(params.limit));
+    if (params.offset !== undefined) query.set('offset', String(params.offset));
+    const qs = query.toString();
+    return apiGet<ListEnvelope<Incident>>(`/incidents${qs ? `?${qs}` : ''}`, opts);
+  },
+  incident: (incidentId: string, opts?: RequestOptions) =>
+    apiGet<Envelope<IncidentDetail>>(`/incidents/${encodeURIComponent(incidentId)}`, opts),
+  monitoringSummary: (opts?: RequestOptions) => apiGet<Envelope<MonitoringSummary>>('/monitoring/summary', opts),
 };

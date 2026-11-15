@@ -69,7 +69,7 @@ export function OverviewPage() {
           }
           hint={
             shipments.status === 'success' && shipments.data.meta.total === 0
-              ? 'None yet: ingestion arrives in M3'
+              ? 'None yet: import the dataset or ingest readings'
               : shipments.status === 'error'
                 ? 'Could not load'
                 : undefined
