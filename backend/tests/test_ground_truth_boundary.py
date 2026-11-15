@@ -26,7 +26,11 @@ ALLOWED = {
     "app/db/models/__init__.py",      # registers every table for Alembic
     "app/dataset/importer.py",        # writes the labels into schema ground_truth
     "app/dataset/manifest.py",        # verifies checksums of every dataset file, reads no rows
+    # Offline evaluation only (contract §6.3, D-12): joins replayed detector outputs with reference
+    # labels from the files. Never imported by operational code (test below), no database access.
+    "app/evaluation/baseline.py",
 }
+OPERATIONAL_PACKAGES = ("app/api/", "app/domain/", "app/services/", "app/monitoring/", "app/main.py")
 FORBIDDEN_NAMES = {"GroundTruthJourney", "GroundTruthEvent", "GROUND_TRUTH_SCHEMA"}
 FORBIDDEN_MODULE = "app.db.models.ground_truth"
 FORBIDDEN_TEXT = ("ground_truth.", "ground_truth/")  # DB schema-qualified names, dataset label files
@@ -101,3 +105,27 @@ def test_d12_frontend_never_references_ground_truth() -> None:
     hits = {p.relative_to(FRONTEND_SRC).as_posix(): [t for t in LABEL_TOKENS if t in p.read_text(encoding="utf-8")]
             for p in files}
     assert {k: v for k, v in hits.items() if v} == {}
+
+
+def test_operational_code_never_imports_the_evaluation_package() -> None:
+    """D-12 / contract §6.3: ground truth is used only by isolated evaluation code."""
+    problems = {}
+    for rel, path in _python_files():
+        if not rel.startswith(OPERATIONAL_PACKAGES):
+            continue
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        bad = [n.module for n in ast.walk(tree) if isinstance(n, ast.ImportFrom) and n.module
+               and n.module.startswith("app.evaluation")]
+        bad += [a.name for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names
+                if a.name.startswith("app.evaluation")]
+        if bad:
+            problems[rel] = bad
+    assert problems == {}
+
+
+def test_b78_detector_modules_are_scanned_and_not_allow_listed() -> None:
+    """B78: the M3 detector code is checked like any other operational module."""
+    scanned = {rel for rel, _ in _python_files()}
+    for module in ("app/domain/detector.py", "app/domain/reconcile.py", "app/services/detection.py",
+                   "app/services/ingest.py", "app/api/monitoring.py"):
+        assert module in scanned and module not in ALLOWED

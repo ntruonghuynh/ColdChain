@@ -20,8 +20,9 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.db.models import AppUser, Organization, Policy, Product, UserRole
+from app.db.models import AppUser, DetectorConfigVersion, Organization, Policy, Product, UserRole
 from app.db.models.enums import OrgType, PolicyStatus, Role
+from app.domain.rules import DetectorConfigError, parse_detector_config
 
 DATA_DIR = Path(__file__).parent / "data"
 
@@ -133,10 +134,44 @@ def load_organizations(session: Session, path: Path, report: SeedReport) -> None
                 report.created.append(f"role {u['username']}:{role}")
 
 
+def load_detector_config_file(session: Session, path: Path, report: SeedReport) -> None:
+    """Detector configuration versions are immutable, like policy versions (contract §5.3)."""
+    document = json.loads(path.read_text(encoding="utf-8"))
+    digest = canonical_sha256(document)
+    try:
+        parse_detector_config(document, digest)
+    except DetectorConfigError as exc:
+        raise SeedConflictError(f"{path.name}: invalid detector configuration ({exc})") from exc
+    label = f"detector config {document['detector_code']} v{document['config_version']}"
+    existing = session.scalar(
+        select(DetectorConfigVersion).where(DetectorConfigVersion.detector_code == document["detector_code"],
+                                            DetectorConfigVersion.config_version == document["config_version"])
+    )
+    if existing is not None:
+        if existing.content_sha256 != digest:
+            raise SeedConflictError(
+                f"{label} already exists with different content (stored sha256 {existing.content_sha256}, "
+                f"file sha256 {digest}). Detector configuration versions are immutable: create a new version.")
+        report.unchanged.append(label)
+        return
+    session.add(DetectorConfigVersion(
+        detector_code=document["detector_code"],
+        config_version=document["config_version"],
+        nominal_sampling_interval_s=document["nominal_sampling_interval_s"],
+        max_continuous_interval_s=document["max_continuous_interval_s"],
+        document=document,
+        content_sha256=digest,
+        source_file=f"app/seed/data/detector/{path.name}",
+    ))
+    report.created.append(label)
+
+
 def run_seed(session: Session, data_dir: Path = DATA_DIR) -> SeedReport:
     report = SeedReport()
     load_organizations(session, data_dir / "organizations.json", report)
     for policy_file in sorted((data_dir / "policies").glob("*.json")):
         load_policy_file(session, policy_file, report)
+    for config_file in sorted((data_dir / "detector").glob("*.json")):
+        load_detector_config_file(session, config_file, report)
     session.commit()
     return report

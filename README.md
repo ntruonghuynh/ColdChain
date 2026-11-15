@@ -2,7 +2,7 @@
 
 Academic prototype for **IT in Logistics — Final project 03**. It monitors refrigerated shipments, tells real temperature excursions apart from missing or faulty sensor data, drafts a procedure-based response, and records custody and quality decisions on a local blockchain. A human Quality Officer always makes the release or quarantine decision.
 
-> **Status: Milestone 2 — synthetic dataset.** The database, backend API, dashboard shell and Docker setup run, and a documented, reproducible **synthetic** dataset of 200 journeys is included and can be imported. Monitoring, ML, LLM and blockchain features are **not implemented yet**; their pages say so. See [docs/implementation-plan.md](docs/implementation-plan.md).
+> **Status: Milestone 3 — ingestion, monitoring and the threshold baseline.** The stack validates and ingests sensor batches, shows monitoring states (CURRENT / STALE / UNKNOWN), confirms missing-data gaps, detects policy excursions with the conventional threshold baseline, and lists open incidents in an excursion queue. All data is **simulated**. ML, LLM, blockchain, quality decisions and login are **not implemented yet**; their pages say so. See [docs/implementation-plan.md](docs/implementation-plan.md).
 
 > **Teaching boundary.** All data is simulated. Temperature limits and procedures are teaching policies, not clinical or regulatory standards. No ML output establishes product safety.
 
@@ -25,19 +25,20 @@ The start script checks that Docker is running (and tries to start it), creates 
 
 > **macOS:** the first time, macOS may block a downloaded script. Right-click `start.command` → **Open** → **Open**. If it says "permission denied", run `chmod +x start.command stop.command` once in Terminal from this folder.
 
-## What runs today (Milestones 1–2)
+## What runs today (Milestones 1–3)
 
 | Area | Status |
 |---|---|
-| PostgreSQL database with the schema (20 tables from Milestone 1; Milestone 2 adds `dataset_release` and a separate `ground_truth` schema) and migrations | Available |
+| PostgreSQL database with the schema (20 tables from Milestone 1; Milestone 2 adds `dataset_release` and a separate `ground_truth` schema; Milestone 3 adds 7 monitoring tables) and migrations | Available |
 | Teaching policy, organizations and demo users loaded as configuration data | Available |
-| Backend API: health checks, system info, policies, organizations, shipments (read-only) | Available |
+| Backend API: health checks, system info, policies, organizations, shipments; ingestion (`POST /api/ingest/batches`), telemetry, sensor status, missing and delayed data, detections, warnings, incidents, monitoring summary | Available |
 | API documentation (OpenAPI / Swagger) | Available at http://localhost:3000/api/docs |
 | Dashboard shell: navigation, header, API connectivity indicator, Overview, Shipments, System Settings | Available |
-| Temperature monitoring, excursion queue, quality review, audit history | Not implemented yet (pages show this) |
+| Temperature monitoring (timeline, missing-data intervals, monitoring state, causal "view as of"), excursion queue, incident detail | Available (Milestone 3) |
+| Quality review, audit history | Not implemented yet (pages show this) |
 | Synthetic dataset (200 journeys, seed 11) with data dictionary, provenance and checksums | Available in `data/release/` (Milestone 2) |
 | Idempotent import of the dataset into PostgreSQL (simulated shipments, readings, context; labels in a separate `ground_truth` schema) | Available as a manual command (Milestone 2) |
-| Data ingestion API, gap detection, threshold baseline | Milestone 3 |
+| Data ingestion API, gap detection, threshold baseline, incidents | Available (Milestone 3) |
 | ML detection · Blockchain · LLM drafts · Login | Milestones 4 · 5 · 6 · 5/7 |
 
 After a fresh start there are no shipments. To load the 200 **simulated** shipments of the canonical dataset (takes about 15 seconds; running it again changes nothing):
@@ -46,7 +47,13 @@ After a fresh start there are no shipments. To load the 200 **simulated** shipme
 docker compose --profile tools run --rm data-tools python -m app.dataset import data/release/coldchain-sim-v1.0.0-seed11
 ```
 
-The Shipments page then lists them, labelled `SIMULATED`. No detection runs on them yet (Milestone 3). Details: [data/README.md](data/README.md), [data dictionary](data/dictionary/data-dictionary.md).
+The Shipments page then lists them, labelled `SIMULATED`. To run the threshold baseline over them, replaying every journey along its recorded receipt times (about 15 seconds; running it again changes nothing):
+
+```bash
+docker compose --profile tools run --rm data-tools python -m app.monitoring replay
+```
+
+The Excursion Queue and Temperature Monitoring pages then show the results. The ocean coverage demonstration (connectivity loss, STALE/UNKNOWN, delayed backfill, excursion found afterwards, incident pending review) is `python -m app.monitoring demo-ocean` with the same prefix. Details: [data/README.md](data/README.md), [data dictionary](data/dictionary/data-dictionary.md), [M3 report](docs/milestones/m3/README.md).
 
 ### Approved teaching policy (configuration data)
 
@@ -154,11 +161,11 @@ The test suite fails if models and migrations differ.
 ### Running tests
 
 ```bash
-# Backend (58 tests) + dataset generator (72 tests) inside Docker,
+# Backend (190 tests) + dataset generator (76 tests) inside Docker,
 # against separate *_test databases (main data untouched)
 docker compose --profile test run --rm --build backend-tests
 
-# Frontend unit/component tests (19 tests), type-check and production build
+# Frontend unit/component tests (22 tests), type-check and production build
 cd frontend && npm ci && npm test && npm run typecheck && npm run build
 
 # End-to-end smoke test of the whole stack: startup, proxy, outage handling,
@@ -179,6 +186,21 @@ docker compose --profile tools run --rm data-tools python -m coldchain_sim verif
 docker compose --profile tools run --rm data-tools python -m app.dataset import data/release/coldchain-sim-v1.0.0-seed11
 docker compose --profile tools run --rm data-tools python -m app.dataset status
 ```
+
+### Monitoring and baseline detection (Milestone 3)
+
+```bash
+# causal replay of the imported shipments through the baseline detector (once per sensor)
+docker compose --profile tools run --rm data-tools python -m app.monitoring replay
+# ocean coverage demonstration on a new demo shipment (causal; idempotent)
+docker compose --profile tools run --rm data-tools python -m app.monitoring demo-ocean
+docker compose --profile tools run --rm data-tools python -m app.monitoring summary
+# development evaluation of the baseline (seed 11 train+validation only; writes files, no database)
+docker compose --profile tools run --rm data-tools python -m app.evaluation baseline \
+  data/release/coldchain-sim-v1.0.0-seed11 --out docs/evaluation/dev/m3-baseline-seed11
+```
+
+Live ingestion: `POST /api/ingest/batches` (see http://localhost:3000/api/docs). The server sets the receipt time; a client can never send it. Specification: [M3 detector contract](docs/design/m3-baseline-detector-contract.md); endpoints: [docs/api/monitoring-api.md](docs/api/monitoring-api.md).
 
 ### Working outside Docker (optional)
 
@@ -215,13 +237,15 @@ Dependency versions are pinned in `backend/requirements*.txt` (compiled from `ba
 | Build fails with "no space left on device" | Free Docker disk space in Docker Desktop → Troubleshoot → Clean / Purge data (this deletes unused images). |
 | Windows: the script window closes before you can read it | Open a Command Prompt in this folder (type `cmd` in the File Explorer address bar) and run `start.bat` there; the messages stay visible. Administrator rights are not needed. |
 
-## Known limitations (Milestones 1–2)
+## Known limitations (Milestones 1–3)
 
-- No login yet. Demo users exist (one per role) but have no credentials; all API endpoints are read-only and open to anyone who can reach port 3000.
-- No monitoring features yet (ingestion API, gap detection, excursion detection, ML, LLM, blockchain).
+- No login yet. Demo users exist (one per role) but have no credentials. All endpoints, including `POST /api/ingest/batches`, are open to anyone who can reach port 3000 (bound to 127.0.0.1 by default); live batches are attributed to the shipment's carrier until authentication arrives (Milestone 5).
+- No ML, LLM or blockchain yet. Incidents stay open: quality dispositions and the release gate arrive in Milestone 5.
+- No API to register shipments or sensor assignments yet (Milestone 5). Live ingestion is accepted only inside a documented monitoring window, so it works for shipments created by the import or the demo command.
+- With 15-minute uploads the monitoring state briefly shows UNKNOWN before almost every upload (it truly has no data then); see the M3 report.
 - The dataset is synthetic. Its physics, sensor faults and labels are simplified; see the limitations in the [data dictionary](data/dictionary/data-dictionary.md#7-known-limitations-of-the-synthetic-data).
 - Importing the dataset is a manual command for now. A configurable first-run import is approved for the final release (D-10, Milestone 10). Imported shipments stay in status `CREATED` because the workflow arrives in Milestone 5.
-- The nominal 5-minute sampling interval is approved for Milestone 3 (D-01). It is not part of the stored policy v1.0, which is immutable.
+- The nominal 5-minute sampling interval and the 7 min 30 s continuity limit live in the detector configuration `DET-BASELINE v1.0.0`, not in the immutable policy v1.0.
 - Windows scripts (`start.bat`, `stop.bat`) were written for Windows 10/11 but have not been executed on Windows yet.
 - Fully offline installation is not supported yet: the first start downloads Docker images and packages.
 
@@ -243,6 +267,7 @@ Dependency versions are pinned in `backend/requirements*.txt` (compiled from `ba
 - [Requirements analysis](docs/requirements-analysis.md)
 - [Architecture](docs/architecture.md)
 - [Implementation plan](docs/implementation-plan.md)
+- [M3 detector contract](docs/design/m3-baseline-detector-contract.md), [monitoring API](docs/api/monitoring-api.md), [M3 report](docs/milestones/m3/README.md)
 - [Data dictionary](data/dictionary/data-dictionary.md) and [provenance](data/dictionary/provenance.md)
 - [Rules for Claude Code](CLAUDE.md)
 

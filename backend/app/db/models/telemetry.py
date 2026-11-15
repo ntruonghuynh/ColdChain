@@ -24,7 +24,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, created_at_col, str_enum, uuid_pk
-from app.db.models.enums import DataOrigin, DoorState, IngestSource, RecordKind
+from app.db.models.enums import DataOrigin, DoorState, IngestMode, IngestSource, RecordKind
 from app.db.types import UTCDateTime
 
 
@@ -48,6 +48,12 @@ class IngestBatch(Base):
     record_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
     accepted_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
     rejected_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
+    # BR-07: identical duplicates are ignored (no business effect), counted here, not rejected.
+    duplicate_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
+    # C-09: IMPORT (M2 dataset import), LIVE (server receipt time), REPLAY (trusted recorded receipt time).
+    ingest_mode: Mapped[IngestMode] = mapped_column(
+        str_enum(IngestMode, "ingest_mode"), nullable=False, server_default=IngestMode.IMPORT.value
+    )
     content_sha256: Mapped[str | None] = mapped_column(String(64))
     canonicalization_version: Mapped[str | None] = mapped_column(String(20))
     business_event_id: Mapped[uuid.UUID | None] = mapped_column(
@@ -57,8 +63,8 @@ class IngestBatch(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "record_count >= 0 AND accepted_count >= 0 AND rejected_count >= 0 "
-            "AND accepted_count + rejected_count <= record_count",
+            "record_count >= 0 AND accepted_count >= 0 AND rejected_count >= 0 AND duplicate_count >= 0 "
+            "AND accepted_count + rejected_count + duplicate_count <= record_count",
             name="counts_consistent",
         ),
         CheckConstraint(

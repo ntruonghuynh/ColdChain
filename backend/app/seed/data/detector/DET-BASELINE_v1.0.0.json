@@ -1,0 +1,8 @@
+{
+  "detector_code": "DET-BASELINE",
+  "config_version": "1.0.0",
+  "description": "Milestone 3 policy-baseline detector configuration. Describes the measuring equipment, not the product requirement (that is the policy).",
+  "nominal_sampling_interval_s": 300,
+  "max_continuous_interval_s": 450,
+  "approval_reference": "Nominal 5-minute sampling interval approved 2026-11-15 (D-01); readings at most 7 min 30 s apart are continuous, approved 2026-11-15 (C-01). Requirements analysis section 13.1; docs/design/m3-baseline-detector-contract.md."
+}

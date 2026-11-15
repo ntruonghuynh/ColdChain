@@ -151,3 +151,38 @@ class LabelSource(StrEnum):
     POLICY_RULE_ON_TRUE_TEMPERATURE = "POLICY_RULE_ON_TRUE_TEMPERATURE"
     INJECTED_SCENARIO = "INJECTED_SCENARIO"
     OBSERVATION_MODEL = "OBSERVATION_MODEL"
+
+
+# ---- Milestone 3: ingestion, monitoring and the policy baseline detector ----
+
+class IngestMode(StrEnum):
+    """How a batch entered the system. IMPORT: M2 dataset import; LIVE: public API with the
+    server's receipt time; REPLAY: trusted internal replay of recorded receipt times (C-09)."""
+
+    IMPORT = "IMPORT"
+    LIVE = "LIVE"
+    REPLAY = "REPLAY"
+
+
+class EvaluationMode(StrEnum):
+    LIVE = "LIVE"
+    REPLAY = "REPLAY"
+
+
+class EvaluationTrigger(StrEnum):
+    BATCH = "BATCH"
+    MONITORING_START = "MONITORING_START"
+    MONITORING_END = "MONITORING_END"
+    CATCH_UP = "CATCH_UP"
+
+
+class TemperatureDirection(StrEnum):
+    HIGH = "HIGH"
+    LOW = "LOW"
+
+
+class ReassessmentReason(StrEnum):
+    """U-04: why an existing quality disposition needs a human reassessment."""
+
+    INCIDENT_EVIDENCE_REVISED = "INCIDENT_EVIDENCE_REVISED"
+    NEW_INCIDENT_AFTER_DISPOSITION = "NEW_INCIDENT_AFTER_DISPOSITION"

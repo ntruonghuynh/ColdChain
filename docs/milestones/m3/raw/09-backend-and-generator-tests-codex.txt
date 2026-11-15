@@ -1,0 +1,375 @@
+ Container coldchain-db-1 Running 
+ Image coldchain-backend:test Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 625B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.17kB 0.0s done
+#2 DONE 0.0s
+
+#3 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#3 DONE 1.2s
+
+#4 docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+#4 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e done
+#4 CACHED
+
+#5 [internal] load metadata for docker.io/library/python:3.12-slim
+#5 DONE 0.8s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 119B done
+#6 DONE 0.0s
+
+#7 [runtime 1/8] FROM docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+#7 resolve docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 4.25kB done
+#8 DONE 0.0s
+
+#9 [test 1/4] COPY requirements-dev.txt ./
+#9 CACHED
+
+#10 [runtime 5/8] COPY alembic.ini ./
+#10 CACHED
+
+#11 [runtime 7/8] COPY app ./app
+#11 CACHED
+
+#12 [runtime 2/8] WORKDIR /app
+#12 CACHED
+
+#13 [runtime 4/8] RUN pip install -r requirements.txt
+#13 CACHED
+
+#14 [runtime 3/8] COPY requirements.txt ./
+#14 CACHED
+
+#15 [test 3/4] COPY pyproject.toml ./
+#15 CACHED
+
+#16 [runtime 6/8] COPY migrations ./migrations
+#16 CACHED
+
+#17 [runtime 8/8] RUN useradd --create-home --uid 10001 appuser
+#17 CACHED
+
+#18 [test 2/4] RUN pip install -r requirements-dev.txt
+#18 CACHED
+
+#19 [test 4/4] COPY tests ./tests
+#19 CACHED
+
+#20 exporting to image
+#20 exporting layers done
+#20 exporting manifest sha256:9dff121aff6641002d145c59fc1ccf0694a599dd2c83d338e21c4d52ac5df4be done
+#20 exporting config sha256:7b0be49be8fa8ab2ca8ca81e9a91dd9e9fef87900a4ed837e019d99b4c7b1581 done
+#20 exporting attestation manifest sha256:de0674ade255994f0fe6f730f2e29e431a3a45a5c96a6dc8b45b2418bb0fefaa done
+#20 exporting manifest list sha256:041c5654e098e1f1331aa48c4035f5cb507630ce9c33ebc894352e8f05f2f49f done
+#20 naming to docker.io/library/coldchain-backend:test done
+#20 unpacking to docker.io/library/coldchain-backend:test done
+#20 DONE 0.0s
+
+#21 resolving provenance for metadata file
+#21 DONE 0.0s
+ Image coldchain-backend:test Built 
+ Container coldchain-db-1 Waiting 
+ Container coldchain-db-1 Healthy 
+ Container coldchain-backend-tests-run-3b3703c51e6a Creating 
+ Container coldchain-backend-tests-run-3b3703c51e6a Created 
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.2.0, pluggy-1.7.0 -- /usr/local/bin/python3.12
+rootdir: /app
+configfile: pyproject.toml
+plugins: anyio-4.16.0
+collecting ... collected 278 items
+
+tests/test_config_and_types.py::test_database_url_escapes_special_characters_in_password PASSED [  0%]
+tests/test_config_and_types.py::test_database_url_override_takes_precedence PASSED [  0%]
+tests/test_config_and_types.py::test_utc_datetime_rejects_naive_timestamps PASSED [  1%]
+tests/test_config_and_types.py::test_utc_datetime_converts_aware_timestamps_to_utc PASSED [  1%]
+tests/test_data_model_constraints.py::test_fr03_reading_keeps_event_and_received_time_as_utc PASSED [  1%]
+tests/test_data_model_constraints.py::test_fr03_reading_requires_received_time PASSED [  2%]
+tests/test_data_model_constraints.py::test_nfr05_naive_timestamp_is_rejected PASSED [  2%]
+tests/test_data_model_constraints.py::test_data01_reading_unique_per_sensor_and_event_time PASSED [  2%]
+tests/test_data_model_constraints.py::test_release_authority_quality_user_can_record_disposition PASSED [  3%]
+tests/test_data_model_constraints.py::test_release_authority_non_quality_user_cannot_record_disposition[carrier.demo] PASSED [  3%]
+tests/test_data_model_constraints.py::test_release_authority_non_quality_user_cannot_record_disposition[warehouse.demo] PASSED [  3%]
+tests/test_data_model_constraints.py::test_release_authority_non_quality_user_cannot_record_disposition[shipper.demo] PASSED [  4%]
+tests/test_data_model_constraints.py::test_release_authority_non_quality_user_cannot_record_disposition[platform.admin] PASSED [  4%]
+tests/test_data_model_constraints.py::test_release_authority_disposition_role_must_be_quality PASSED [  5%]
+tests/test_data_model_constraints.py::test_release_authority_warehouse_release_with_release_disposition PASSED [  5%]
+tests/test_data_model_constraints.py::test_release_authority_warehouse_release_rejected_for_quarantine PASSED [  5%]
+tests/test_data_model_constraints.py::test_release_authority_warehouse_release_rejected_for_other_shipments_decision PASSED [  6%]
+tests/test_data_model_constraints.py::test_disposition_cannot_close_incident_of_another_shipment PASSED [  6%]
+tests/test_data_model_constraints.py::test_br13_business_reference_is_unique PASSED [  6%]
+tests/test_data_model_constraints.py::test_only_one_active_policy_per_product PASSED [  7%]
+tests/test_data_model_constraints.py::test_policy_check_constraints[overrides0-ck_policy_release_authority_is_quality] PASSED [  7%]
+tests/test_data_model_constraints.py::test_policy_check_constraints[overrides1-ck_policy_min_below_max] PASSED [  7%]
+tests/test_data_model_constraints.py::test_policy_check_constraints[overrides2-ck_policy_gap_review_not_below_unknown] PASSED [  8%]
+tests/test_data_model_constraints.py::test_policy_check_constraints[overrides3-ck_policy_high_duration_positive] PASSED [  8%]
+tests/test_data_model_constraints.py::test_shipment_policy_must_belong_to_shipment_product PASSED [  8%]
+tests/test_dataset_import.py::test_import_writes_observed_rows_ground_truth_and_provenance PASSED [  9%]
+tests/test_dataset_import.py::test_fr03_import_keeps_event_and_received_time_unchanged PASSED [  9%]
+tests/test_dataset_import.py::test_import_twice_is_idempotent PASSED     [ 10%]
+tests/test_dataset_import.py::test_missing_readings_are_not_created_by_the_import PASSED [ 10%]
+tests/test_dataset_import.py::test_tampered_file_is_rejected_and_nothing_is_written PASSED [ 10%]
+tests/test_dataset_import.py::test_same_dataset_id_with_different_content_is_a_conflict PASSED [ 11%]
+tests/test_dataset_import.py::test_labels_from_a_different_policy_are_refused PASSED [ 11%]
+tests/test_dataset_import.py::test_existing_shipment_ids_are_never_merged PASSED [ 11%]
+tests/test_dataset_import.py::test_ground_truth_is_stored_in_its_own_schema PASSED [ 12%]
+tests/test_dataset_import.py::test_empty_context_field_stays_null PASSED [ 12%]
+tests/test_ground_truth_boundary.py::test_application_code_is_scanned PASSED [ 12%]
+tests/test_ground_truth_boundary.py::test_only_the_dataset_loader_touches_ground_truth PASSED [ 13%]
+tests/test_ground_truth_boundary.py::test_the_boundary_check_detects_a_violation PASSED [ 13%]
+tests/test_ground_truth_boundary.py::test_d12_operational_api_exposes_no_ground_truth PASSED [ 14%]
+tests/test_ground_truth_boundary.py::test_d12_frontend_never_references_ground_truth PASSED [ 14%]
+tests/test_ground_truth_boundary.py::test_operational_code_never_imports_the_evaluation_package PASSED [ 14%]
+tests/test_ground_truth_boundary.py::test_b78_detector_modules_are_scanned_and_not_allow_listed PASSED [ 15%]
+tests/test_health_and_errors.py::test_liveness PASSED                    [ 15%]
+tests/test_health_and_errors.py::test_readiness_reports_database_ok_and_migration_head PASSED [ 15%]
+tests/test_health_and_errors.py::test_readiness_returns_503_when_database_unreachable PASSED [ 16%]
+tests/test_health_and_errors.py::test_request_id_is_generated_and_echoed PASSED [ 16%]
+tests/test_health_and_errors.py::test_unknown_route_uses_error_envelope PASSED [ 16%]
+tests/test_health_and_errors.py::test_validation_error_uses_error_envelope PASSED [ 17%]
+tests/test_health_and_errors.py::test_missing_resource_uses_not_found_code PASSED [ 17%]
+tests/test_health_and_errors.py::test_openapi_schema_is_served PASSED    [ 17%]
+tests/test_m3_acceptance_boundaries.py::test_b33_final_event_time_results_and_current_incident_extents_are_order_independent PASSED [ 18%]
+tests/test_m3_acceptance_boundaries.py::test_b33_documented_exception_conflicting_duplicates_depend_on_arrival_order PASSED [ 18%]
+tests/test_m3_acceptance_boundaries.py::test_b66_every_incremental_step_equals_a_fresh_causal_recalculation PASSED [ 19%]
+tests/test_m3_acceptance_boundaries.py::test_b66_stored_history_viewed_as_of_each_step_equals_fresh_evaluation PASSED [ 19%]
+tests/test_m3_acceptance_boundaries.py::test_b62_late_evidence_leaves_every_decision_record_byte_identical PASSED [ 19%]
+tests/test_m3_acceptance_boundaries.py::test_b64_offline_reprocessing_with_another_configuration_never_touches_live_tables PASSED [ 20%]
+tests/test_m3_acceptance_boundaries.py::test_b79_b80_metrics_on_a_hand_made_fixture PASSED [ 20%]
+tests/test_m3_communication.py::test_waiting_for_a_scheduled_upload_keeps_the_temperature_unknown PASSED [ 20%]
+tests/test_m3_communication.py::test_silence_longer_than_every_recent_interval_is_reported_as_possible_outage PASSED [ 21%]
+tests/test_m3_communication.py::test_communication_view_is_causal_and_honest_without_history PASSED [ 21%]
+tests/test_m3_communication.py::test_communication_view_never_feeds_detection PASSED [ 21%]
+tests/test_m3_communication.py::test_api_separates_freshness_communication_gaps_and_incidents PASSED [ 22%]
+tests/test_m3_detection_service.py::test_b28_ocean_outage_visible_as_stale_unknown_then_backfill_detects_excursion PASSED [ 22%]
+tests/test_m3_detection_service.py::test_b66_b68_c09_persisted_replay_equals_ingestion_replay PASSED [ 23%]
+tests/test_m3_detection_service.py::test_b65_c09_status_and_results_as_of_ignore_later_receipts PASSED [ 23%]
+tests/test_m3_detection_service.py::test_b62_u04_late_evidence_never_changes_a_disposition_or_release PASSED [ 23%]
+tests/test_m3_detection_service.py::test_u04_new_incident_after_a_disposition_flags_the_decision PASSED [ 24%]
+tests/test_m3_detection_service.py::test_b63_br09_only_a_quality_workflow_may_close_an_incident PASSED [ 24%]
+tests/test_m3_detection_service.py::test_b63_superseded_and_closed_are_distinguishable PASSED [ 24%]
+tests/test_m3_detection_service.py::test_b36_shipment_keeps_its_own_policy_version PASSED [ 25%]
+tests/test_m3_detection_service.py::test_b77_every_result_carries_policy_and_detector_versions PASSED [ 25%]
+tests/test_m3_detection_service.py::test_b40_delay_fields_for_a_run_received_in_three_batches PASSED [ 25%]
+tests/test_m3_detection_service.py::test_b35_br08_rejected_reading_inside_a_run_counts_as_missing PASSED [ 26%]
+tests/test_m3_detection_service.py::test_b49_c02_delayed_readings_fill_the_unknown_span_without_gap_or_incident PASSED [ 26%]
+tests/test_m3_detection_service.py::test_b50_c02_confirmed_40_min_gap_opens_data_gap_incident_at_receipt PASSED [ 26%]
+tests/test_m3_detector_rules.py::test_policy_and_config_values_come_from_the_approved_files PASSED [ 27%]
+tests/test_m3_detector_rules.py::test_b01_b04_br02_limits_are_inclusive_without_tolerance[8.0-IN_RANGE] PASSED [ 27%]
+tests/test_m3_detector_rules.py::test_b01_b04_br02_limits_are_inclusive_without_tolerance[8.1-HIGH] PASSED [ 28%]
+tests/test_m3_detector_rules.py::test_b01_b04_br02_limits_are_inclusive_without_tolerance[8.01-HIGH] PASSED [ 28%]
+tests/test_m3_detector_rules.py::test_b01_b04_br02_limits_are_inclusive_without_tolerance[2.0-IN_RANGE] PASSED [ 28%]
+tests/test_m3_detector_rules.py::test_b01_b04_br02_limits_are_inclusive_without_tolerance[1.9-LOW] PASSED [ 29%]
+tests/test_m3_detector_rules.py::test_b01_b04_br02_limits_are_inclusive_without_tolerance[1.99-LOW] PASSED [ 29%]
+tests/test_m3_detector_rules.py::test_b02_single_high_reading_is_a_zero_minute_near_miss PASSED [ 29%]
+tests/test_m3_detector_rules.py::test_b05_br02_six_readings_span_25_min_no_excursion PASSED [ 30%]
+tests/test_m3_detector_rules.py::test_b06_br05_seven_readings_span_30_min_excursion_confirmed_at_the_seventh PASSED [ 30%]
+tests/test_m3_detector_rules.py::test_b07_br02_run_continues_after_confirmation PASSED [ 30%]
+tests/test_m3_detector_rules.py::test_b08_b09_br05_low_three_readings_no_four_readings_yes PASSED [ 31%]
+tests/test_m3_detector_rules.py::test_b10_c05_jitter_29m59s_is_not_an_excursion_until_the_next_reading PASSED [ 31%]
+tests/test_m3_detector_rules.py::test_b11_br02_one_in_range_reading_splits_the_run PASSED [ 32%]
+tests/test_m3_detector_rules.py::test_b12_br02_direction_change_separates_runs PASSED [ 32%]
+tests/test_m3_detector_rules.py::test_b41_c05_off_grid_run_of_exactly_30_min_qualifies PASSED [ 32%]
+tests/test_m3_detector_rules.py::test_b42_c05_low_run_of_14m59_5s_does_not_qualify PASSED [ 33%]
+tests/test_m3_detector_rules.py::test_b43_c01_five_readings_7m30s_apart_are_continuous_and_qualify PASSED [ 33%]
+tests/test_m3_detector_rules.py::test_b13_c01_exactly_7m30s_is_continuous PASSED [ 33%]
+tests/test_m3_detector_rules.py::test_b14_c01_7m30_001s_is_a_short_gap_that_splits_the_run PASSED [ 34%]
+tests/test_m3_detector_rules.py::test_b16_c01_extra_sample_is_continuous PASSED [ 34%]
+tests/test_m3_detector_rules.py::test_b44_c01_only_the_pair_beyond_the_limit_is_split PASSED [ 34%]
+tests/test_m3_detector_rules.py::test_b76_detector_config_continuity_limit_must_lie_between_one_and_two_intervals PASSED [ 35%]
+tests/test_m3_detector_rules.py::test_b15_br05_one_missing_reading_splits_a_40_min_run_into_two_warnings_no_excursion PASSED [ 35%]
+tests/test_m3_detector_rules.py::test_b17_b20_br03_br04_bracketing_span_boundaries[span0-SHORT_GAP] PASSED [ 35%]
+tests/test_m3_detector_rules.py::test_b17_b20_br03_br04_bracketing_span_boundaries[span1-UNKNOWN] PASSED [ 36%]
+tests/test_m3_detector_rules.py::test_b17_b20_br03_br04_bracketing_span_boundaries[span2-UNKNOWN] PASSED [ 36%]
+tests/test_m3_detector_rules.py::test_b17_b20_br03_br04_bracketing_span_boundaries[span3-UNKNOWN_REVIEW_REQUIRED] PASSED [ 37%]
+tests/test_m3_detector_rules.py::test_b45_jittered_29m56s_is_unknown_not_review PASSED [ 37%]
+tests/test_m3_detector_rules.py::test_b46_jittered_30m03s_requires_review PASSED [ 37%]
+tests/test_m3_detector_rules.py::test_b47_estimated_missing_samples_is_a_separate_measurement[7.5-0] PASSED [ 38%]
+tests/test_m3_detector_rules.py::test_b47_estimated_missing_samples_is_a_separate_measurement[7.500016666666666-1] PASSED [ 38%]
+tests/test_m3_detector_rules.py::test_b47_estimated_missing_samples_is_a_separate_measurement[10-1] PASSED [ 38%]
+tests/test_m3_detector_rules.py::test_b47_estimated_missing_samples_is_a_separate_measurement[15-2] PASSED [ 39%]
+tests/test_m3_detector_rules.py::test_b47_estimated_missing_samples_is_a_separate_measurement[20-3] PASSED [ 39%]
+tests/test_m3_detector_rules.py::test_b47_estimated_missing_samples_is_a_separate_measurement[30-5] PASSED [ 39%]
+tests/test_m3_detector_rules.py::test_b47_estimated_missing_samples_is_a_separate_measurement[40-7] PASSED [ 40%]
+tests/test_m3_detector_rules.py::test_b21_br05_qualifying_run_followed_by_long_gap_is_flagged PASSED [ 40%]
+tests/test_m3_detector_rules.py::test_b22_br05_short_run_before_long_gap_is_not_an_excursion PASSED [ 41%]
+tests/test_m3_detector_rules.py::test_b23_br05_runs_on_both_sides_of_a_gap_are_separate PASSED [ 41%]
+tests/test_m3_detector_rules.py::test_b24_br05_qualifying_run_starting_at_the_closing_reading_is_flagged PASSED [ 41%]
+tests/test_m3_detector_rules.py::test_b25_br05_run_ending_one_reading_before_the_gap_is_not_adjacent PASSED [ 42%]
+tests/test_m3_detector_rules.py::test_b26_br05_short_gaps_also_flag_adjacent_runs PASSED [ 42%]
+tests/test_m3_detector_rules.py::test_b48_c02_monitoring_state_thresholds[age0-CURRENT-False] PASSED [ 42%]
+tests/test_m3_detector_rules.py::test_b48_c02_monitoring_state_thresholds[age1-STALE-False] PASSED [ 43%]
+tests/test_m3_detector_rules.py::test_b48_c02_monitoring_state_thresholds[age2-STALE-False] PASSED [ 43%]
+tests/test_m3_detector_rules.py::test_b48_c02_monitoring_state_thresholds[age3-UNKNOWN-False] PASSED [ 43%]
+tests/test_m3_detector_rules.py::test_b48_c02_monitoring_state_thresholds[age4-UNKNOWN-True] PASSED [ 44%]
+tests/test_m3_detector_rules.py::test_b48_c02_monitoring_state_thresholds[age5-CURRENT-False] PASSED [ 44%]
+tests/test_m3_detector_rules.py::test_b27_b48_stale_telemetry_creates_no_gap_until_bounded PASSED [ 44%]
+tests/test_m3_detector_rules.py::test_monitoring_not_started_and_ended PASSED [ 45%]
+tests/test_m3_detector_rules.py::test_b70_c04_leading_gap_from_documented_start[20-UNKNOWN] PASSED [ 45%]
+tests/test_m3_detector_rules.py::test_b70_c04_leading_gap_from_documented_start[30-UNKNOWN_REVIEW_REQUIRED] PASSED [ 46%]
+tests/test_m3_detector_rules.py::test_b71_c04_first_reading_7m30s_after_start_is_no_gap PASSED [ 46%]
+tests/test_m3_detector_rules.py::test_b37_c04_no_readings_with_both_boundaries_is_one_gap PASSED [ 46%]
+tests/test_m3_detector_rules.py::test_b72_b74_c04_without_end_boundary_nothing_is_confirmed_and_state_is_unknown PASSED [ 47%]
+tests/test_m3_detector_rules.py::test_b73_c04_trailing_gap_to_documented_end PASSED [ 47%]
+tests/test_m3_evaluation.py::test_d13_reserved_final_evaluation_seeds_are_refused[22] PASSED [ 47%]
+tests/test_m3_evaluation.py::test_d13_reserved_final_evaluation_seeds_are_refused[33] PASSED [ 48%]
+tests/test_m3_evaluation.py::test_d13_reserved_final_evaluation_seeds_are_refused[44] PASSED [ 48%]
+tests/test_m3_evaluation.py::test_d13_reserved_final_evaluation_seeds_are_refused[55] PASSED [ 48%]
+tests/test_m3_evaluation.py::test_d13_reserved_final_evaluation_seeds_are_refused[66] PASSED [ 49%]
+tests/test_m3_evaluation.py::test_d13_test_partition_is_refused_for_development_measurements PASSED [ 49%]
+tests/test_m3_evaluation.py::test_u06_matching_requires_same_journey_type_and_overlap PASSED [ 50%]
+tests/test_m3_evaluation.py::test_u06_closed_detection_touching_half_open_reference_start_matches_but_not_its_end PASSED [ 50%]
+tests/test_m3_evaluation.py::test_u06_one_to_one_with_largest_overlap_first PASSED [ 50%]
+tests/test_m3_evaluation.py::test_u06_tie_breaks_are_deterministic_and_independent_of_input_order PASSED [ 51%]
+tests/test_m3_evaluation.py::test_b64_c10_evaluation_code_has_no_database_access PASSED [ 51%]
+tests/test_m3_evaluation.py::test_b79_b80_development_run_on_the_validation_partition PASSED [ 51%]
+tests/test_m3_ingestion.py::test_fr03_c09_live_batch_uses_server_receipt_time_and_keeps_event_at PASSED [ 52%]
+tests/test_m3_ingestion.py::test_b32_br13_same_reference_and_payload_returns_original_result PASSED [ 52%]
+tests/test_m3_ingestion.py::test_br13_same_reference_different_payload_is_a_conflict PASSED [ 52%]
+tests/test_m3_ingestion.py::test_b60_c09_client_cannot_supply_received_at PASSED [ 53%]
+tests/test_m3_ingestion.py::test_b39_br08_precision_is_checked_on_the_exact_json_number PASSED [ 53%]
+tests/test_m3_ingestion.py::test_unknown_shipment_404_and_invalid_json_422 PASSED [ 53%]
+tests/test_m3_ingestion.py::test_b58_br08_measurement_validation[-40.00-None] PASSED [ 54%]
+tests/test_m3_ingestion.py::test_b58_br08_measurement_validation[60.00-None] PASSED [ 54%]
+tests/test_m3_ingestion.py::test_b58_br08_measurement_validation[-40.01-OUT_OF_PHYSICAL_RANGE] PASSED [ 55%]
+tests/test_m3_ingestion.py::test_b58_br08_measurement_validation[60.01-OUT_OF_PHYSICAL_RANGE] PASSED [ 55%]
+tests/test_m3_ingestion.py::test_b58_br08_measurement_validation[NaN-NOT_A_NUMBER] PASSED [ 55%]
+tests/test_m3_ingestion.py::test_b58_br08_measurement_validation[abc-NOT_A_NUMBER] PASSED [ 56%]
+tests/test_m3_ingestion.py::test_b58_br08_measurement_validation[True-NOT_A_NUMBER] PASSED [ 56%]
+tests/test_m3_ingestion.py::test_b58_br08_measurement_validation[8.004-PRECISION_EXCEEDED] PASSED [ 56%]
+tests/test_m3_ingestion.py::test_b59_br08_future_skew_limit_and_delayed_data[offset0-None] PASSED [ 57%]
+tests/test_m3_ingestion.py::test_b59_br08_future_skew_limit_and_delayed_data[offset1-CLOCK_SKEW] PASSED [ 57%]
+tests/test_m3_ingestion.py::test_b59_br08_future_skew_limit_and_delayed_data[offset2-None] PASSED [ 57%]
+tests/test_m3_ingestion.py::test_timestamps_without_zone_and_missing_fields_are_rejected_with_reasons PASSED [ 58%]
+tests/test_m3_ingestion.py::test_b75_u03_unassigned_unknown_and_out_of_window_readings_never_reach_detection PASSED [ 58%]
+tests/test_m3_ingestion.py::test_b34_b54_br07_identical_duplicate_has_no_business_effect PASSED [ 58%]
+tests/test_m3_ingestion.py::test_b55_u01_conflict_is_rejected_kept_for_review_and_opens_no_sensor_fault_incident PASSED [ 59%]
+tests/test_m3_ingestion.py::test_b56_br07_duplicates_inside_one_batch PASSED [ 59%]
+tests/test_m3_ingestion.py::test_b57_br07_same_key_from_another_shipment_is_a_conflict PASSED [ 60%]
+tests/test_m3_ingestion.py::test_u05_context_records_are_linked_deduplicated_and_conflict_checked PASSED [ 60%]
+tests/test_m3_ingestion.py::test_replay_mode_requires_a_recorded_receipt_time_and_live_refuses_one PASSED [ 60%]
+tests/test_m3_ingestion.py::test_br13_service_level_conflict PASSED      [ 61%]
+tests/test_m3_monitoring_api.py::test_telemetry_monitoring_and_causal_as_of PASSED [ 61%]
+tests/test_m3_monitoring_api.py::test_deliveries_report_delayed_backfill_and_gaps PASSED [ 61%]
+tests/test_m3_monitoring_api.py::test_gaps_detections_warnings_and_queue PASSED [ 62%]
+tests/test_m3_monitoring_api.py::test_incident_detail_has_evidence_versions_and_revisions PASSED [ 62%]
+tests/test_m3_monitoring_api.py::test_summary_configs_and_errors PASSED  [ 62%]
+tests/test_m3_reconcile_replay.py::test_b53_c07_same_inputs_give_a_noop_evaluation PASSED [ 63%]
+tests/test_m3_reconcile_replay.py::test_b65_c09_readings_received_after_as_of_are_invisible PASSED [ 63%]
+tests/test_m3_reconcile_replay.py::test_b29_br09_backfill_supersedes_gap_and_keeps_data_gap_incident_open PASSED [ 64%]
+tests/test_m3_reconcile_replay.py::test_b30_br05_backfill_merges_two_short_runs_into_an_excursion PASSED [ 64%]
+tests/test_m3_reconcile_replay.py::test_b31_c08_backfill_merging_two_incidents_keeps_both_open PASSED [ 64%]
+tests/test_m3_reconcile_replay.py::test_b61_c08_backfill_that_splits_a_run_below_threshold_supersedes_without_deleting PASSED [ 65%]
+tests/test_m3_reconcile_replay.py::test_b52_out_of_order_batches_supersede_then_converge PASSED [ 65%]
+tests/test_m3_reconcile_replay.py::test_b33_c07_any_arrival_order_gives_the_same_final_results PASSED [ 65%]
+tests/test_m3_reconcile_replay.py::test_b69_timeline_order_start_batches_then_end_at_the_same_instant PASSED [ 66%]
+tests/test_m3_reconcile_replay.py::test_b67_c09_end_boundary_is_not_used_before_it_is_reached PASSED [ 66%]
+tests/test_m3_reconcile_replay.py::test_b28_ocean_outage_complete_backfill_detects_excursion_without_gap_incident PASSED [ 66%]
+tests/test_m3_reconcile_replay.py::test_b51_ocean_restore_batch_with_a_real_hole_opens_a_gap_incident_at_receipt PASSED [ 67%]
+tests/test_migrations.py::test_upgrade_creates_all_tables_and_matches_models PASSED [ 67%]
+tests/test_migrations.py::test_event_and_received_time_are_timestamptz PASSED [ 67%]
+tests/test_migrations.py::test_downgrade_removes_schema_and_upgrade_again_works PASSED [ 68%]
+tests/test_migrations.py::test_m2_migration_is_additive_and_reversible_to_m1 PASSED [ 68%]
+tests/test_migrations.py::test_0003_is_additive_and_downgrades_to_the_milestone_2_schema PASSED [ 69%]
+tests/test_reference_api.py::test_policies_endpoint_returns_approved_teaching_policy PASSED [ 69%]
+tests/test_reference_api.py::test_organizations_list_roles_and_no_credentials PASSED [ 69%]
+tests/test_reference_api.py::test_shipments_list_is_empty_without_ingestion PASSED [ 70%]
+tests/test_reference_api.py::test_shipments_list_returns_database_rows PASSED [ 70%]
+tests/test_reference_api.py::test_system_info_marks_future_features_not_implemented PASSED [ 70%]
+tests/test_seed.py::test_seeded_policy_matches_approved_teaching_values PASSED [ 71%]
+tests/test_seed.py::test_policy_values_come_from_config_file PASSED      [ 71%]
+tests/test_seed.py::test_seed_is_idempotent PASSED                       [ 71%]
+tests/test_seed.py::test_changed_policy_content_for_existing_version_is_rejected PASSED [ 72%]
+tests/test_seed.py::test_detector_config_is_seeded_and_immutable PASSED  [ 72%]
+test_sim_determinism.py::test_same_seed_and_config_give_byte_identical_files PASSED [ 73%]
+test_sim_determinism.py::test_different_seed_gives_different_data PASSED [ 73%]
+test_sim_determinism.py::test_manifest_records_seed_config_and_generator PASSED [ 73%]
+test_sim_determinism.py::test_a_journey_depends_only_on_its_own_seed PASSED [ 74%]
+test_sim_determinism.py::test_journey_ids_are_unique_and_carry_no_label_information PASSED [ 74%]
+test_sim_determinism.py::test_eval10_canonical_and_reserved_seeds_generate_200_journeys_reproducibly[11] PASSED [ 74%]
+test_sim_determinism.py::test_eval10_canonical_and_reserved_seeds_generate_200_journeys_reproducibly[22] PASSED [ 75%]
+test_sim_determinism.py::test_eval10_canonical_and_reserved_seeds_generate_200_journeys_reproducibly[33] PASSED [ 75%]
+test_sim_determinism.py::test_eval10_canonical_and_reserved_seeds_generate_200_journeys_reproducibly[44] PASSED [ 75%]
+test_sim_determinism.py::test_eval10_canonical_and_reserved_seeds_generate_200_journeys_reproducibly[55] PASSED [ 76%]
+test_sim_determinism.py::test_eval10_canonical_and_reserved_seeds_generate_200_journeys_reproducibly[66] PASSED [ 76%]
+test_sim_labels.py::test_br02_policy_excursions_meet_the_duration_rule PASSED [ 76%]
+test_sim_labels.py::test_br02_every_long_true_out_of_range_run_is_labelled_and_no_short_one_is PASSED [ 77%]
+test_sim_labels.py::test_true_temperature_is_out_of_range_inside_every_policy_excursion PASSED [ 77%]
+test_sim_labels.py::test_every_policy_excursion_has_an_injected_physical_cause PASSED [ 78%]
+test_sim_labels.py::test_sensor_only_scenarios_have_no_true_excursion PASSED [ 78%]
+test_sim_labels.py::test_observed_value_equals_truth_plus_sensor_error_components PASSED [ 78%]
+test_sim_labels.py::test_ground_truth_never_appears_in_observed_files PASSED [ 79%]
+test_sim_missing_delayed.py::test_br04_missing_readings_are_absent_and_never_filled PASSED [ 79%]
+test_sim_missing_delayed.py::test_br03_missing_data_events_match_the_gaps_between_received_readings PASSED [ 79%]
+test_sim_missing_delayed.py::test_all_gap_classes_are_present PASSED     [ 80%]
+test_sim_missing_delayed.py::test_eval13_dataset_contains_excursions_hidden_by_missing_data PASSED [ 80%]
+test_sim_missing_delayed.py::test_fr03_ocean_gap_readings_keep_their_original_event_time PASSED [ 80%]
+test_sim_missing_delayed.py::test_delayed_and_missing_readings_are_disjoint PASSED [ 81%]
+test_sim_missing_delayed.py::test_retried_readings_arrive_after_the_failed_upload_with_original_event_time PASSED [ 81%]
+test_sim_missing_delayed.py::test_hidden_excursion_inside_an_ocean_gap_is_revealed_after_upload PASSED [ 82%]
+test_sim_policy_rules.py::test_policy_values_are_read_from_the_approved_policy_file PASSED [ 82%]
+test_sim_policy_rules.py::test_policy_hash_uses_the_seed_loader_canonical_form PASSED [ 82%]
+test_sim_policy_rules.py::test_br02_exactly_max_temperature_is_in_range PASSED [ 83%]
+test_sim_policy_rules.py::test_br02_exactly_min_temperature_is_in_range PASSED [ 83%]
+test_sim_policy_rules.py::test_br02_high_excursion_needs_at_least_30_minutes_above_8c[29-False] PASSED [ 83%]
+test_sim_policy_rules.py::test_br02_high_excursion_needs_at_least_30_minutes_above_8c[30-True] PASSED [ 84%]
+test_sim_policy_rules.py::test_br02_high_excursion_needs_at_least_30_minutes_above_8c[31-True] PASSED [ 84%]
+test_sim_policy_rules.py::test_br02_low_excursion_needs_at_least_15_minutes_below_2c[14-False] PASSED [ 84%]
+test_sim_policy_rules.py::test_br02_low_excursion_needs_at_least_15_minutes_below_2c[15-True] PASSED [ 85%]
+test_sim_policy_rules.py::test_br02_low_excursion_needs_at_least_15_minutes_below_2c[16-True] PASSED [ 85%]
+test_sim_policy_rules.py::test_br02_continuity_a_single_in_range_minute_splits_the_run PASSED [ 85%]
+test_sim_policy_rules.py::test_br02_run_reaching_the_end_of_the_series_is_closed_there PASSED [ 86%]
+test_sim_policy_rules.py::test_br02_sample_step_is_respected PASSED      [ 86%]
+test_sim_policy_rules.py::test_br03_br04_gap_classification_boundaries[5-SHORT_GAP] PASSED [ 87%]
+test_sim_policy_rules.py::test_br03_br04_gap_classification_boundaries[10-SHORT_GAP] PASSED [ 87%]
+test_sim_policy_rules.py::test_br03_br04_gap_classification_boundaries[15-SHORT_GAP] PASSED [ 87%]
+test_sim_policy_rules.py::test_br03_br04_gap_classification_boundaries[15.5-UNKNOWN] PASSED [ 88%]
+test_sim_policy_rules.py::test_br03_br04_gap_classification_boundaries[20-UNKNOWN] PASSED [ 88%]
+test_sim_policy_rules.py::test_br03_br04_gap_classification_boundaries[29.9-UNKNOWN] PASSED [ 88%]
+test_sim_policy_rules.py::test_br03_br04_gap_classification_boundaries[30-UNKNOWN_REVIEW_REQUIRED] PASSED [ 89%]
+test_sim_policy_rules.py::test_br03_br04_gap_classification_boundaries[185-UNKNOWN_REVIEW_REQUIRED] PASSED [ 89%]
+test_sim_policy_rules.py::test_policy_file_is_unchanged_since_the_labels_were_derived PASSED [ 89%]
+test_sim_policy_rules.py::test_sampling_interval_is_configuration_not_policy PASSED [ 90%]
+test_sim_release.py::test_committed_release_matches_its_manifest PASSED  [ 90%]
+test_sim_release.py::test_committed_release_is_the_canonical_synthetic_dataset PASSED [ 91%]
+test_sim_release.py::test_committed_release_regenerates_to_identical_content PASSED [ 91%]
+test_sim_release.py::test_a13_five_reserved_evaluation_seeds_are_independent_of_the_development_seed PASSED [ 91%]
+test_sim_release.py::test_reserved_seed_manifests_are_committed_complete_and_distinct PASSED [ 92%]
+test_sim_schema.py::test_data01_readings_have_every_required_field PASSED [ 92%]
+test_sim_schema.py::test_data02_context_has_required_fields_and_null_only_means_not_reported PASSED [ 92%]
+test_sim_schema.py::test_observed_files_have_the_documented_columns PASSED [ 93%]
+test_sim_schema.py::test_sc02_at_least_200_journeys_with_every_scenario_and_ambient_profile PASSED [ 93%]
+test_sim_schema.py::test_journey_ids_shipments_and_sensors_are_unique_and_one_to_one PASSED [ 93%]
+test_sim_schema.py::test_reading_keys_are_unique_and_match_context PASSED [ 94%]
+test_sim_schema.py::test_nfr05_timestamps_are_utc_inside_the_journey_and_on_the_sampling_grid PASSED [ 94%]
+test_sim_schema.py::test_uploads_are_consistent_with_their_readings PASSED [ 94%]
+test_sim_schema.py::test_dataset_is_marked_synthetic_everywhere PASSED   [ 95%]
+test_sim_schema.py::test_manifest_row_counts_match_the_files PASSED      [ 95%]
+test_sim_sensor_faults.py::test_spikes_change_only_the_observation PASSED [ 96%]
+test_sim_sensor_faults.py::test_spike_readings_deviate_while_neighbours_track_the_truth PASSED [ 96%]
+test_sim_sensor_faults.py::test_sensor_bias_shifts_every_reading_by_a_constant PASSED [ 96%]
+test_sim_sensor_faults.py::test_sensor_drift_grows_linearly_to_the_documented_offset PASSED [ 97%]
+test_sim_sensor_faults.py::test_physical_temperature_is_normal_in_sensor_fault_journeys PASSED [ 97%]
+test_sim_splits.py::test_split_file_is_reproducible_from_the_seed PASSED [ 97%]
+test_sim_splits.py::test_a_different_split_seed_gives_a_different_assignment PASSED [ 98%]
+test_sim_splits.py::test_every_journey_is_in_exactly_one_partition PASSED [ 98%]
+test_sim_splits.py::test_partition_sizes_follow_70_15_15 PASSED          [ 98%]
+test_sim_splits.py::test_data06_every_ambient_profile_and_scenario_is_in_every_partition PASSED [ 99%]
+test_sim_splits.py::test_overlapping_windows_of_one_journey_never_cross_partitions PASSED [ 99%]
+test_sim_splits.py::test_leakage_check_detects_duplicates_and_omissions PASSED [100%]
+
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /usr/local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 278 passed, 1 warning in 46.76s ========================

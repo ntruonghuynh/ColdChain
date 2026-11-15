@@ -2,9 +2,9 @@
 
 | Item | Value |
 |---|---|
-| Status | Milestone 0 design. **Milestone 1 implemented** the database schema (§5) and the infrastructure (§8). **Milestone 2 implemented** the synthetic data generator, dataset import and ground-truth schema (§3.7, §5, I-9). Everything else is still design |
+| Status | Milestone 0 design. **Milestone 1 implemented** the database schema (§5) and the infrastructure (§8). **Milestone 2 implemented** the synthetic data generator, dataset import and ground-truth schema (§3.7, §5, I-9). **Milestone 3 implemented** ingestion, telemetry monitoring, the policy-baseline detector, incidents and the excursion queue (§3.2, §5, §7.1; specification `docs/design/m3-baseline-detector-contract.md`). Everything else is still design |
 | Inputs | `docs/requirements-analysis.md` (requirement IDs referenced in brackets, e.g. [FR-24]) |
-| Last updated | 2026-11-15 (Milestone 2 review) |
+| Last updated | 2026-11-15 (Milestone 3 implementation) |
 
 ---
 
@@ -85,8 +85,8 @@ FastAPI application. Planned internal layers:
 | Layer | Responsibility |
 |---|---|
 | `api/` | HTTP routes, request/response schemas (Pydantic), auth dependencies. No business logic. |
-| `domain/` | Pure business rules with no I/O: validation (BR-07, BR-08), gap detection (BR-03 to BR-05), policy threshold engine (BR-02), incident rules (BR-09), disposition and release rules (BR-10 to BR-12). Fully unit-testable. |
-| `services/` | Use cases that combine domain rules with storage: ingest batch, re-evaluate interval, open incident, build evidence package, record disposition, request release, reconcile. |
+| `domain/` | Pure business rules with no I/O (**implemented in M3**: `rules.py`, `validation.py`, `detector.py`, `reconcile.py`, `replay.py`; specification `docs/design/m3-baseline-detector-contract.md`): validation (BR-07, BR-08), gap detection (BR-03 to BR-05), policy threshold engine (BR-02), incident rules (BR-09), disposition and release rules (BR-10 to BR-12). Fully unit-testable. |
+| `services/` | (**M3:** `ingest.py`, `detection.py`, `queries.py`, `demo.py`.) Use cases that combine domain rules with storage: ingest batch, re-evaluate interval, open incident, build evidence package, record disposition, request release, reconcile. |
 | `db/` | SQLAlchemy models, Alembic migrations, repositories. |
 | `integrations/` | Adapters: `ml_adapter` (calls the `ml` package), `llm_adapter` (calls the `llm` package), `chain_gateway` (web3 client, read views), `audit_log` (signed DB log). |
 | `worker/` | Outbox relay to the chain, confirmation tracking, retry with backoff, scheduled reconciliation. |
@@ -242,7 +242,9 @@ Change from the M0 design: the mutable delivery state (`status`, `attempts`, `ne
 
 Only `app/db/models/ground_truth.py`, the model index and the importer may refer to the ground-truth models; `backend/tests/test_ground_truth_boundary.py` enforces this for every other application module (detection, features, API). Both live under the same database role in this prototype; a separate read-only role for detection is not configured (limitation).
 
-**Added in later milestones** (not drawn as implemented): `detection` (source `BASELINE`/`ML`, model version, window, class, score) and `data_gap` (start, end, status `UNKNOWN`) in M3–M4, `llm_draft` (prompt version, provider, model, source IDs, status, tokens, latency, cost) in M6, `audit_log` (hash-chained, signed entries for the comparison in EVAL-03) in M5.
+**Implemented in Milestone 3** (migration `0003`, additive only; fields in `docs/design/m3-baseline-detector-contract.md` §5.14): `detector_config` (immutable detector configuration versions: nominal 5-min interval, 7 min 30 s continuity), `detector_evaluation` (one row per causal evaluation: `as_of`, input fingerprint, policy and configuration versions), `data_gap`, `detection` (observed runs, source `POLICY_BASELINE`), `data_quality_warning` and `incident_revision` (append-only revisions; `superseded_at` set once when replaced), `decision_reassessment` (U-04); new columns `incident.sensor_id`, `incident.detector_config_id`, `incident.opened_by_evaluation_id`, `ingest_batch.duplicate_count`, `ingest_batch.ingest_mode` (`IMPORT`/`LIVE`/`REPLAY`).
+
+**Added in later milestones** (not drawn as implemented): ML fields on `detection` (model version, window, class, score) in M4, `llm_draft` (prompt version, provider, model, source IDs, status, tokens, latency, cost) in M6, `audit_log` (hash-chained, signed entries for the comparison in EVAL-03) in M5.
 
 Rules for the schema:
 
@@ -314,12 +316,11 @@ sequenceDiagram
     participant WH as Warehouse operator
 
     Note over L: Coverage lost. Logger keeps measuring and buffers.
-    API->>DB: Gap detector: no readings > 15 min → DATA_GAP (UNKNOWN)
-    API->>DB: Gap ≥ 30 min → open DATA_GAP incident
+    Note over API: Monitoring state: no data > 7 min 30 s → STALE, > 15 min → UNKNOWN (shown, never safe, no incident)
     Note over L: Coverage restored
     L->>API: Upload buffered batch (original event_at, new received_at)
     API->>DB: Validate, store readings, keep both timestamps
-    API->>DB: Re-evaluate interval: baseline + ML → TEMPERATURE_EXCURSION
+    API->>DB: Recalculate sensor journey (event_at order) → TEMPERATURE_EXCURSION; DATA_GAP incident only if a confirmed gap ≥ 30 min remains
     API->>DB: business_event(batch hash), business_event(incident) in outbox
     W->>C: anchorSensorBatch(ref, hash) / openIncident(ref, ...)
     C-->>W: confirmed
@@ -332,6 +333,8 @@ sequenceDiagram
     WH->>API: Request warehouse release
     API-->>WH: Allowed only if decision = RELEASE and confirmed
 ```
+
+Decision C-02 (approved 2026-11-15, `docs/design/m3-baseline-detector-contract.md` §5.7): during the outage the shipment shows monitoring state STALE, then UNKNOWN. That is visible and never shown as in range, but it is not an incident. When the buffered batch arrives, the whole sensor journey is recalculated in `event_at` order. A `DATA_GAP` incident opens only if a confirmed missing-data interval of at least 30 min remains, and every incident stores `raised_at` = the batch's receipt time. In replay, the clock is the recorded `received_at` timeline and is causal (C-09). The "ML" step joins in M4.
 
 ### 7.2 Disposition and release state machine
 
@@ -484,7 +487,7 @@ Compose services (`docker-compose.yml`). Services marked M1 exist now; the other
 | E3 Complete | as E1 | as E2 | DB + blockchain |
 | E3-alt Comparator | as E1 | as E2 | DB + signed audit log |
 
-Runners in `scripts/eval/` read a run config (seeds, model version, prompt version, contract version), write raw per-case results (CSV/JSONL) and a summary to `docs/evaluation/runs/<run_id>/`, together with the exact config and git commit. Uncertainty: per-seed values plus mean ± standard deviation across ≥5 seeds (the reserved evaluation seeds 22, 33, 44, 55, 66; seed 11 is the development dataset, A-13), and journey-level bootstrap 95% intervals where the sample allows [EVAL-09, EVAL-10].
+Runners in `scripts/eval/` read a run config (seeds, model version, prompt version, contract version), write raw per-case results (CSV/JSONL) and a summary to `docs/evaluation/runs/<run_id>/`, together with the exact config and git commit. Uncertainty: per-seed values plus mean ± standard deviation across ≥5 seeds (the reserved evaluation seeds 22, 33, 44, 55, 66; seed 11 is the development dataset, A-13), and journey-level bootstrap 95% intervals where the sample allows [EVAL-09, EVAL-10]. Detection delay is defined in `docs/design/m3-baseline-detector-contract.md` §6 (A-02 formalized): physical onset from ground truth, first observed evidence, earliest emission time from causal replay. Evaluation code is the only code that joins detector outputs with ground truth.
 
 ## 11. Known limitations (by design)
 

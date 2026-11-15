@@ -1,0 +1,87 @@
+# M3 API and SPA routes through the frontend proxy (port 3000), stack rebuilt after the deliveries change
+GET / (SPA) -> HTTP 200
+GET /temperature (SPA) -> HTTP 200
+GET /excursions (SPA) -> HTTP 200
+GET /incidents/x (SPA) -> HTTP 200
+
+GET /api/system/info
+ milestone M3
+  database         available
+  reference_data   available
+  shipments_read   available
+  synthetic_data   available
+  ingestion        available
+  ml               not_implemented
+  blockchain       not_implemented
+  quality_workflow not_implemented
+  llm              not_implemented
+  authentication   not_implemented
+
+GET /api/monitoring/summary?as_of=2026-11-15T00:00:00Z
+  shipments_total 201
+  shipments_evaluated 201
+  sensors_by_monitoring_state {'NOT_STARTED': 0, 'CURRENT': 0, 'STALE': 0, 'UNKNOWN': 0, 'ENDED': 201}
+  open_incidents_by_category {'TEMPERATURE_EXCURSION': 106, 'DATA_GAP': 41, 'SENSOR_FAULT_SUSPECTED': 0}
+  open_incidents_by_basis {'CURRENT': 145, 'SUPERSEDED_BY_DATA': 2, 'MERGED_INTO': 0}
+  current_warnings_by_kind {'MISSING_READINGS': 418, 'GAP_ADJACENT_OUT_OF_RANGE': 10}
+  current_evidence_warnings 10
+  batches_total 37300
+  readings_total 115643
+  rejected_records_total 0
+  duplicates_ignored_total 0
+
+GET /api/incidents?status=OPEN&limit=3
+ total 147
+  INC-SIM-S11-J0054-SIM-S11-L0054-TEX-H-20261025T115200Z TEMPERATURE_EXCURSION PENDING_QUALITY_REVIEW CURRENT
+  INC-SIM-S11-J0014-SIM-S11-L0014-TEX-H-20261025T045800Z TEMPERATURE_EXCURSION PENDING_QUALITY_REVIEW CURRENT
+  INC-SIM-S11-J0090-SIM-S11-L0090-TEX-L-20261024T230000Z TEMPERATURE_EXCURSION PENDING_QUALITY_REVIEW CURRENT
+
+GET /api/shipments/DEMO-OCEAN-SIM-S11-J0154/monitoring?as_of=2026-10-19T08:53:05Z
+  state CURRENT newest 2026-10-19T08:52:00Z unobserved_s 65
+GET /api/shipments/DEMO-OCEAN-SIM-S11-J0154/monitoring?as_of=2026-10-19T09:00:00Z
+  state STALE newest 2026-10-19T08:52:00Z unobserved_s 480
+GET /api/shipments/DEMO-OCEAN-SIM-S11-J0154/monitoring?as_of=2026-10-19T15:57:03Z
+  state UNKNOWN newest 2026-10-19T08:52:00Z unobserved_s 25503
+GET /api/shipments/DEMO-OCEAN-SIM-S11-J0154/monitoring?as_of=2026-10-19T23:01:02Z
+  state CURRENT newest 2026-10-19T22:57:00Z unobserved_s 242
+
+GET /api/shipments/DEMO-OCEAN-SIM-S11-J0154/deliveries (summary)
+  batches 164  state before receipt {'STALE': 2, 'UNKNOWN': 161, 'ENDED': 1}
+  late_backfill batches:
+    DEMO-SIM-S11-J0154-U0034 2026-10-18T15:23:17Z readings 6 unobserved_before_s 1877 max_lag_s 1577
+    DEMO-SIM-S11-J0154-U0057 2026-10-18T21:22:45Z readings 6 unobserved_before_s 1845 max_lag_s 1545
+    DEMO-SIM-S11-J0154-U0089 2026-10-19T05:37:36Z readings 6 unobserved_before_s 1836 max_lag_s 1536
+    DEMO-SIM-S11-J0154-U0103 2026-10-19T23:01:02Z readings 169 unobserved_before_s 50942 max_lag_s 50642
+    DEMO-SIM-S11-J0154-U0111 2026-10-20T01:07:23Z readings 6 unobserved_before_s 1823 max_lag_s 1523
+    DEMO-SIM-S11-J0154-U0134 2026-10-20T07:08:13Z readings 6 unobserved_before_s 1873 max_lag_s 1573
+    DEMO-SIM-S11-J0154-U0135 2026-10-20T07:38:25Z readings 6 unobserved_before_s 1885 max_lag_s 1585
+
+GET /api/incidents?shipment_id=DEMO-OCEAN-SIM-S11-J0154
+  INC-DEMO-OCEAN-SIM-S11-J0154-DEMO-SIM-S11-L0154-TEX-H-20261019T150200Z OPEN PENDING_QUALITY_REVIEW opened 2026-10-19T23:01:02Z revisions 1 evidence readings 45 policy POL-CHILL-01 1.0 detector DET-BASELINE 1.0.0 opening REPLAY BATCH
+
+POST /api/ingest/batches with a client received_at (must be refused)
+  HTTP 422
+POST /api/ingest/batches for an ended monitoring window (reading rejected OUTSIDE_MONITORING_WINDOW, nothing stored)
+  accepted 0 rejected 1 ['OUTSIDE_MONITORING_WINDOW']
+
+OpenAPI paths:
+  /api/detector-configs
+  /api/health
+  /api/health/live
+  /api/incidents
+  /api/incidents/{incident_id}
+  /api/ingest/batches
+  /api/monitoring/summary
+  /api/organizations
+  /api/policies
+  /api/policies/{policy_id}
+  /api/sensors/{sensor_id}/status
+  /api/shipments
+  /api/shipments/{shipment_id}
+  /api/shipments/{shipment_id}/data-gaps
+  /api/shipments/{shipment_id}/deliveries
+  /api/shipments/{shipment_id}/detections
+  /api/shipments/{shipment_id}/monitoring
+  /api/shipments/{shipment_id}/telemetry
+  /api/shipments/{shipment_id}/warnings
+  /api/system/info

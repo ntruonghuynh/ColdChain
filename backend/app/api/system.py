@@ -21,9 +21,12 @@ FEATURES: list[FeatureStatus] = [
     FeatureStatus(key="synthetic_data", name="Synthetic journey dataset and import", status="available",
                   milestone="M2",
                   note="Canonical simulated dataset in data/release/, imported with a manual command. "
-                       "No detection runs on it yet (Milestone 3)."),
+                       "Detection runs on it with `python -m app.monitoring replay` (Milestone 3)."),
     FeatureStatus(key="ingestion", name="Reading ingestion, gap detection and threshold baseline",
-                  status="not_implemented", milestone="M3"),
+                  status="available", milestone="M3",
+                  note="Live ingestion API (server receipt time), monitoring states, confirmed gaps, "
+                       "policy-baseline excursions, incidents and excursion queue. Incidents stay open: "
+                       "quality dispositions arrive in Milestone 5."),
     FeatureStatus(key="ml", name="ML excursion detection", status="not_implemented", milestone="M4"),
     FeatureStatus(key="blockchain", name="Blockchain records and reconciliation",
                   status="not_implemented", milestone="M5"),

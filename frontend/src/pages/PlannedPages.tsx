@@ -1,39 +1,6 @@
 import { NotImplemented } from '../components/ui/NotImplemented';
 import { PageHeader } from '../components/ui/PageHeader';
 
-export function TemperatureMonitoringPage() {
-  return (
-    <>
-      <PageHeader title="Temperature Monitoring" description="Temperature timeline per shipment." />
-      <NotImplemented
-        milestone="Milestones 3 and 7"
-        planned={[
-          'Temperature timeline by sensor event time, with the policy range shown as a band.',
-          'Missing-data indicator: gaps shown as UNKNOWN, never as in-range.',
-          'Markers for readings that arrived late (received time vs event time).',
-          'Threshold baseline and ML detections overlaid for comparison.',
-        ]}
-      />
-    </>
-  );
-}
-
-export function ExcursionQueuePage() {
-  return (
-    <>
-      <PageHeader title="Excursion Queue" description="Open incidents that need quality review." />
-      <NotImplemented
-        milestone="Milestones 3 and 7"
-        planned={[
-          'Incidents by category: temperature excursion, data gap, suspected sensor fault.',
-          'Age, shipment and interval for each incident.',
-          'Product-risk alerts kept separate from missing or faulty sensor data.',
-        ]}
-      />
-    </>
-  );
-}
-
 export function QualityReviewPage() {
   return (
     <>

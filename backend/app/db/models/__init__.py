@@ -3,6 +3,15 @@
 from app.db.models.dataset import DatasetRelease
 from app.db.models.ground_truth import GroundTruthEvent, GroundTruthJourney
 from app.db.models.ledger import BusinessEvent, ChainRecord, OutboxEntry
+from app.db.models.monitoring import (
+    DataGap,
+    DataQualityWarning,
+    DecisionReassessment,
+    Detection,
+    DetectorConfigVersion,
+    DetectorEvaluation,
+    IncidentRevision,
+)
 from app.db.models.reference import AppUser, Organization, Policy, Product, UserRole
 from app.db.models.shipment import Sensor, SensorAssignment, Shipment
 from app.db.models.telemetry import ContextReading, IngestBatch, Reading, RejectedRecord
@@ -14,12 +23,19 @@ __all__ = [
     "ChainRecord",
     "ContextReading",
     "CustodyEvent",
+    "DataGap",
+    "DataQualityWarning",
     "DatasetRelease",
+    "DecisionReassessment",
+    "Detection",
+    "DetectorConfigVersion",
+    "DetectorEvaluation",
     "Disposition",
     "DispositionIncident",
     "GroundTruthEvent",
     "GroundTruthJourney",
     "Incident",
+    "IncidentRevision",
     "IngestBatch",
     "Organization",
     "OutboxEntry",

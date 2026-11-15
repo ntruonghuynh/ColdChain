@@ -52,6 +52,13 @@ class Incident(Base):
     )
     detector_version: Mapped[str | None] = mapped_column(String(60))
     policy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("policy.policy_id"), nullable=False)
+    # Milestone 3 (detector-created incidents): sensor, detector configuration and the evaluation
+    # that opened the incident. Facts recorded at opening are never edited (C-08).
+    sensor_id: Mapped[str | None] = mapped_column(ForeignKey("sensor.sensor_id"))
+    detector_config_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("detector_config.detector_config_id"))
+    opened_by_evaluation_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("detector_evaluation.evaluation_id")
+    )
     summary: Mapped[str | None] = mapped_column(Text)
     opened_at: Mapped[datetime] = mapped_column(UTCDateTime(), nullable=False)
     closed_at: Mapped[datetime | None] = mapped_column(UTCDateTime())
@@ -68,6 +75,7 @@ class Incident(Base):
             name="closed_at_matches_status",
         ),
         Index("ix_incident_status_category", "status", "category"),
+        Index("ix_incident_shipment_id", "shipment_id"),
     )
 
 

@@ -1,5 +1,6 @@
 import { Package } from 'lucide-react';
 import { useCallback, useState } from 'react';
+import { Link } from 'react-router';
 import { api } from '../api/client';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
@@ -26,7 +27,7 @@ export function ShipmentsPage() {
           <EmptyState
             icon={<Package className="h-6 w-6" />}
             title="No shipments recorded"
-            description="Simulated shipments appear after the synthetic dataset is imported (see the README, Milestone 2). Live data ingestion is planned for Milestone 3. Nothing is shown until real records exist."
+            description="Simulated shipments appear after the synthetic dataset is imported (see the README). Readings arrive through the ingestion API. Nothing is shown until real records exist."
           />
         )}
         {shipments.status === 'success' && shipments.data.meta.total > 0 && (
@@ -45,7 +46,11 @@ export function ShipmentsPage() {
                 <tbody className="divide-y divide-slate-100">
                   {shipments.data.data.map((s) => (
                     <tr key={s.shipment_id}>
-                      <td className="px-5 py-2.5 font-mono text-xs text-slate-900">{s.shipment_id}</td>
+                      <td className="px-5 py-2.5 font-mono text-xs">
+                        <Link className="text-cyan-700 hover:underline" to={`/temperature?shipment=${encodeURIComponent(s.shipment_id)}`}>
+                          {s.shipment_id}
+                        </Link>
+                      </td>
                       <td className="px-5 py-2.5 text-slate-700">
                         {s.origin ?? '—'} → {s.destination ?? '—'}
                       </td>

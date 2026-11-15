@@ -1,0 +1,43 @@
+$ docker compose --profile tools run --rm data-tools python -m app.monitoring demo-ocean
+SIMULATED DATA - ocean coverage demonstration (Milestone 3, causal replay)
+source journey (observed data only) : SIM-S11-J0154
+demo shipment                       : DEMO-OCEAN-SIM-S11-J0154
+longest silence between batches     : 2026-10-19T08:53:05+00:00 -> 2026-10-19T23:01:02+00:00 (14.13 h)
+batches replayed through ingestion  : 164
+
+[2026-10-19T08:53:05+00:00] 1 normal telemetry (last batch before the outage)
+    monitoring state  : CURRENT   newest event_at: 2026-10-19T08:52:00+00:00   unobserved: 1.08 min   visible readings: 315
+    confirmed gaps    : 0 (review required: 0)
+    incident          : none
+[2026-10-19T08:59:31+00:00] 3a connectivity lost: just over 7 min 30 s without a new reading
+    monitoring state  : STALE   newest event_at: 2026-10-19T08:52:00+00:00   unobserved: 7.52 min   visible readings: 315
+    confirmed gaps    : 0 (review required: 0)
+    incident          : none
+[2026-10-19T09:07:01+00:00] 3b connectivity lost: just over 15 min without a new reading
+    monitoring state  : UNKNOWN   newest event_at: 2026-10-19T08:52:00+00:00   unobserved: 15.02 min   visible readings: 315
+    confirmed gaps    : 0 (review required: 0)
+    incident          : none
+[2026-10-19T09:37:00+00:00] 3c connectivity lost: 45 min without a new reading
+    monitoring state  : UNKNOWN   newest event_at: 2026-10-19T08:52:00+00:00   unobserved: 45.0 min   visible readings: 315
+    confirmed gaps    : 0 (review required: 0)
+    incident          : none
+[2026-10-19T15:57:03.500000+00:00] 4 mid-outage (readings buffered on the logger, not received)
+    monitoring state  : UNKNOWN   newest event_at: 2026-10-19T08:52:00+00:00   unobserved: 425.06 min   visible readings: 315
+    confirmed gaps    : 0 (review required: 0)
+    incident          : none
+[2026-10-19T23:01:01+00:00] 4 one second before link restoration
+    monitoring state  : UNKNOWN   newest event_at: 2026-10-19T08:52:00+00:00   unobserved: 849.02 min   visible readings: 315
+    confirmed gaps    : 0 (review required: 0)
+    incident          : none
+[2026-10-19T23:01:02+00:00] 5-7 link restored: buffered backfill received and re-evaluated
+    monitoring state  : CURRENT   newest event_at: 2026-10-19T22:57:00+00:00   unobserved: 4.03 min   visible readings: 484
+    confirmed gaps    : 0 (review required: 0)
+    incident          : INC-DEMO-OCEAN-SIM-S11-J0154-DEMO-SIM-S11-L0154-TEX-H-20261019T150200Z TEMPERATURE_EXCURSION status=OPEN basis=CURRENT extent=('2026-10-19T15:02:00+00:00', '2026-10-19T17:42:00+00:00') gap_continuity_warning=False raised_at=2026-10-19T23:01:02+00:00
+[2026-10-20T14:50:23+00:00] 8 end of replay: incidents pending human review
+    monitoring state  : ENDED   newest event_at: 2026-10-20T14:47:00+00:00   unobserved: None min   visible readings: 674
+    confirmed gaps    : 0 (review required: 0)
+    incident          : INC-DEMO-OCEAN-SIM-S11-J0154-DEMO-SIM-S11-L0154-TEX-H-20261019T150200Z TEMPERATURE_EXCURSION status=OPEN basis=CURRENT extent=('2026-10-19T15:02:00+00:00', '2026-10-19T17:42:00+00:00') gap_continuity_warning=False raised_at=2026-10-19T23:01:02+00:00
+
+causal re-check (checkpoints recomputed from the final database with as_of filters): IDENTICAL
+No disposition is recorded: every incident stays OPEN, pending human quality review (M5). No warehouse release is possible or attempted.
+exit=0

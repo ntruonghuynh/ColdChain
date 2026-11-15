@@ -1,0 +1,81 @@
+{
+  "result": "PASS",
+  "browser": "153.0.8010.12",
+  "scenario": {
+    "shipmentId": "SIM-S11-J0154",
+    "beforeRestore": "2026-10-19T15:57:03Z",
+    "afterRestore": "2026-10-19T23:02:00Z"
+  },
+  "viewports": {
+    "desktop": {
+      "before": {
+        "asOf": "2026-10-19T15:57:03Z",
+        "readings": 315,
+        "newestEventAt": "2026-10-19T08:52:00Z",
+        "newestReceivedAt": "2026-10-19T08:53:05Z",
+        "monitoringState": "UNKNOWN",
+        "communicationStatus": "LONGER_THAN_RECENT_UPLOAD_INTERVALS",
+        "incidents": {
+          "TEMPERATURE_EXCURSION": 0,
+          "DATA_GAP": 0
+        },
+        "missingDataMessage": "Missing data is never treated as safe."
+      },
+      "after": {
+        "asOf": "2026-10-19T23:02:00Z",
+        "readings": 484,
+        "newestEventAt": "2026-10-19T22:57:00Z",
+        "newestReceivedAt": "2026-10-19T23:01:02Z",
+        "monitoringState": "CURRENT",
+        "communicationStatus": "WITHIN_RECENT_UPLOAD_INTERVALS",
+        "incidents": {
+          "TEMPERATURE_EXCURSION": 1,
+          "DATA_GAP": 0
+        }
+      },
+      "dimensions": {
+        "viewportWidth": 1440,
+        "documentWidth": 1440
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "badResponses": []
+    },
+    "mobile": {
+      "before": {
+        "asOf": "2026-10-19T15:57:03Z",
+        "readings": 315,
+        "newestEventAt": "2026-10-19T08:52:00Z",
+        "newestReceivedAt": "2026-10-19T08:53:05Z",
+        "monitoringState": "UNKNOWN",
+        "communicationStatus": "LONGER_THAN_RECENT_UPLOAD_INTERVALS",
+        "incidents": {
+          "TEMPERATURE_EXCURSION": 0,
+          "DATA_GAP": 0
+        },
+        "missingDataMessage": "Missing data is never treated as safe."
+      },
+      "after": {
+        "asOf": "2026-10-19T23:02:00Z",
+        "readings": 484,
+        "newestEventAt": "2026-10-19T22:57:00Z",
+        "newestReceivedAt": "2026-10-19T23:01:02Z",
+        "monitoringState": "CURRENT",
+        "communicationStatus": "WITHIN_RECENT_UPLOAD_INTERVALS",
+        "incidents": {
+          "TEMPERATURE_EXCURSION": 1,
+          "DATA_GAP": 0
+        }
+      },
+      "dimensions": {
+        "viewportWidth": 390,
+        "documentWidth": 390
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "badResponses": []
+    }
+  }
+}

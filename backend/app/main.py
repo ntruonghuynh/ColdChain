@@ -13,7 +13,7 @@ from collections.abc import Awaitable, Callable
 from fastapi import APIRouter, FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import health, reference, shipments, system
+from app.api import health, ingest, monitoring, reference, shipments, system
 from app.api.schemas import ErrorEnvelope
 from app.core.config import APP_NAME, APP_VERSION, get_settings
 from app.core.errors import register_exception_handlers
@@ -23,8 +23,11 @@ _REQUEST_ID_PATTERN = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
 DESCRIPTION = """
 Backend for the **Cold Chain Monitoring and Excursion Response** teaching prototype.
 
-Milestone 1 provides health checks and read-only reference data. Ingestion, ML,
-LLM and blockchain features are **not implemented yet** (see `GET /api/system/info`).
+Milestone 3 adds validated sensor ingestion (`POST /api/ingest/batches`, server receipt time),
+telemetry monitoring (CURRENT / STALE / UNKNOWN), confirmed data gaps, the policy-threshold
+baseline detector, append-only incidents and the excursion queue. Read endpoints accept an
+`as_of` processing time and show only what was known by then. ML, LLM, blockchain, quality
+dispositions and authentication are **not implemented yet** (see `GET /api/system/info`).
 
 All data is simulated. Policies are teaching policies, not regulatory standards.
 """
@@ -73,6 +76,8 @@ def create_app() -> FastAPI:
     api.include_router(system.router)
     api.include_router(reference.router)
     api.include_router(shipments.router)
+    api.include_router(ingest.router)
+    api.include_router(monitoring.router)
     app.include_router(api)
     return app
 
