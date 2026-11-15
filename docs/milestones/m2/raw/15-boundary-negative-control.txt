@@ -1,0 +1,6 @@
+# Negative control: a throwaway tree (outside the repository) with frontend/src/leak.ts containing 'ground_truth'
+$ docker compose --profile test run --rm -v "<scratch>/probe:/probe:ro" -e COLDCHAIN_REPO_DIR=/probe backend-tests pytest -q -p no:cacheprovider -c pyproject.toml tests/test_ground_truth_boundary.py::test_d12_frontend_never_references_ground_truth
+E       AssertionError: assert {'leak.ts': ['ground_truth']} == {}
+tests/test_ground_truth_boundary.py:103: AssertionError
+1 failed, 1 warning in 0.02s
+(expected: 1 failed)

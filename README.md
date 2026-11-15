@@ -2,7 +2,7 @@
 
 Academic prototype for **IT in Logistics — Final project 03**. It monitors refrigerated shipments, tells real temperature excursions apart from missing or faulty sensor data, drafts a procedure-based response, and records custody and quality decisions on a local blockchain. A human Quality Officer always makes the release or quarantine decision.
 
-> **Status: Milestone 1 — infrastructure and application shell.** The database, backend API, dashboard shell and Docker setup run. Monitoring, ML, LLM and blockchain features are **not implemented yet**; their pages say so. See [docs/implementation-plan.md](docs/implementation-plan.md).
+> **Status: Milestone 2 — synthetic dataset.** The database, backend API, dashboard shell and Docker setup run, and a documented, reproducible **synthetic** dataset of 200 journeys is included and can be imported. Monitoring, ML, LLM and blockchain features are **not implemented yet**; their pages say so. See [docs/implementation-plan.md](docs/implementation-plan.md).
 
 > **Teaching boundary.** All data is simulated. Temperature limits and procedures are teaching policies, not clinical or regulatory standards. No ML output establishes product safety.
 
@@ -25,20 +25,28 @@ The start script checks that Docker is running (and tries to start it), creates 
 
 > **macOS:** the first time, macOS may block a downloaded script. Right-click `start.command` → **Open** → **Open**. If it says "permission denied", run `chmod +x start.command stop.command` once in Terminal from this folder.
 
-## What runs today (Milestone 1)
+## What runs today (Milestones 1–2)
 
 | Area | Status |
 |---|---|
-| PostgreSQL database with the full initial schema (20 tables) and migrations | Available |
+| PostgreSQL database with the schema (20 tables from Milestone 1; Milestone 2 adds `dataset_release` and a separate `ground_truth` schema) and migrations | Available |
 | Teaching policy, organizations and demo users loaded as configuration data | Available |
 | Backend API: health checks, system info, policies, organizations, shipments (read-only) | Available |
 | API documentation (OpenAPI / Swagger) | Available at http://localhost:3000/api/docs |
 | Dashboard shell: navigation, header, API connectivity indicator, Overview, Shipments, System Settings | Available |
 | Temperature monitoring, excursion queue, quality review, audit history | Not implemented yet (pages show this) |
-| Data ingestion, gap detection, threshold baseline | Milestone 3 |
+| Synthetic dataset (200 journeys, seed 11) with data dictionary, provenance and checksums | Available in `data/release/` (Milestone 2) |
+| Idempotent import of the dataset into PostgreSQL (simulated shipments, readings, context; labels in a separate `ground_truth` schema) | Available as a manual command (Milestone 2) |
+| Data ingestion API, gap detection, threshold baseline | Milestone 3 |
 | ML detection · Blockchain · LLM drafts · Login | Milestones 4 · 5 · 6 · 5/7 |
 
-There are no shipments yet: they are created by data ingestion (Milestone 3). The dashboard shows an empty state instead of example data.
+After a fresh start there are no shipments. To load the 200 **simulated** shipments of the canonical dataset (takes about 15 seconds; running it again changes nothing):
+
+```bash
+docker compose --profile tools run --rm data-tools python -m app.dataset import data/release/coldchain-sim-v1.0.0-seed11
+```
+
+The Shipments page then lists them, labelled `SIMULATED`. No detection runs on them yet (Milestone 3). Details: [data/README.md](data/README.md), [data dictionary](data/dictionary/data-dictionary.md).
 
 ### Approved teaching policy (configuration data)
 
@@ -146,7 +154,8 @@ The test suite fails if models and migrations differ.
 ### Running tests
 
 ```bash
-# Backend (45 tests) inside Docker, against separate *_test databases (main data untouched)
+# Backend (58 tests) + dataset generator (72 tests) inside Docker,
+# against separate *_test databases (main data untouched)
 docker compose --profile test run --rm --build backend-tests
 
 # Frontend unit/component tests (19 tests), type-check and production build
@@ -155,6 +164,20 @@ cd frontend && npm ci && npm test && npm run typecheck && npm run build
 # End-to-end smoke test of the whole stack: startup, proxy, outage handling,
 # shutdown and data persistence across restart (uses only the Python standard library)
 python3 scripts/smoke_test.py            # add --keep-running to leave the stack up
+```
+
+### Synthetic dataset (Milestone 2)
+
+```bash
+# regenerate the canonical dataset into the git-ignored scratch folder
+docker compose --profile tools run --rm data-tools python -m coldchain_sim generate \
+  --config data/generator/config/coldchain-sim-v1.yaml --seed 11 --out data/generated/seed11
+# verify the committed release (checksums + byte-for-byte content regeneration)
+docker compose --profile tools run --rm data-tools python -m coldchain_sim verify \
+  data/release/coldchain-sim-v1.0.0-seed11 --regenerate
+# import (idempotent) and show what is imported
+docker compose --profile tools run --rm data-tools python -m app.dataset import data/release/coldchain-sim-v1.0.0-seed11
+docker compose --profile tools run --rm data-tools python -m app.dataset status
 ```
 
 ### Working outside Docker (optional)
@@ -192,11 +215,13 @@ Dependency versions are pinned in `backend/requirements*.txt` (compiled from `ba
 | Build fails with "no space left on device" | Free Docker disk space in Docker Desktop → Troubleshoot → Clean / Purge data (this deletes unused images). |
 | Windows: the script window closes before you can read it | Open a Command Prompt in this folder (type `cmd` in the File Explorer address bar) and run `start.bat` there; the messages stay visible. Administrator rights are not needed. |
 
-## Known limitations (Milestone 1)
+## Known limitations (Milestones 1–2)
 
 - No login yet. Demo users exist (one per role) but have no credentials; all API endpoints are read-only and open to anyone who can reach port 3000.
-- No monitoring features yet (ingestion, gap detection, excursion detection, ML, LLM, blockchain).
-- The 5-minute expected sampling interval (proposed rule BR-03) is not approved yet and is therefore not part of the stored policy.
+- No monitoring features yet (ingestion API, gap detection, excursion detection, ML, LLM, blockchain).
+- The dataset is synthetic. Its physics, sensor faults and labels are simplified; see the limitations in the [data dictionary](data/dictionary/data-dictionary.md#7-known-limitations-of-the-synthetic-data).
+- Importing the dataset is a manual command for now. A configurable first-run import is approved for the final release (D-10, Milestone 10). Imported shipments stay in status `CREATED` because the workflow arrives in Milestone 5.
+- The nominal 5-minute sampling interval is approved for Milestone 3 (D-01). It is not part of the stored policy v1.0, which is immutable.
 - Windows scripts (`start.bat`, `stop.bat`) were written for Windows 10/11 but have not been executed on Windows yet.
 - Fully offline installation is not supported yet: the first start downloads Docker images and packages.
 
@@ -208,7 +233,8 @@ Dependency versions are pinned in `backend/requirements*.txt` (compiled from `ba
 | `backend/` | FastAPI app (`app/`), Alembic migrations, tests, Dockerfile |
 | `frontend/` | React + TypeScript + Vite + Tailwind app, nginx config, tests, Dockerfile |
 | `scripts/` | `smoke_test.py`; later: demo scenarios, evaluation runners, packaging |
-| `data/`, `ml/`, `llm/`, `blockchain/` | Placeholders for Milestones 2, 4, 6 and 5 |
+| `data/` | Synthetic data generator, configuration, data dictionary, provenance, canonical dataset release |
+| `ml/`, `llm/`, `blockchain/` | Placeholders for Milestones 4, 6 and 5 |
 | `docker-compose.yml` | The local stack |
 | `start.*` / `stop.*` | One-click start/stop for macOS (`.command`) and Windows (`.bat`) |
 
@@ -217,6 +243,7 @@ Dependency versions are pinned in `backend/requirements*.txt` (compiled from `ba
 - [Requirements analysis](docs/requirements-analysis.md)
 - [Architecture](docs/architecture.md)
 - [Implementation plan](docs/implementation-plan.md)
+- [Data dictionary](data/dictionary/data-dictionary.md) and [provenance](data/dictionary/provenance.md)
 - [Rules for Claude Code](CLAUDE.md)
 
 ## Packaging for students

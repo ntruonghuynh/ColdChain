@@ -5,9 +5,13 @@ Academic full-stack prototype: monitoring + ML + LLM/RAG + blockchain + web dash
 
 ## Current status
 
-- Milestone 0 accepted. **Milestone 1** (Docker, PostgreSQL schema + migrations, FastAPI skeleton, React shell) is implemented and awaiting the owner's acceptance.
-- Not implemented: ingestion, gap/excursion detection, ML, LLM, blockchain, authentication. Their UI pages must keep saying "Not implemented yet" until the owning milestone delivers them, and `backend/app/api/system.py` `FEATURES` must stay truthful.
+- Milestone 0 accepted; Milestone 1 implemented. **Milestone 2** (synthetic dataset generator, data dictionary, provenance, canonical release, idempotent DB import, ground-truth schema) is implemented and awaiting the owner's acceptance.
+- Not implemented: ingestion API, gap/excursion detection, ML, LLM, blockchain, authentication. Their UI pages must keep saying "Not implemented yet" until the owning milestone delivers them, and `backend/app/api/system.py` `FEATURES` must stay truthful.
 - Approved teaching policy (2026-11-14) lives in `backend/app/seed/data/policies/POL-CHILL-01_v1.0.json`. Policy versions are immutable; never edit that file's values — publish a new version file after owner approval.
+- Canonical **development** dataset `data/release/coldchain-sim-v1.0.0-seed11/` is committed and immutable: never edit it in place. Seeds 22, 33, 44, 55, 66 are reserved for operational simulation evaluation (only their manifests are committed); never tune or develop on them (A-13). A changed generator, configuration or policy needs a new dataset version (new folder) and a regenerated manifest.
+- Ground truth (D-12): only the modules on the allow-list in `backend/tests/test_ground_truth_boundary.py` may read the `ground_truth` schema or the `ground_truth/` files. Ground-truth labels may be used as supervised *targets* for training and evaluation (one allow-listed label builder, added in M4). Feature extraction, detection, inference, operational APIs and the frontend use observed data only. Never weaken or delete those regression tests to make code pass.
+- Evaluation protocol (D-13): seed 11 is for development, training, validation and internal regression checks, and its `test` partition is never used for iterative tuning. Seeds 22, 33, 44, 55, 66 are final evaluation seeds: never use them for feature, model, preprocessing or threshold choices, and open them only after the model and preprocessing are frozen. Record the model version, seed assignments and protocol with every result.
+- The approved nominal 5-minute sampling interval belongs in detector configuration, not in the policy (policy v1.0 is immutable). BR-05 is **not approved**: see requirements analysis §13.3 and ask before implementing it.
 
 ## Read before you change anything
 
@@ -54,7 +58,10 @@ Run from the repository root unless noted. `.env` must exist (`cp .env.example .
 |---|---|
 | Start stack and wait until healthy | `docker compose up -d --build --wait` |
 | Stop (keeps data) | `docker compose down` — never add `-v` without explicit owner approval (deletes all data) |
-| Backend tests (in Docker, uses `*_test` databases) | `docker compose --profile test run --rm --build backend-tests` |
+| Backend + generator tests (in Docker, uses `*_test` databases) | `docker compose --profile test run --rm --build backend-tests` |
+| Generate a dataset (scratch) | `docker compose --profile tools run --rm data-tools python -m coldchain_sim generate --config data/generator/config/coldchain-sim-v1.yaml --seed 11 --out data/generated/seed11` |
+| Verify the canonical release (checksums + regeneration) | `docker compose --profile tools run --rm data-tools python -m coldchain_sim verify data/release/coldchain-sim-v1.0.0-seed11 --regenerate` |
+| Import the canonical dataset (idempotent) / show status | `docker compose --profile tools run --rm data-tools python -m app.dataset import data/release/coldchain-sim-v1.0.0-seed11` / `... python -m app.dataset status` |
 | Frontend tests / type-check / build | `cd frontend && npm test && npm run typecheck && npm run build` |
 | Full-stack smoke test (startup, proxy, outage, shutdown, persistence) | `python3 scripts/smoke_test.py` |
 | Migration status | `docker compose run --rm migrate alembic current` |

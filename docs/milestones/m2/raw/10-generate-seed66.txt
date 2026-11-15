@@ -1,0 +1,21 @@
+$ docker compose --profile tools run --rm data-tools python -m coldchain_sim generate --config data/generator/config/coldchain-sim-v1.yaml --seed 66 --out data/generated/eval-seeds/seed66
+dataset_id          coldchain-sim-v1.0.0-seed66
+seed / split_seed   66 / 66
+journeys            200
+fingerprint         7bfacae4606836765c3a6e437bb9fa38646e160445e9de3465fce93248141d72
+  ground_truth/events.csv.gz           2769 rows
+  ground_truth/journeys.csv             200 rows
+  ground_truth/slots.csv.gz          117115 rows
+  observed/context.csv.gz            115565 rows
+  observed/readings.csv.gz           115565 rows
+  observed/shipments.csv                200 rows
+  observed/uploads.csv.gz             37266 rows
+  splits/journey_split.csv              200 rows
+written to          data/generated/eval-seeds/seed66  (4.6 s)
+
+$ docker compose --profile tools run --rm data-tools python -m coldchain_sim verify data/generated/eval-seeds/seed66 --regenerate
+checksums: OK
+regeneration: identical content
+dataset_id coldchain-sim-v1.0.0-seed66  fingerprint 7bfacae4606836765c3a6e437bb9fa38646e160445e9de3465fce93248141d72
+
+$ cp data/generated/eval-seeds/seed66/manifest.json data/release/seed-manifests/coldchain-sim-v1.0.0-seed66.manifest.json

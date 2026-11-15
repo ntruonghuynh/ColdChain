@@ -1,0 +1,53 @@
+$ docker compose --profile tools run --rm data-tools python -m coldchain_sim verify data/release/coldchain-sim-v1.0.0-seed11 --regenerate
+checksums: OK
+regeneration: identical content
+dataset_id coldchain-sim-v1.0.0-seed11  fingerprint 80c4aec06daf3554ba0eecea7ff63d3d14cd5545df43cc7b94601b1fe8a9970d
+(exit code 0)
+
+$ docker compose --profile tools run --rm data-tools python -m app.dataset verify data/release/coldchain-sim-v1.0.0-seed11
+OK  coldchain-sim-v1.0.0-seed11  fingerprint 80c4aec06daf3554ba0eecea7ff63d3d14cd5545df43cc7b94601b1fe8a9970d
+(exit code 0)
+
+$ docker compose --profile tools run --rm data-tools python -m app.dataset status
+No dataset imported.
+(exit code 0)
+
+$ docker compose --profile tools run --rm data-tools python -m app.dataset import data/release/coldchain-sim-v1.0.0-seed11
+dataset_id   coldchain-sim-v1.0.0-seed11
+fingerprint  80c4aec06daf3554ba0eecea7ff63d3d14cd5545df43cc7b94601b1fe8a9970d
+status       imported
+  shipment                   inserted      200   stored      200
+  sensor_assignment          inserted      200   stored      200
+  ingest_batch               inserted    37136   stored    37136
+  reading                    inserted   114969   stored   114969
+  context_reading            inserted   114969   stored   114969
+  ground_truth.journey       inserted      200   stored      200
+  ground_truth.event         inserted     2750   stored     2750
+elapsed      11.4 s
+(exit code 0)
+
+$ docker compose --profile tools run --rm data-tools python -m app.dataset import data/release/coldchain-sim-v1.0.0-seed11
+dataset_id   coldchain-sim-v1.0.0-seed11
+fingerprint  80c4aec06daf3554ba0eecea7ff63d3d14cd5545df43cc7b94601b1fe8a9970d
+status       already_imported
+  shipment                   inserted        0   stored      200
+  sensor_assignment          inserted        0   stored      200
+  ingest_batch               inserted        0   stored    37136
+  reading                    inserted        0   stored   114969
+  context_reading            inserted        0   stored   114969
+  ground_truth.journey       inserted        0   stored      200
+  ground_truth.event         inserted        0   stored     2750
+elapsed      0.1 s
+(exit code 0)
+
+$ docker compose --profile tools run --rm data-tools python -m app.dataset status
+coldchain-sim-v1.0.0-seed11  seed=11  journeys=200  imported_at=2026-11-13T18:33:39.432377+00:00  fingerprint=80c4aec06daf3554ba0eecea7ff63d3d14cd5545df43cc7b94601b1fe8a9970d
+  shipment                        200
+  sensor_assignment               200
+  ingest_batch                  37136
+  reading                      114969
+  context_reading              114969
+  ground_truth.journey            200
+  ground_truth.event             2750
+(exit code 0)
+
