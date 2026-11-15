@@ -1,0 +1,7 @@
+ Container coldchain-db-1 Running 
+ Container coldchain-db-1 Waiting 
+ Container coldchain-db-1 Healthy 
+ Container coldchain-data-tools-run-213e77d968d8 Creating 
+ Container coldchain-data-tools-run-213e77d968d8 Created 
+shipments: 200  sensors replayed: 0  already evaluated: 200
+evaluations written: 0  incidents opened: 0  incident revisions: 0  (0.1 s)

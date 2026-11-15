@@ -1,0 +1,7 @@
+$ docker compose --profile tools run --rm data-tools python -m app.monitoring replay
+shipments: 200  sensors replayed: 200  already evaluated: 0
+evaluations written: 37536  incidents opened: 146  incident revisions: 1007  (12.6 s)
+exit=0
+$ docker compose --profile tools run --rm data-tools python -m app.monitoring replay   # second run (idempotency check)
+shipments: 200  sensors replayed: 0  already evaluated: 200
+evaluations written: 0  incidents opened: 0  incident revisions: 0  (0.1 s)

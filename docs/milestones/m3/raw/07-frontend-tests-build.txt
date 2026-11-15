@@ -1,0 +1,21 @@
+$ cd frontend && npm test && npm run typecheck && npm run build
+> coldchain-frontend@0.1.0 test
+> vitest run
+ RUN  v3.2.7 <repo>/frontend
+ ✓ src/api/client.test.ts (6 tests) 5ms
+ ✓ src/components/ConnectivityIndicator.test.tsx (3 tests) 46ms
+ ✓ src/pages/monitoring.test.tsx (5 tests) 130ms
+ ✓ src/pages/pages.test.tsx (8 tests) 150ms
+ Test Files  4 passed (4)
+      Tests  22 passed (22)
+   Start at  17:30:49
+   Duration  899ms (transform 147ms, setup 207ms, collect 592ms, tests 331ms, environment 1.20s, prepare 195ms)
+> coldchain-frontend@0.1.0 typecheck
+> tsc --noEmit
+
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.58 kB │ gzip:   0.34 kB
+dist/assets/index-8gUYrBm5.css   24.12 kB │ gzip:   5.45 kB
+dist/assets/index-aNzVRUsi.js   321.85 kB │ gzip: 100.20 kB
+✓ built in 722ms

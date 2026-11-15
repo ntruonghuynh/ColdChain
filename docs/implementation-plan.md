@@ -2,7 +2,7 @@
 
 | Item | Value |
 |---|---|
-| Status | M0 accepted · M1 implemented (2026-11-14) · **M2 implemented and reviewed; decisions D-01, D-05, D-10 to D-13 finalised 2026-11-15; awaiting commit approval** |
+| Status | M0 accepted · M1 implemented (2026-11-14) · M2 implemented and merged · **M3 implemented 2026-11-15, awaiting the owner's acceptance** (report `docs/milestones/m3/README.md`; contract `docs/design/m3-baseline-detector-contract.md` approved with U-01 to U-08) |
 | Inputs | `docs/requirements-analysis.md`, `docs/architecture.md` |
 | Course window | 8 to 10 weeks (brief, page 1) |
 | Last updated | 2026-11-15 |
@@ -80,12 +80,12 @@ Suggested timing for a 10-week course (adjust to the team): week 1 M0–M1, week
 | Field | Content |
 |---|---|
 | Objectives | Batch ingestion API with validation and idempotency; gap detector; policy threshold engine; incident creation; re-evaluation on late data; excursion queue API; loader that replays generated journeys through the ingestion API. |
-| Files / modules | `backend/app/domain/{validation.py, gaps.py, policy_engine.py, incidents.py}`, `backend/app/services/{ingest.py, reevaluate.py, incidents.py}`, `backend/app/api/{ingest.py, shipments.py, incidents.py}`, `scripts/replay_dataset.py`, tests under `backend/tests/` |
+| Files / modules | As built: `backend/app/domain/{rules, validation, detector, reconcile, replay}.py`, `backend/app/services/{ingest, detection, queries, demo}.py`, `backend/app/api/{ingest, monitoring, monitoring_schemas}.py`, `backend/app/monitoring/` (replay and demo commands; replaces the planned `scripts/replay_dataset.py`), `backend/app/evaluation/` (isolated development evaluation), migration `0003`, frontend pages Temperature Monitoring, Excursion Queue and Incident detail, tests `backend/tests/test_m3_*.py` and `frontend/src/pages/monitoring.test.tsx` |
 | Dependencies | M1, M2; D-01, D-09 (BR-02 to BR-09) |
-| Acceptance criteria | Invalid records rejected with reasons (BR-08); duplicates handled per BR-07; both timestamps stored unchanged; gaps >15 min become UNKNOWN intervals, gaps ≥30 min open `DATA_GAP` incidents; BR-02 excursions open `TEMPERATURE_EXCURSION` incidents; a buffered batch arriving after a gap triggers re-evaluation and the excursion is detected with original `event_at`; UNKNOWN time is never counted as in range; excursion queue lists open incidents by category. |
-| Tests | Unit test per business rule BR-02 to BR-09, including boundaries (exactly 8.0 °C, exactly 30 min, exactly 15 min gap); property test that no gap interval is ever reported in-range; integration test: out-of-order batch after outage; idempotent re-upload of the same batch; conflicting duplicate rejected. |
+| Acceptance criteria | Invalid records rejected with reasons (BR-08); duplicates handled per BR-07; both timestamps stored unchanged; stale telemetry is shown as monitoring state STALE/UNKNOWN (never safe, no incident); confirmed gaps >15 min are UNKNOWN, confirmed gaps ≥30 min open `DATA_GAP` incidents (C-02); BR-02 excursions open `TEMPERATURE_EXCURSION` incidents; a buffered batch arriving after a gap triggers re-evaluation and the excursion is detected with original `event_at`; UNKNOWN time is never counted as in range; excursion queue lists open incidents by category. |
+| Tests | Boundary cases B01–B80 of the detector contract §7 (one test per case, rule ID in the name or docstring; coverage in `docs/milestones/m3/README.md` §6), including exactly 8.0 °C, exactly 30 min, exactly 15 min gap, 7 min 30 s continuity, replay causality; property test that no gap interval is ever reported in-range; integration test: out-of-order batch after outage; idempotent re-upload of the same batch; conflicting duplicate rejected. |
 | Deliverables | Working ingestion and baseline detection; API docs (OpenAPI); M3 report. |
-| Decisions in force (2026-11-15) | The nominal 5-minute sampling interval (D-01) lives in **detector configuration**, versioned and recorded with each detection result. It does not live in the policy, so `POL-CHILL-01_v1.0.json` and policy version 1.0 stay unchanged. BR-05 is **not approved** (open questions in requirements analysis §13.3). It must be decided before the BR-05 part of M3 is built and accepted. BR-06 to BR-09 also still need approval (D-09). |
+| Decisions in force (2026-11-15) | Contract `docs/design/m3-baseline-detector-contract.md` is the specification and is implemented. Approved: D-01 (5-min interval in detector configuration), BR-05, C-01 to C-10, the BR-06 to BR-09 interpretations, U-01 to U-08 (BR-09 amended explicitly by U-01; BR-10 to BR-15 reviewed with no M3 conflict). Policy file v1.0 and the canonical dataset are unchanged. Open (not blocking): contract §9 O-1 to O-3 |
 | Closes | FR-01, FR-03, FR-04, FR-05, FR-10, FR-11, FR-12 (baseline side), FR-20 (API), EVAL-01, EVAL-13 (functional side) |
 
 ## M4 — ML pipeline

@@ -1,0 +1,7 @@
+$ git status --short -- data/release backend/app/seed/data/policies
+(empty = unchanged)
+$ git diff --stat -- data/release backend/app/seed/data/policies
+(empty = unchanged)
+$ docker compose --profile tools run --rm data-tools python -m coldchain_sim verify data/release/coldchain-sim-v1.0.0-seed11
+checksums: OK
+dataset_id coldchain-sim-v1.0.0-seed11  fingerprint 80c4aec06daf3554ba0eecea7ff63d3d14cd5545df43cc7b94601b1fe8a9970d

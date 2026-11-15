@@ -249,7 +249,7 @@ Canonical totals: 200 journeys (`COLD` 40, `HOT` 59, `TEMPERATE` 71, `VARIABLE` 
 | **Observed sensor data** | The simulated logger and gateway | `observed/` files; DB tables `shipment`, `sensor_assignment`, `ingest_batch`, `reading`, `context_reading` | Logger values *with* bias, drift, noise and spikes; missing readings absent; delayed readings with original `event_at` and later `received_at`; context. **No label of any kind** | Everyone, including detection and ML features |
 | **Operational labels** | The running system, from observed data only | Operational tables added in later milestones (`incident`, `detection`, `data_gap`) | M3: UNKNOWN gap intervals, `DATA_GAP` and `TEMPERATURE_EXCURSION` incidents from the policy baseline. M4: ML predictions and scores. Advisory; they never authorize a release (BR-15) | The application and users; compared with the reference labels in M9 |
 
-**None of the operational labels exist in Milestone 2.** The same policy rule (BR-02) produces both a *reference label* (applied to the true temperature, here) and an *operational detection* (applied to observed readings, M3). They are different by construction. The observed series has sensor error, 5-minute sampling, gaps and delays. How far the operational detections stray from the reference labels is the quantity M9 measures. Enforcement: `backend/tests/test_ground_truth_boundary.py` fails if any module in `backend/app`, `ml/` or `llm/` other than the dataset loader reads the ground-truth models, the `ground_truth` schema or the `ground_truth/` files.
+**Operational labels exist since Milestone 3**, in the operational tables `data_gap`, `detection`, `data_quality_warning`, `incident` and `incident_revision`, produced only from observed data by the policy baseline (`python -m app.monitoring replay`). None existed in Milestone 2. The same policy rule (BR-02) produces both a *reference label* (applied to the true temperature, here) and an *operational detection* (applied to observed readings, M3). They are different by construction. The observed series has sensor error, 5-minute sampling, gaps and delays. How far the operational detections stray from the reference labels is the quantity M9 measures. Enforcement: `backend/tests/test_ground_truth_boundary.py` fails if any module in `backend/app`, `ml/` or `llm/` other than the dataset loader reads the ground-truth models, the `ground_truth` schema or the `ground_truth/` files.
 
 **Training-time labels vs inference-time features (D-12, approved 2026-11-15).** A supervised model needs two inputs during training: *features* (X) and *targets* (y).
 
@@ -268,13 +268,15 @@ Canonical totals: 200 journeys (`COLD` 40, `HOT` 59, `TEMPERATE` 71, `VARIABLE` 
 
 These labels are the **reference for evaluation**. They are not what the Milestone 3 baseline detector computes. The detector applies the same policy to *observed* readings at 5-minute resolution, so it sees noise, bias, spikes and gaps. The difference between the two is exactly what M9 measures.
 
+**Duration conventions differ by design (BR-05, approved 2026-11-15).** A reference label counts minutes of the 1-minute true series (`[start_at, end_at)`, so 30 true minutes qualify). An operational run lasts from its first to its last observed reading, so 7 readings are needed for 30 min above 8 °C and 4 for 15 min below 2 °C, and any missing reading breaks the run. The reference labels are unchanged. Details: `docs/design/m3-baseline-detector-contract.md` §2.4.
+
 ## 6. Database mapping (import)
 
 | File | Table | Notes |
 |---|---|---|
 | `manifest.json` | `dataset_release` | One row with the full manifest, seed, versions, policy hash and fingerprint |
 | `observed/shipments.csv` | `shipment`, `sensor`, `sensor_assignment` | `data_origin = SIMULATED`, `source_dataset_id` set; status stays `CREATED` (workflow is M5) |
-| `observed/uploads.csv.gz` | `ingest_batch` | `business_ref = upload_id`, `source = SIMULATOR`, `record_count = 2 × reading_count` (reading + context) |
+| `observed/uploads.csv.gz` | `ingest_batch` | `business_ref = upload_id`, `source = SIMULATOR`, `record_count = 2 × reading_count` (reading + context); since migration 0003 `ingest_mode = IMPORT`, `duplicate_count = 0` |
 | `observed/readings.csv.gz` | `reading` | `event_at`, `received_at` unchanged |
 | `observed/context.csv.gz` | `context_reading` | Empty → NULL |
 | `ground_truth/journeys.csv` | `ground_truth.journey` | Columns not mapped to their own column are kept as text in `parameters` |
@@ -282,6 +284,8 @@ These labels are the **reference for evaluation**. They are not what the Milesto
 | `ground_truth/slots.csv.gz`, `splits/` | — | Files only |
 
 Primary keys of imported rows are UUIDv5 values derived from business keys, so the same dataset gets the same IDs in every database.
+
+The Milestone 3 detector and the offline evaluation replay these batches causally along `ingest_batch.received_at` (the recorded receipt time); a reading is never used before its receipt (C-09). The detector's gap measurements are named `bracketing_span_s` (exact time between the bounding readings, compared with the policy) and `estimated_missing_samples` / `estimated_missing_duration_s` (information only); the reference label's `observed_gap_min` corresponds to the bracketing span.
 
 ## 7. Known limitations of the synthetic data
 
