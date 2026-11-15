@@ -1,5 +1,7 @@
 """Import every model so Base.metadata is complete (used by Alembic and tests)."""
 
+from app.db.models.dataset import DatasetRelease
+from app.db.models.ground_truth import GroundTruthEvent, GroundTruthJourney
 from app.db.models.ledger import BusinessEvent, ChainRecord, OutboxEntry
 from app.db.models.reference import AppUser, Organization, Policy, Product, UserRole
 from app.db.models.shipment import Sensor, SensorAssignment, Shipment
@@ -12,8 +14,11 @@ __all__ = [
     "ChainRecord",
     "ContextReading",
     "CustodyEvent",
+    "DatasetRelease",
     "Disposition",
     "DispositionIncident",
+    "GroundTruthEvent",
+    "GroundTruthJourney",
     "Incident",
     "IngestBatch",
     "Organization",

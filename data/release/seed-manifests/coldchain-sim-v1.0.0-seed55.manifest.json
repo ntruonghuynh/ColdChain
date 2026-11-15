@@ -1,0 +1,253 @@
+{
+  "config": {
+    "config_version": "1.0.0",
+    "copy": "config.yaml",
+    "sha256": "78c4d02b88324ffbf93e22a2f485f3d5438a1f8836c859677231d2e740fae7da",
+    "source_path": "data/generator/config/coldchain-sim-v1.yaml"
+  },
+  "conventions": {
+    "empty_field": "not reported (NULL), never a default value",
+    "missing_reading": "absent row in observed/readings and observed/context; never filled",
+    "temperature_unit": "degree Celsius",
+    "timezone": "UTC; ISO 8601 with 'Z'"
+  },
+  "data_origin": "SIMULATED",
+  "dataset_fingerprint": "08a47b298df54c2eb4bf1842c0fe290bfad455abd27421c83ce72937724c669e",
+  "dataset_id": "coldchain-sim-v1.0.0-seed55",
+  "dataset_name": "coldchain-sim",
+  "dataset_version": "1.0.0",
+  "description": "Synthetic cold-chain journeys for a teaching prototype. Not real data.",
+  "files": [
+    {
+      "bytes": 6977,
+      "content_sha256": "78c4d02b88324ffbf93e22a2f485f3d5438a1f8836c859677231d2e740fae7da",
+      "description": "Exact copy of the configuration used.",
+      "format": "yaml",
+      "path": "config.yaml",
+      "role": "config",
+      "rows": null,
+      "sha256": "78c4d02b88324ffbf93e22a2f485f3d5438a1f8836c859677231d2e740fae7da"
+    },
+    {
+      "bytes": 49917,
+      "columns": [
+        "event_id",
+        "journey_id",
+        "event_type",
+        "label_source",
+        "cause",
+        "start_at",
+        "end_at",
+        "duration_min",
+        "attributes"
+      ],
+      "content_sha256": "272930c9421681401ce97122a167cf0b7b3f6bdc60946d8ec4422b04e79e4303",
+      "description": "Labelled intervals: true out-of-range runs, policy excursions, injected causes, sensor faults, missing data and transmission delays. NOT a model input.",
+      "format": "csv+gzip",
+      "path": "ground_truth/events.csv.gz",
+      "role": "ground_truth",
+      "rows": 2671,
+      "sha256": "2f907107a8f82116a0a012d756d50e794cc40c4e1b31f4cad0aa1e31f1a134ec"
+    },
+    {
+      "bytes": 59542,
+      "columns": [
+        "journey_id",
+        "shipment_id",
+        "sensor_id",
+        "journey_seed",
+        "primary_scenario",
+        "scenario_tags",
+        "ambient_profile",
+        "route_type",
+        "departure_at",
+        "arrival_at",
+        "duration_min",
+        "setpoint_c",
+        "cooling_coupling_per_min",
+        "ambient_coupling_per_min",
+        "process_noise_sd_c",
+        "ambient_mean_start_c",
+        "ambient_mean_end_c",
+        "ambient_diurnal_amplitude_c",
+        "sensor_bias_c",
+        "sensor_drift_c_per_day",
+        "sensor_drift_start_at",
+        "sensor_noise_sd_c",
+        "has_ambient_probe",
+        "battery_start_pct",
+        "battery_drain_pct_per_day",
+        "expected_readings",
+        "observed_readings",
+        "missing_readings",
+        "delayed_readings",
+        "max_delay_min",
+        "policy_excursion_count",
+        "true_minutes_above_max",
+        "true_minutes_below_min"
+      ],
+      "content_sha256": "c9d8b1e1cc61c8a20caee3c59eeb4e87b75fd8426b99a37d246a971ffb6d1bc7",
+      "description": "Scenario, ambient profile and simulation parameters per journey. NOT a model input.",
+      "format": "csv",
+      "path": "ground_truth/journeys.csv",
+      "role": "ground_truth",
+      "rows": 200,
+      "sha256": "c9d8b1e1cc61c8a20caee3c59eeb4e87b75fd8426b99a37d246a971ffb6d1bc7"
+    },
+    {
+      "bytes": 1459368,
+      "columns": [
+        "journey_id",
+        "slot_at",
+        "true_product_temperature_c",
+        "true_ambient_temperature_c",
+        "door_open_in_interval",
+        "true_temperature_state",
+        "in_policy_excursion",
+        "sensor_offset_c",
+        "sensor_noise_c",
+        "sensor_spike_c",
+        "observation_status",
+        "missing_cause",
+        "transmission",
+        "delay_s"
+      ],
+      "content_sha256": "dbb7cebb8807717f57b96dc3fd45dfead55cf7c4fa7a209af9ec0900d6456a4e",
+      "description": "Per expected reading: true temperature, sensor error components and observation status. NOT a model input.",
+      "format": "csv+gzip",
+      "path": "ground_truth/slots.csv.gz",
+      "role": "ground_truth",
+      "rows": 115584,
+      "sha256": "a8806f45d131a6cba6b402458e100383b2f8b8f8a9b7fe2dabdd0f4920228c8c"
+    },
+    {
+      "bytes": 812215,
+      "columns": [
+        "shipment_id",
+        "sensor_id",
+        "event_at",
+        "received_at",
+        "door_state",
+        "battery_level_pct",
+        "ambient_temperature_c",
+        "upload_id"
+      ],
+      "content_sha256": "3dc75436e9a6ab12dda762dc94de5b45316c84661834d6d677599dc2acf6ab49",
+      "description": "Context records as received (DATA-02). Empty = not reported.",
+      "format": "csv+gzip",
+      "path": "observed/context.csv.gz",
+      "role": "observed",
+      "rows": 113933,
+      "sha256": "a7dcee87765a24a4c1d3ce4c7e0e6d64164d285d70e6db0eb3429331d3d91855"
+    },
+    {
+      "bytes": 702057,
+      "columns": [
+        "shipment_id",
+        "sensor_id",
+        "event_at",
+        "received_at",
+        "temperature_c",
+        "upload_id"
+      ],
+      "content_sha256": "fb63a3175d91e4730496168809c944e7687c2f2fafe1a74c70d522f7bc1b5d52",
+      "description": "Temperature readings as received (DATA-01). Missing readings are absent rows.",
+      "format": "csv+gzip",
+      "path": "observed/readings.csv.gz",
+      "role": "observed",
+      "rows": 113933,
+      "sha256": "c5e00143fc282fba8a70c16acfd23e437d7750798a2121d27d9823eaea8cafda"
+    },
+    {
+      "bytes": 36105,
+      "columns": [
+        "shipment_id",
+        "sensor_id",
+        "product_id",
+        "policy_code",
+        "policy_version",
+        "origin",
+        "destination",
+        "route_type",
+        "departure_at",
+        "arrival_at",
+        "data_origin",
+        "dataset_id"
+      ],
+      "content_sha256": "cf64aa702975f845f465ee4719a30307f58b88cb4ecf274f517778bde8a32cfe",
+      "description": "One row per shipment (journey) with its logger, policy and planned route.",
+      "format": "csv",
+      "path": "observed/shipments.csv",
+      "role": "observed",
+      "rows": 200,
+      "sha256": "cf64aa702975f845f465ee4719a30307f58b88cb4ecf274f517778bde8a32cfe"
+    },
+    {
+      "bytes": 459239,
+      "columns": [
+        "upload_id",
+        "shipment_id",
+        "sensor_id",
+        "received_at",
+        "first_event_at",
+        "last_event_at",
+        "reading_count"
+      ],
+      "content_sha256": "e3d1e45c8434c000528ee2a46a6ac002ab8c4f5f1f888a63a3d22edd63507c0d",
+      "description": "Every batch received from a gateway, with its received time.",
+      "format": "csv+gzip",
+      "path": "observed/uploads.csv.gz",
+      "role": "observed",
+      "rows": 36705,
+      "sha256": "d536a54893526c17df3a8de1e1ed2b60271a9094a46e6854417dcee90a67b172"
+    },
+    {
+      "bytes": 4141,
+      "columns": [
+        "journey_id",
+        "partition"
+      ],
+      "content_sha256": "b6ac6aacddf7812c5a65ba4118768da994d8a6d1b3f407f4a609f5149e439a54",
+      "description": "Journey-level partition assignment (train / validation / test).",
+      "format": "csv",
+      "path": "splits/journey_split.csv",
+      "role": "split",
+      "rows": 200,
+      "sha256": "b6ac6aacddf7812c5a65ba4118768da994d8a6d1b3f407f4a609f5149e439a54"
+    },
+    {
+      "bytes": 5264,
+      "content_sha256": "754e22dab72c112a45d449e5deb0ef02a260c0cdf994dc6076677d0c4f9977a3",
+      "description": "Counts computed from the generated files.",
+      "format": "json",
+      "path": "statistics.json",
+      "role": "statistics",
+      "rows": null,
+      "sha256": "754e22dab72c112a45d449e5deb0ef02a260c0cdf994dc6076677d0c4f9977a3"
+    }
+  ],
+  "generator": {
+    "name": "coldchain_sim",
+    "version": "1.0.0"
+  },
+  "journey_count": 200,
+  "manifest_schema_version": "1.0",
+  "policy": {
+    "content_sha256": "73f757e24319791dd6cb8200cf1863aac362d97d6ef32fe01bfa89566b5e0a96",
+    "gap_review_at_min": 30,
+    "gap_unknown_after_min": 15,
+    "high_excursion_min_duration_min": 30,
+    "low_excursion_min_duration_min": 15,
+    "max_temp_c": 8.0,
+    "min_temp_c": 2.0,
+    "policy_code": "POL-CHILL-01",
+    "policy_version": "1.0",
+    "procedure_version": "SOP-EXC v1.0",
+    "product_id": "PRD-CHILL-01",
+    "source_file": "backend/app/seed/data/policies/POL-CHILL-01_v1.0.json"
+  },
+  "regenerate_command": "docker compose --profile tools run --rm data-tools python -m coldchain_sim generate --config data/generator/config/coldchain-sim-v1.yaml --seed 55 --out data/generated/<folder>",
+  "seed": 55,
+  "split_seed": 55,
+  "synthetic": true
+}

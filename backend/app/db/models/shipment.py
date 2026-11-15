@@ -3,7 +3,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import CheckConstraint, ForeignKey, ForeignKeyConstraint, String, Text, UniqueConstraint
+from sqlalchemy import CheckConstraint, ForeignKey, ForeignKeyConstraint, Index, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, created_at_col, str_enum, uuid_pk
@@ -27,6 +27,8 @@ class Shipment(Base):
         str_enum(ShipmentStatus, "shipment_status"), nullable=False, server_default=ShipmentStatus.CREATED.value
     )
     data_origin: Mapped[DataOrigin] = mapped_column(str_enum(DataOrigin, "data_origin"), nullable=False)
+    # Set when the shipment was created by a dataset import (Milestone 2 provenance, DATA-07).
+    source_dataset_id: Mapped[str | None] = mapped_column(ForeignKey("dataset_release.dataset_id"))
     created_at: Mapped[datetime] = created_at_col()
 
     __table_args__ = (
@@ -35,6 +37,7 @@ class Shipment(Base):
             ["policy_id", "product_id"], ["policy.policy_id", "policy.product_id"],
             name="fk_shipment_policy_product",
         ),
+        Index("ix_shipment_source_dataset_id", "source_dataset_id"),
     )
 
 

@@ -16,3 +16,8 @@ Dockerfile text eol=lf
 *.joblib binary
 *.gz binary
 *.zip binary
+
+# Dataset releases are verified byte-for-byte against manifest.json: never convert line endings.
+data/release/** -text
+# The simulator configuration is hashed into every dataset fingerprint: always LF.
+data/generator/config/*.yaml text eol=lf

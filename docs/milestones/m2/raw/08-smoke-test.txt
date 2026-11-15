@@ -1,0 +1,32 @@
+$ python3 scripts/smoke_test.py --keep-running
+[PASS] compose configuration valid
+[PASS] stack starts and becomes healthy - 6s
+[PASS] start: React app served at / - HTTP 200
+[PASS] start: SPA deep link /shipments - HTTP 200
+[PASS] start: /api/health via proxy - HTTP 200, db=ok, revision=0002
+[PASS] start: migration at head
+[PASS] seeded teaching policy returned - POL-CHILL-01 v1.0
+[PASS] backend outage reported as JSON api_unreachable - HTTP 502, code=api_unreachable
+[PASS] frontend still served during backend outage - HTTP 200
+[PASS] backend recovers after restart - health 200 again
+[PASS] shutdown removes containers (data volume kept)
+[PASS] stack restarts after shutdown
+[PASS] restart: React app served at / - HTTP 200
+[PASS] restart: SPA deep link /shipments - HTTP 200
+[PASS] restart: /api/health via proxy - HTTP 200, db=ok, revision=0002
+[PASS] restart: migration at head
+[PASS] database cluster persisted across restart - system_identifier 7707713279831003170
+[PASS] policy row persisted (same policy_id) - 7db29c4e-19ca-40af-9f9f-ea53f3469ddf
+
+18 passed, 0 failed
+(exit code 0)
+
+$ docker compose --profile tools run --rm data-tools python -m app.dataset status   (after restart: data persisted)
+coldchain-sim-v1.0.0-seed11  seed=11  journeys=200  imported_at=2026-11-13T18:33:39.432377+00:00  fingerprint=80c4aec06daf3554ba0eecea7ff63d3d14cd5545df43cc7b94601b1fe8a9970d
+  shipment                        200
+  sensor_assignment               200
+  ingest_batch                  37136
+  reading                      114969
+  context_reading              114969
+  ground_truth.journey            200
+  ground_truth.event             2750

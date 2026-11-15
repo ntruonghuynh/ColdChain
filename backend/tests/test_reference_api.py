@@ -57,8 +57,9 @@ def test_system_info_marks_future_features_not_implemented(client: TestClient) -
     response = client.get("/api/system/info")
     assert response.status_code == 200
     data = response.json()["data"]
-    assert data["milestone"] == "M1"
+    assert data["milestone"] == "M2"
     features = {f["key"]: f for f in data["features"]}
     for key in ["ingestion", "ml", "llm", "blockchain", "quality_workflow", "authentication"]:
         assert features[key]["status"] == "not_implemented", key
     assert features["database"]["status"] == "available"
+    assert features["synthetic_data"]["status"] == "available"

@@ -2,9 +2,9 @@
 
 | Item | Value |
 |---|---|
-| Status | Milestone 0 design. **Milestone 1 implemented** the database schema (§5) and the infrastructure (§8); everything else is still design |
+| Status | Milestone 0 design. **Milestone 1 implemented** the database schema (§5) and the infrastructure (§8). **Milestone 2 implemented** the synthetic data generator, dataset import and ground-truth schema (§3.7, §5, I-9). Everything else is still design |
 | Inputs | `docs/requirements-analysis.md` (requirement IDs referenced in brackets, e.g. [FR-24]) |
-| Last updated | 2026-11-14 (Milestone 1) |
+| Last updated | 2026-11-15 (Milestone 2 review) |
 
 ---
 
@@ -56,7 +56,7 @@ flowchart LR
     WORKER -- "JSON-RPC: transactions" --> CHAIN
     API -- "JSON-RPC: read-only views" --> CHAIN
     DEPLOY --> CHAIN
-    SIM -- "CSV/Parquet + ground truth" --> API
+    SIM -- "CSV.gz + manifest<br/>(import, M2)" --> DB
     SIM -- "training data" --> ML
 ```
 
@@ -107,9 +107,13 @@ Python package. Retrieval over the approved corpus, prompt templates, provider a
 
 Hardhat project: Solidity contract `ColdChainRegistry`, deployment script, role setup, contract tests. Details in section 7.4.
 
-### 3.7 Data (`data/`)
+### 3.7 Data (`data/`) — implemented in Milestone 2
 
-Seeded journey simulator, data dictionary, provenance record, generated datasets (canonical release committed or regenerated, decision D-05).
+- **Generator** `data/generator/coldchain_sim` (Python 3.12 standard library + PyYAML; runs in the backend image through the `data-tools` Compose service). Layers: 1-minute thermal physics → 5-minute logger observations (bias, drift, noise, spikes) → transmission (15-minute uploads, failed uploads, ocean coverage outage with buffered upload) → ground truth (true out-of-range runs, policy-derived excursions, injected causes, missing data, delays). Seeds are derived per journey with SHA-256, so journeys are independent and output is byte-identical for the same seed and configuration.
+- **Output layout**: `observed/` (shipments, uploads, readings, context: what the system receives), `ground_truth/` (journeys, events, per-sample truth), `splits/journey_split.csv` (journey → partition only), `manifest.json` (versions, seed, policy hash, per-file checksums, fingerprint), `statistics.json`, `config.yaml`.
+- **Canonical release** `data/release/coldchain-sim-v1.0.0-seed11/` committed (D-05); evaluation-seed manifests in `data/release/seed-manifests/`.
+- **Documentation**: `data/dictionary/data-dictionary.md`, `data/dictionary/provenance.md`.
+- **Import** `backend/app/dataset/` (`python -m app.dataset import <dir>`): verifies the manifest, checks that the dataset's policy hash equals the stored policy's `content_sha256`, then writes observed rows into the operational tables and labels into schema `ground_truth`, in one transaction, idempotently (re-import writes nothing). It is a dataset loader, not the M3 ingestion path, and runs no detection.
 
 ### 3.8 Scripts (`scripts/`)
 
@@ -131,7 +135,7 @@ Section 8.
 | I-6 | Chain write | Worker → Hardhat node | Contract ABI, one call per business event, unique business reference | Outbox retry with backoff; check `isReferenceUsed` before resending [BC-09] |
 | I-7 | Chain read | Backend → Hardhat node | Contract view functions and event logs | Chain unreachable → reconciliation shows "chain unavailable", not "missing" |
 | I-8 | Contract deploy | chain-deploy → shared volume | `deployment.json` with chain ID, address, ABI hash, role assignments | Backend refuses chain writes if the deployment file is missing or the code hash differs |
-| I-9 | Dataset | Simulator → Backend / ML | Versioned files + `manifest.json` (seed, generator version, row counts, SHA-256) | Loader checks manifest hashes before use |
+| I-9 | Dataset | Simulator → Backend / ML | Versioned files + `manifest.json` (seed, generator and config versions, policy hash, row counts, SHA-256 of stored and uncompressed bytes, dataset fingerprint) | Loader checks manifest hashes before use (implemented M2: `app.dataset.manifest.load_and_verify`); policy hash mismatch or a different dataset under an existing ID is refused |
 
 ## 5. Data model
 
@@ -228,7 +232,17 @@ erDiagram
 
 Change from the M0 design: the mutable delivery state (`status`, `attempts`, `next_attempt_at`, `last_error`) moved from `business_event` to a separate `outbox_entry` table, so `business_event` stays an immutable fact as required by the append-only rule below.
 
-**Added in later milestones** (not drawn as implemented): `detection` (source `BASELINE`/`ML`, model version, window, class, score) and `data_gap` (start, end, status `UNKNOWN`) in M3–M4, `llm_draft` (prompt version, provider, model, source IDs, status, tokens, latency, cost) in M6, `audit_log` (hash-chained, signed entries for the comparison in EVAL-03) in M5, and `ground_truth_*` tables kept in a **separate schema** that detection code cannot read [DATA-09] in M2.
+**Implemented in Milestone 2** (migration `0002`, additive only):
+
+| Object | Purpose |
+|---|---|
+| `dataset_release` | Provenance of each imported dataset: generator and config versions, seed, split seed, policy (FK) and policy hash, content fingerprint (unique), full manifest (JSONB) [DATA-07] |
+| `shipment.source_dataset_id` | Nullable FK to `dataset_release`; NULL for shipments not created by an import |
+| schema `ground_truth`, tables `journey` and `event` | Simulator labels (scenario, ambient profile, parameters; labelled intervals with `label_source` and JSONB attributes), apart from the operational tables [DATA-09] |
+
+Only `app/db/models/ground_truth.py`, the model index and the importer may refer to the ground-truth models; `backend/tests/test_ground_truth_boundary.py` enforces this for every other application module (detection, features, API). Both live under the same database role in this prototype; a separate read-only role for detection is not configured (limitation).
+
+**Added in later milestones** (not drawn as implemented): `detection` (source `BASELINE`/`ML`, model version, window, class, score) and `data_gap` (start, end, status `UNKNOWN`) in M3–M4, `llm_draft` (prompt version, provider, model, source IDs, status, tokens, latency, cost) in M6, `audit_log` (hash-chained, signed entries for the comparison in EVAL-03) in M5.
 
 Rules for the schema:
 
@@ -256,14 +270,17 @@ Role grants are revoked by setting `user_role.revoked_at`, never deleted, becaus
 
 ```mermaid
 flowchart LR
-    G["Generated journeys<br/>(5 seeds × ≥200)"] --> S["Journey-level split<br/>train / val / test<br/>grouped by journey,<br/>stratified by ambient profile"]
+    G["Seed 11 development dataset<br/>(200 journeys)"] --> S["Journey-level split<br/>train / val / test<br/>grouped by journey,<br/>stratified"]
     S --> W["Windowing on event_at grid<br/>5-min slots, gaps kept as NaN"]
-    W --> F["Feature builder<br/>feature_spec vN"]
+    W --> F["Feature builder<br/>observed data only<br/>feature_spec vN"]
+    GT["Ground-truth events<br/>(targets only, D-12)"] --> L["Label builder<br/>(allow-listed)"]
+    L --> T
     F --> T["Train candidates<br/>on train"]
     T --> V["Select model and tune thresholds<br/>on validation only"]
     V --> Z["Freeze: model + feature spec<br/>+ preprocessing + hashes"]
-    Z --> E["Single test run<br/>on held-out journeys"]
-    Z --> P["Serve via backend<br/>validated predict API"]
+    Z --> E["Seed-11 test partition:<br/>one regression check, no tuning"]
+    Z --> FE["Final evaluation (M9)<br/>seeds 22, 33, 44, 55, 66"]
+    Z --> P["Serve via backend<br/>validated predict API<br/>(no ground truth)"]
 ```
 
 - **Windows** [ML-01]: resample to a 5-minute grid by `event_at`; missing slots stay `NaN` (no forward fill across a gap, P2). Window length and stride are configuration (starting proposal: 60 minutes, stride 5 minutes). Features use only data at or before the window end [ML-09].
@@ -276,7 +293,9 @@ flowchart LR
   - C2 — optional: `IsolationForest` anomaly score as an extra spike/bias signal.
   The final candidate is chosen on validation results only [ML-08].
 - **Event aggregation**: consecutive positive windows form a predicted event; the minimum run length is tuned on validation [EVAL-11].
-- **Freeze** [ML-06]: `ml/registry/<model_version>/` holds the model file, `feature_spec.json`, preprocessing config, training-data manifest hash, validation metrics, model card and a SHA-256 of each file. The test set is run once per seed after freezing.
+- **Training-time labels vs inference-time features** [ML-09, D-12, approved 2026-11-15]: *labels* (targets) come from the simulator's ground-truth events. They are read by one explicitly allow-listed label-builder module, only during training and evaluation, and only for the journeys of the partition in use. *Features* are computed only from observed data (`reading`, `context_reading`, or the `observed/` files), identically in training and in inference. Inference, operational APIs and the frontend never read ground truth. `backend/tests/test_ground_truth_boundary.py` enforces this. M4 adds the label builder to its allow-list and the feature and predict modules stay forbidden.
+- **Seeds and partitions** [D-13, approved 2026-11-15]: seed 11 is used for development, training (train partition), model selection and threshold tuning (validation partition) and internal regression checks (test partition). The seed-11 test partition is never used for iterative tuning. Seeds 22, 33, 44, 55, 66 are final evaluation seeds. They do not influence feature selection, model selection, preprocessing or thresholds, and they are evaluated only after the model and preprocessing are frozen.
+- **Freeze** [ML-06]: `ml/registry/<model_version>/` holds the model file, `feature_spec.json`, preprocessing config, training-data manifest hash, validation metrics, model card and a SHA-256 of each file (D-05: committed, small, versioned). The freeze record also stores the seed assignments (development seed and split seed; final evaluation seeds) and the evaluation-protocol version. Final evaluation seeds are opened only after this record exists.
 - **Serving** [ML-07]: backend loads one model version (`ML_MODEL_VERSION`), validates feature frames against the spec, stores every prediction with its model version. Predictions open incidents for review only [BR-15].
 
 ## 7. Key flows
@@ -430,7 +449,8 @@ Compose services (`docker-compose.yml`). Services marked M1 exist now; the other
 | `migrate` (M1) | `backend/` image, target `runtime` | none | exits 0 | One-shot: `alembic upgrade head && python -m app.seed` (idempotent reference data) |
 | `backend` (M1) | same image as `migrate` | none | `GET /api/health` (DB reachable and schema at head) | Starts only after `migrate` completed successfully |
 | `frontend` (M1) | multi-stage: `node:24-alpine` build → `nginx:1.28-alpine` | `127.0.0.1:3000` → 8080 | `GET /healthz` | Serves the SPA; reverse-proxies `/api/` to `backend:8000` |
-| `backend-tests` (M1, profile `test`) | `backend/` image, target `test` | none | pytest exit code | Uses separate `*_test` databases |
+| `backend-tests` (M1, profile `test`) | `backend/` image, target `test` | none | pytest exit code | Uses separate `*_test` databases. Since M2 it mounts the repository read-only at `/workspace` and also runs `data/generator/tests` |
+| `data-tools` (M2, profile `tools`) | same image as `backend` | none | exit code | One-shot dataset tools: `python -m coldchain_sim ...` (generate, verify) and `python -m app.dataset ...` (verify, import, status). Mounts the repository at `/workspace` |
 | `chain` (M5) | built from `blockchain/` (Node LTS + Hardhat) | 8545 | — | In-memory chain; reset together with `db` |
 | `chain-deploy` (M5) | same as `chain` | none | — | One-shot: deploy, grant roles, write `deployment.json` |
 | `worker` (M5) | same image as `backend` | none | — | Outbox relay and scheduled jobs |
@@ -464,7 +484,7 @@ Compose services (`docker-compose.yml`). Services marked M1 exist now; the other
 | E3 Complete | as E1 | as E2 | DB + blockchain |
 | E3-alt Comparator | as E1 | as E2 | DB + signed audit log |
 
-Runners in `scripts/eval/` read a run config (seeds, model version, prompt version, contract version), write raw per-case results (CSV/JSONL) and a summary to `docs/evaluation/runs/<run_id>/`, together with the exact config and git commit. Uncertainty: per-seed values plus mean ± standard deviation across ≥5 seeds, and journey-level bootstrap 95% intervals where the sample allows [EVAL-09, EVAL-10].
+Runners in `scripts/eval/` read a run config (seeds, model version, prompt version, contract version), write raw per-case results (CSV/JSONL) and a summary to `docs/evaluation/runs/<run_id>/`, together with the exact config and git commit. Uncertainty: per-seed values plus mean ± standard deviation across ≥5 seeds (the reserved evaluation seeds 22, 33, 44, 55, 66; seed 11 is the development dataset, A-13), and journey-level bootstrap 95% intervals where the sample allows [EVAL-09, EVAL-10].
 
 ## 11. Known limitations (by design)
 

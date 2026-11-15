@@ -101,5 +101,6 @@ export interface Shipment {
   destination: string | null;
   status: string;
   data_origin: 'SIMULATED' | 'MEASURED';
+  source_dataset_id?: string | null;
   created_at: string;
 }

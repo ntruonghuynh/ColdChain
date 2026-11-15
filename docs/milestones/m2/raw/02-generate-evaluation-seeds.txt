@@ -1,0 +1,53 @@
+$ docker compose --profile tools run --rm data-tools python -m coldchain_sim seeds --config data/generator/config/coldchain-sim-v1.yaml --seeds 22,33,44,55 --out-root data/generated/eval-seeds
+dataset_id          coldchain-sim-v1.0.0-seed22
+seed / split_seed   22 / 22
+journeys            200
+fingerprint         198fd15dc4636bde6a797acb5e4a0241cc95abb44f24e0728886bdf2d520130c
+  ground_truth/events.csv.gz           2702 rows
+  ground_truth/journeys.csv             200 rows
+  ground_truth/slots.csv.gz          116487 rows
+  observed/context.csv.gz            114653 rows
+  observed/readings.csv.gz           114653 rows
+  observed/shipments.csv                200 rows
+  observed/uploads.csv.gz             37042 rows
+  splits/journey_split.csv              200 rows
+written to          data/generated/eval-seeds/seed22  (3.3 s)
+dataset_id          coldchain-sim-v1.0.0-seed33
+seed / split_seed   33 / 33
+journeys            200
+fingerprint         1342465c34ea69988e1acafdf508d69d202f3e21df32592ec8a1e1b3738f1fba
+  ground_truth/events.csv.gz           2650 rows
+  ground_truth/journeys.csv             200 rows
+  ground_truth/slots.csv.gz          115636 rows
+  observed/context.csv.gz            114071 rows
+  observed/readings.csv.gz           114071 rows
+  observed/shipments.csv                200 rows
+  observed/uploads.csv.gz             36839 rows
+  splits/journey_split.csv              200 rows
+written to          data/generated/eval-seeds/seed33  (3.2 s)
+dataset_id          coldchain-sim-v1.0.0-seed44
+seed / split_seed   44 / 44
+journeys            200
+fingerprint         4bd98709fd8cf74396c484c811f74c4f020c6384feff222d21749a8f467d15e7
+  ground_truth/events.csv.gz           2739 rows
+  ground_truth/journeys.csv             200 rows
+  ground_truth/slots.csv.gz          114044 rows
+  observed/context.csv.gz            112296 rows
+  observed/readings.csv.gz           112296 rows
+  observed/shipments.csv                200 rows
+  observed/uploads.csv.gz             36248 rows
+  splits/journey_split.csv              200 rows
+written to          data/generated/eval-seeds/seed44  (3.2 s)
+dataset_id          coldchain-sim-v1.0.0-seed55
+seed / split_seed   55 / 55
+journeys            200
+fingerprint         08a47b298df54c2eb4bf1842c0fe290bfad455abd27421c83ce72937724c669e
+  ground_truth/events.csv.gz           2671 rows
+  ground_truth/journeys.csv             200 rows
+  ground_truth/slots.csv.gz          115584 rows
+  observed/context.csv.gz            113933 rows
+  observed/readings.csv.gz           113933 rows
+  observed/shipments.csv                200 rows
+  observed/uploads.csv.gz             36705 rows
+  splits/journey_split.csv              200 rows
+written to          data/generated/eval-seeds/seed55  (3.2 s)

@@ -1,0 +1,35 @@
+# SHA-256 of every file in data/release/coldchain-sim-v1.0.0-seed11 BEFORE the 2026-11-15 review changes
+bc898140e21bb47d55e4b0beb683d43d189ba0bda272f431f31e4b1a8cb07cd8  data/release/coldchain-sim-v1.0.0-seed11/README.md
+78c4d02b88324ffbf93e22a2f485f3d5438a1f8836c859677231d2e740fae7da  data/release/coldchain-sim-v1.0.0-seed11/config.yaml
+84ef722d786b46f2061845b1dd1c2f5e7836bb078182e7c21306f969957616d4  data/release/coldchain-sim-v1.0.0-seed11/ground_truth/events.csv.gz
+9ddc7f7629ef93a25eb2073885ac788c3ef3d2e1bbbe16eca786c87ced4457e3  data/release/coldchain-sim-v1.0.0-seed11/ground_truth/journeys.csv
+fbf91cad1f4ff3f1fa8de78eff2fd98da3f3365a728d6a23e15483bd1e2a2605  data/release/coldchain-sim-v1.0.0-seed11/ground_truth/slots.csv.gz
+11b04d2ea8abba8dcf8c478b4e822683ddc3044cc176e9d40dc995a4a712a1b9  data/release/coldchain-sim-v1.0.0-seed11/manifest.json
+899546e56f5d287c0edcf57e9a77b9061ff1933477f8b885ab2004f8952aa007  data/release/coldchain-sim-v1.0.0-seed11/observed/context.csv.gz
+7fc0d7ff7b820f48f59c3c619956d37177cc4fc48e8158c4ad52d295a1e19bba  data/release/coldchain-sim-v1.0.0-seed11/observed/readings.csv.gz
+7737f6c4c68d4781c6ad9fd261429e63db51b94935d228af9e4275b86a8e1ba8  data/release/coldchain-sim-v1.0.0-seed11/observed/shipments.csv
+719aec9ef8def875400971b180b7dfcc8443100aa5a01be846ca3e8e9251251d  data/release/coldchain-sim-v1.0.0-seed11/observed/uploads.csv.gz
+810341920fc0213680f2063155b0c45c6fc44e8b14030e2ae2bb5572d4adfa73  data/release/coldchain-sim-v1.0.0-seed11/splits/journey_split.csv
+86cd7636e85f12be268779295647c901d7bd6f4dddc5f26db86d8e1f4456af9b  data/release/coldchain-sim-v1.0.0-seed11/statistics.json
+
+# AFTER
+bc898140e21bb47d55e4b0beb683d43d189ba0bda272f431f31e4b1a8cb07cd8  data/release/coldchain-sim-v1.0.0-seed11/README.md
+78c4d02b88324ffbf93e22a2f485f3d5438a1f8836c859677231d2e740fae7da  data/release/coldchain-sim-v1.0.0-seed11/config.yaml
+84ef722d786b46f2061845b1dd1c2f5e7836bb078182e7c21306f969957616d4  data/release/coldchain-sim-v1.0.0-seed11/ground_truth/events.csv.gz
+9ddc7f7629ef93a25eb2073885ac788c3ef3d2e1bbbe16eca786c87ced4457e3  data/release/coldchain-sim-v1.0.0-seed11/ground_truth/journeys.csv
+fbf91cad1f4ff3f1fa8de78eff2fd98da3f3365a728d6a23e15483bd1e2a2605  data/release/coldchain-sim-v1.0.0-seed11/ground_truth/slots.csv.gz
+11b04d2ea8abba8dcf8c478b4e822683ddc3044cc176e9d40dc995a4a712a1b9  data/release/coldchain-sim-v1.0.0-seed11/manifest.json
+899546e56f5d287c0edcf57e9a77b9061ff1933477f8b885ab2004f8952aa007  data/release/coldchain-sim-v1.0.0-seed11/observed/context.csv.gz
+7fc0d7ff7b820f48f59c3c619956d37177cc4fc48e8158c4ad52d295a1e19bba  data/release/coldchain-sim-v1.0.0-seed11/observed/readings.csv.gz
+7737f6c4c68d4781c6ad9fd261429e63db51b94935d228af9e4275b86a8e1ba8  data/release/coldchain-sim-v1.0.0-seed11/observed/shipments.csv
+719aec9ef8def875400971b180b7dfcc8443100aa5a01be846ca3e8e9251251d  data/release/coldchain-sim-v1.0.0-seed11/observed/uploads.csv.gz
+810341920fc0213680f2063155b0c45c6fc44e8b14030e2ae2bb5572d4adfa73  data/release/coldchain-sim-v1.0.0-seed11/splits/journey_split.csv
+86cd7636e85f12be268779295647c901d7bd6f4dddc5f26db86d8e1f4456af9b  data/release/coldchain-sim-v1.0.0-seed11/statistics.json
+
+$ diff before after
+identical (0 differences)
+
+$ docker compose --profile tools run --rm data-tools python -m coldchain_sim verify data/release/coldchain-sim-v1.0.0-seed11 --regenerate
+checksums: OK
+regeneration: identical content
+dataset_id coldchain-sim-v1.0.0-seed11  fingerprint 80c4aec06daf3554ba0eecea7ff63d3d14cd5545df43cc7b94601b1fe8a9970d

@@ -1,0 +1,56 @@
+$ curl -s "http://localhost:3000/api/shipments?limit=2"
+{
+    "data": [
+        {
+            "shipment_id": "SIM-S11-J0002",
+            "product_id": "PRD-CHILL-01",
+            "policy_id": "7db29c4e-19ca-40af-9f9f-ea53f3469ddf",
+            "shipper_org_id": "ORG-SHIPPER",
+            "carrier_org_id": "ORG-CARRIER",
+            "receiver_org_id": "ORG-RECEIVER",
+            "origin": "Simulated site 02",
+            "destination": "Simulated site 04",
+            "status": "CREATED",
+            "data_origin": "SIMULATED",
+            "source_dataset_id": "coldchain-sim-v1.0.0-seed11",
+            "created_at": "2026-11-13T18:33:39.420543Z"
+        },
+        {
+            "shipment_id": "SIM-S11-J0001",
+            "product_id": "PRD-CHILL-01",
+            "policy_id": "7db29c4e-19ca-40af-9f9f-ea53f3469ddf",
+            "shipper_org_id": "ORG-SHIPPER",
+            "carrier_org_id": "ORG-CARRIER",
+            "receiver_org_id": "ORG-RECEIVER",
+            "origin": "Simulated site 03",
+            "destination": "Simulated site 04",
+            "status": "CREATED",
+            "data_origin": "SIMULATED",
+            "source_dataset_id": "coldchain-sim-v1.0.0-seed11",
+            "created_at": "2026-11-13T18:33:39.420543Z"
+        }
+    ],
+    "meta": {
+        "total": 200,
+        "limit": 2,
+        "offset": 0
+    }
+}
+
+$ curl -s http://localhost:3000/api/system/info  (milestone + synthetic_data feature)
+milestone M2
+[{'key': 'synthetic_data', 'name': 'Synthetic journey dataset and import', 'status': 'available', 'milestone': 'M2', 'note': 'Canonical simulated dataset in data/release/, imported with a manual command. No detection runs on it yet (Milestone 3).'}, {'key': 'ingestion', 'name': 'Reading ingestion, gap detection and threshold baseline', 'status': 'not_implemented', 'milestone': 'M3', 'note': None}]
+
+$ docker compose exec db psql -U coldchain coldchain -c "SELECT * FROM (SELECT DISTINCT ON (shipment_id) shipment_id, event_at, received_at, round(extract(epoch FROM received_at - event_at)/60, 1) AS delay_min FROM reading ORDER BY shipment_id, received_at - event_at DESC) d ORDER BY delay_min DESC LIMIT 3"
+  shipment_id  |        event_at        |      received_at       | delay_min 
+---------------+------------------------+------------------------+-----------
+ SIM-S11-J0154 | 2026-10-19 08:57:00+00 | 2026-10-19 23:01:02+00 |     844.0
+ SIM-S11-J0006 | 2026-09-07 09:16:00+00 | 2026-09-07 23:01:03+00 |     825.1
+ SIM-S11-J0083 | 2026-09-08 02:23:00+00 | 2026-09-08 15:58:01+00 |     815.0
+(3 rows)
+$ docker compose exec db psql -U coldchain coldchain -c "<rows per schema>"
+ simulated_shipments | gt_policy_excursions | readings_without_provenance 
+---------------------+----------------------+-----------------------------
+                 200 |                   93 |                           0
+(1 row)
+

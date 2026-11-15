@@ -1,0 +1,25 @@
+$ docker run --rm --platform linux/amd64 -v "$PWD":/workspace:ro -w /workspace -e PYTHONPATH=/workspace/data/generator python:3.12-slim sh -c "pip install -q pyyaml==6.0.3 && python -m coldchain_sim verify data/release/coldchain-sim-v1.0.0-seed11 --regenerate"
+Unable to find image 'python:3.12-slim' locally
+3.12-slim: Pulling from library/python
+05e0eee5572e: Pulling fs layer
+68bced9e0afa: Pulling fs layer
+37fb86c2a767: Pulling fs layer
+2dc99d2d0a39: Pulling fs layer
+05e0eee5572e: Download complete
+68bced9e0afa: Download complete
+e0a5f9afcd02: Download complete
+37fb86c2a767: Download complete
+68bced9e0afa: Pull complete
+37fb86c2a767: Pull complete
+f26199dfe4a6: Download complete
+2dc99d2d0a39: Download complete
+05e0eee5572e: Pull complete
+2dc99d2d0a39: Pull complete
+Digest: sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+Status: Downloaded newer image for python:3.12-slim
+x86_64
+Python 3.12.16
+checksums: OK
+regeneration: identical content
+dataset_id coldchain-sim-v1.0.0-seed11  fingerprint 80c4aec06daf3554ba0eecea7ff63d3d14cd5545df43cc7b94601b1fe8a9970d
+(exit code 0)

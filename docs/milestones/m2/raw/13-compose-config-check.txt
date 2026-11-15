@@ -1,0 +1,12 @@
+$ docker compose --env-file .env.example config --quiet && echo "compose config valid with .env.example"
+compose config valid with .env.example
+
+$ docker compose --env-file .env.example --profile test --profile tools config --services
+db
+migrate
+backend
+backend-tests
+data-tools
+frontend
+
+Frontend tests and scripts/smoke_test.py were not re-run: no frontend file, compose file or start/stop script changed in the 2026-11-15 review (results of the earlier run: raw/07, raw/08).

@@ -1,7 +1,7 @@
 [project]
 name = "coldchain-backend"
 version = "0.1.0"
-description = "Cold Chain Monitoring and Excursion Response - FastAPI backend (Milestone 1 skeleton)"
+description = "Cold Chain Monitoring and Excursion Response - FastAPI backend"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "fastapi>=0.115,<1.0",
@@ -11,6 +11,8 @@ dependencies = [
     "psycopg[binary]>=3.2,<4.0",
     "pydantic>=2.7,<3.0",
     "pydantic-settings>=2.3,<3.0",
+    # Simulator configuration files (data/generator/config/*.yaml), Milestone 2.
+    "pyyaml>=6.0,<7.0",
 ]
 
 [project.optional-dependencies]

@@ -2,10 +2,10 @@
 
 | Item | Value |
 |---|---|
-| Status | M0 accepted · **M1 implemented, awaiting acceptance** (2026-11-14) |
+| Status | M0 accepted · M1 implemented (2026-11-14) · **M2 implemented and reviewed; decisions D-01, D-05, D-10 to D-13 finalised 2026-11-15; awaiting commit approval** |
 | Inputs | `docs/requirements-analysis.md`, `docs/architecture.md` |
 | Course window | 8 to 10 weeks (brief, page 1) |
-| Last updated | 2026-11-14 |
+| Last updated | 2026-11-15 |
 
 ## Working rules for every milestone
 
@@ -71,8 +71,9 @@ Suggested timing for a 10-week course (adjust to the team): week 1 M0–M1, week
 | Dependencies | M1 (schema field names); D-01, D-02, D-05 |
 | Acceptance criteria | Same seed + config → byte-identical output (checked by SHA-256 in `manifest.json`); each seed has ≥200 journeys; every scenario type is present with counts recorded in the manifest; every journey has an ambient profile label; outages produce readings whose `received_at` is later than `event_at` by the outage length; ground truth includes labelled excursion intervals; data dictionary documents units, timezone (UTC), missing-value meaning, label source and provenance for every field. |
 | Tests | Determinism test (two runs, same hash); schema test (required fields, types, UTC); scenario coverage test; outage timestamp test; label/observation separation test; at least five seeds generate successfully. |
-| Deliverables | Generator, data dictionary, provenance record, manifests for seeds used in evaluation (proposal: 11, 22, 33, 44, 55). |
+| Deliverables | Generator, data dictionary, provenance record, canonical development dataset (seed 11) and manifests for the reserved evaluation seeds 22, 33, 44, 55, 66 (A-13, approved 2026-11-15). |
 | Closes | SC-02, DATA-04, DATA-06 (dataset side), DATA-07, DATA-08, DATA-09, EVAL-10 (data side), SUB-02 (draft) |
+| As implemented (2026-11-14) | Owner's M2 instructions added: database import (migration `0002`: `dataset_release`, `shipment.source_dataset_id`, schema `ground_truth`; `backend/app/dataset/`), deterministic 70/15/15 journey split (`splits/journey_split.csv`), sampling interval 5 min and durations 24–72 h as approved simulation assumptions. Configuration file is `data/generator/config/coldchain-sim-v1.yaml`. Generator tests live in `data/generator/tests/` and run inside the `backend-tests` container. New Compose service `data-tools` (profile `tools`). Raw run output: `docs/milestones/m2/raw/`. |
 
 ## M3 — Ingestion, validation, gap detection, threshold baseline, excursion queue
 
@@ -84,6 +85,7 @@ Suggested timing for a 10-week course (adjust to the team): week 1 M0–M1, week
 | Acceptance criteria | Invalid records rejected with reasons (BR-08); duplicates handled per BR-07; both timestamps stored unchanged; gaps >15 min become UNKNOWN intervals, gaps ≥30 min open `DATA_GAP` incidents; BR-02 excursions open `TEMPERATURE_EXCURSION` incidents; a buffered batch arriving after a gap triggers re-evaluation and the excursion is detected with original `event_at`; UNKNOWN time is never counted as in range; excursion queue lists open incidents by category. |
 | Tests | Unit test per business rule BR-02 to BR-09, including boundaries (exactly 8.0 °C, exactly 30 min, exactly 15 min gap); property test that no gap interval is ever reported in-range; integration test: out-of-order batch after outage; idempotent re-upload of the same batch; conflicting duplicate rejected. |
 | Deliverables | Working ingestion and baseline detection; API docs (OpenAPI); M3 report. |
+| Decisions in force (2026-11-15) | The nominal 5-minute sampling interval (D-01) lives in **detector configuration**, versioned and recorded with each detection result. It does not live in the policy, so `POL-CHILL-01_v1.0.json` and policy version 1.0 stay unchanged. BR-05 is **not approved** (open questions in requirements analysis §13.3). It must be decided before the BR-05 part of M3 is built and accepted. BR-06 to BR-09 also still need approval (D-09). |
 | Closes | FR-01, FR-03, FR-04, FR-05, FR-10, FR-11, FR-12 (baseline side), FR-20 (API), EVAL-01, EVAL-13 (functional side) |
 
 ## M4 — ML pipeline
@@ -96,6 +98,7 @@ Suggested timing for a 10-week course (adjust to the team): week 1 M0–M1, week
 | Acceptance criteria | No journey appears in more than one partition (asserted in code); test set contains all ambient profiles; features use only data up to window end; thresholds tuned only on validation; frozen artifact includes feature spec, preprocessing config, data manifest hash and file hashes; prediction API rejects frames that do not match the spec; every stored prediction carries the model version; ML results cannot change shipment state. |
 | Tests | Leakage tests (group split, no future data in features, labels not in feature columns); deterministic training with fixed seed; feature unit tests on hand-built series (spike vs gradual warming); API schema tests; test that the predict path has no write access to dispositions or releases. |
 | Deliverables | Frozen model version(s), model card with validation results only, per-seed test results saved as raw files (reported in M9). |
+| Decisions in force (2026-11-15) | **D-12:** a single label-builder module reads ground-truth events as supervised targets and is added explicitly to the allow-list in `backend/tests/test_ground_truth_boundary.py`. Feature extraction, inference and the predict API use observed data only. **D-13:** train on seed-11 `train`, tune on seed-11 `validation`; the seed-11 `test` partition is a single regression check after freezing, never used for iterative tuning. Seeds 22–66 are not opened in M4. The freeze record stores the model version, seed assignments and protocol version. **D-05:** frozen artifacts are committed with SHA-256 checksums. |
 | Closes | FR-13, FR-14, FR-15 (API side), DATA-05, ML-01 to ML-10, NFR-04 (model part), SUB-03 (model part) |
 
 ## M5 — Blockchain module, chain gateway, outbox, signed audit log
@@ -156,13 +159,14 @@ Suggested timing for a 10-week course (adjust to the team): week 1 M0–M1, week
 | Acceptance criteria | Detection (event-level precision, recall, delay — both definitions) and reliability (false alarms per journey, missing-reading performance) for E0 vs E1 on ≥5 seeds; operations timing for E0–E3; LLM quality on ≥40 cases with all six measures; blockchain tests (altered files, unauthorized writes, invalid transitions, duplicates, outage with retry) with accept/reject counts, p50/p95 confirmation latency, consistency after recovery; E3 vs E3-alt comparison; every primary metric reported with sample size, baseline, candidate, absolute difference and uncertainty where supportable; every number in the report traceable to a saved raw file; limitations section. |
 | Tests | Unit tests for metric functions on hand-computed examples (event matching, delay, p50/p95, bootstrap); a check that the report's numbers match the raw files. |
 | Deliverables | Test report, raw results, evaluation configs. |
+| Decisions in force (2026-11-15) | **D-13:** final results come from seeds 22, 33, 44, 55, 66, evaluated with the frozen model and preprocessing only. Each run records the model version, seed assignments and protocol, and no setting is changed after looking at them. A change after that point requires a new model version and a fresh, recorded run. |
 | Closes | ML-03, EVAL-02 to EVAL-12, EVAL-13 (measured), SUB-05, SUB-08 |
 
 ## M10 — Packaging, distribution and submission
 
 | Field | Content |
 |---|---|
-| Objectives | ZIP package that a non-technical student can run with Docker Desktop; student guide; demo video script; final submission checklist. |
+| Objectives | ZIP package that a non-technical student can run with Docker Desktop; student guide; demo video script; final submission checklist; configurable, idempotent first-run import of the canonical dataset (D-10, approved 2026-11-15; reuses the M2 importer). |
 | Files / modules | `scripts/package_zip.sh`, root `start.*`/`stop.*` (from M1), `docs/student-guide.md` (with screenshots), `docs/demo-script.md`, `docs/submission-checklist.md`, final `README.md` |
 | Dependencies | M1 to M9 |
 | Acceptance criteria | On a clean machine with only Docker Desktop: unzip, copy `.env.example` to `.env` (or let the start script do it), run one start command, open the dashboard, run all four demo scenarios. ZIP contains no `.env`, keys, `node_modules`, caches or generated scratch data. Demo script fits 6–8 minutes and covers DEMO-01 to DEMO-04. Checklist maps every SUB-xx to a file. |

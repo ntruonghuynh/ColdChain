@@ -26,7 +26,7 @@ export function ShipmentsPage() {
           <EmptyState
             icon={<Package className="h-6 w-6" />}
             title="No shipments recorded"
-            description="Shipments are created by data ingestion, which is planned for Milestone 3. Nothing is shown until real records exist."
+            description="Simulated shipments appear after the synthetic dataset is imported (see the README, Milestone 2). Live data ingestion is planned for Milestone 3. Nothing is shown until real records exist."
           />
         )}
         {shipments.status === 'success' && shipments.data.meta.total > 0 && (

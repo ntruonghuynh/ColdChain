@@ -1,0 +1,77 @@
+$ docker compose up -d --build --wait
+ Image coldchain-frontend:local Building 
+ Image coldchain-backend:local Building 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ Image coldchain-backend:local Built 
+ Image coldchain-frontend:local Built 
+ Container coldchain-db-1 Running 
+ Container coldchain-migrate-1 Recreate 
+ Container coldchain-migrate-1 Recreated 
+ Container coldchain-backend-1 Recreate 
+ Container coldchain-backend-1 Recreated 
+ Container coldchain-frontend-1 Recreate 
+ Container coldchain-frontend-1 Recreated 
+ Container coldchain-db-1 Waiting 
+ Container coldchain-db-1 Healthy 
+ Container coldchain-migrate-1 Starting 
+ Container coldchain-migrate-1 Started 
+ Container coldchain-migrate-1 Waiting 
+ Container coldchain-migrate-1 Exited 
+ Container coldchain-backend-1 Starting 
+ Container coldchain-backend-1 Started 
+ Container coldchain-backend-1 Waiting 
+ Container coldchain-backend-1 Healthy 
+ Container coldchain-frontend-1 Starting 
+ Container coldchain-frontend-1 Started 
+ Container coldchain-backend-1 Waiting 
+ Container coldchain-frontend-1 Waiting 
+ Container coldchain-db-1 Waiting 
+ Container coldchain-migrate-1 Waiting 
+ Container coldchain-backend-1 Healthy 
+ Container coldchain-migrate-1 Exited 
+ Container coldchain-db-1 Healthy 
+ Container coldchain-frontend-1 Healthy 
+
+$ docker compose logs migrate
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade 0001 -> 0002, synthetic dataset provenance and ground truth schema (Milestone 2)
+Seed complete: 0 created, 12 unchanged.
+
+$ docker compose run --rm migrate alembic current
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+0002 (head)

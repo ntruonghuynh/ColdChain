@@ -1,0 +1,14 @@
+$ docker compose --profile tools run --rm data-tools python -m coldchain_sim generate --config data/generator/config/coldchain-sim-v1.yaml --seed 11 --out data/release/coldchain-sim-v1.0.0-seed11
+dataset_id          coldchain-sim-v1.0.0-seed11
+seed / split_seed   11 / 11
+journeys            200
+fingerprint         80c4aec06daf3554ba0eecea7ff63d3d14cd5545df43cc7b94601b1fe8a9970d
+  ground_truth/events.csv.gz           2750 rows
+  ground_truth/journeys.csv             200 rows
+  ground_truth/slots.csv.gz          116669 rows
+  observed/context.csv.gz            114969 rows
+  observed/readings.csv.gz           114969 rows
+  observed/shipments.csv                200 rows
+  observed/uploads.csv.gz             37136 rows
+  splits/journey_split.csv              200 rows
+written to          data/release/coldchain-sim-v1.0.0-seed11  (3.4 s)

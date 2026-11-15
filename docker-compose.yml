@@ -1,8 +1,10 @@
-# Cold Chain Monitoring and Excursion Response — local stack (Milestone 1)
+# Cold Chain Monitoring and Excursion Response — local stack (Milestones 1-2)
 #
 #   docker compose up -d --build --wait     start everything and wait until healthy
 #   docker compose down                     stop (data in the "pgdata" volume is kept)
-#   docker compose --profile test run --rm backend-tests    run backend tests
+#   docker compose --profile test run --rm backend-tests    run backend + generator tests
+#   docker compose --profile tools run --rm data-tools python -m coldchain_sim ...   dataset generator
+#   docker compose --profile tools run --rm data-tools python -m app.dataset ...     dataset import
 #
 # Values come from .env (copy .env.example). Required secrets have no defaults here.
 
@@ -94,6 +96,33 @@ services:
       APP_ENV: test
       # Tests create and drop this separate database; the main database is never touched.
       TEST_POSTGRES_DB: ${POSTGRES_DB:-coldchain}_test
+      # Generator package and committed dataset come from the read-only repository mount.
+      PYTHONPATH: /workspace/data/generator
+      COLDCHAIN_REPO_DIR: /workspace
+    volumes:
+      - .:/workspace:ro
+    command: ["pytest", "-v", "-p", "no:cacheprovider", "-c", "pyproject.toml", "tests", "/workspace/data/generator/tests"]
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  data-tools:
+    # One-shot tools for the synthetic dataset (Milestone 2). Same image as the backend.
+    #   generate: python -m coldchain_sim generate --config data/generator/config/coldchain-sim-v1.yaml --seed 11 --out data/generated/seed11
+    #   import:   python -m app.dataset import data/release/coldchain-sim-v1.0.0-seed11
+    # The repository is mounted at /workspace; output goes to data/generated/ (git-ignored)
+    # unless you deliberately write to data/release/.
+    profiles: ["tools"]
+    image: coldchain-backend:local
+    pull_policy: never
+    environment:
+      <<: *backend-env
+      PYTHONPATH: /app:/workspace/data/generator
+      PYTHONDONTWRITEBYTECODE: "1"
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
     depends_on:
       db:
         condition: service_healthy

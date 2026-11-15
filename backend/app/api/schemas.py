@@ -143,4 +143,5 @@ class ShipmentOut(BaseModel):
     destination: str | None
     status: str
     data_origin: str
+    source_dataset_id: str | None = None
     created_at: datetime
