@@ -1,10 +1,8 @@
 """DATA-09 / ML-09 / A-12 / D-12: ground-truth labels must not reach detection, features, inference, the API or the frontend.
 
-Static check over the application code. Only the model definition, the model package index
-(needed so Alembic sees every table) and the dataset loader may refer to the ground-truth
-models, the ``ground_truth`` schema or the ``ground_truth/`` dataset files. Milestone 3
-detection, Milestone 4 features/prediction (``ml/``), Milestone 6 LLM code (``llm/``) and every
-API route inherit this check automatically.
+Static check over application code. In addition to ground-truth model definitions and dataset
+import, only M3 offline evaluation and the explicitly allow-listed M4 target loader may read the
+labels. Features, prediction, detection, LLM code and API routes are scanned and forbidden.
 
 D-12 (approved 2026-11-15): ground truth may be used as supervised *targets* for training and
 evaluation. The M4 label-builder module that reads them must be added to ``ALLOWED`` explicitly,
@@ -29,6 +27,8 @@ ALLOWED = {
     # Offline evaluation only (contract §6.3, D-12): joins replayed detector outputs with reference
     # labels from the files. Never imported by operational code (test below), no database access.
     "app/evaluation/baseline.py",
+    # Explicitly isolated M4 D-12 supervised-target loader; no feature or serving code imports it.
+    "ml/coldchain_ml/labels.py",
 }
 OPERATIONAL_PACKAGES = ("app/api/", "app/domain/", "app/services/", "app/monitoring/", "app/main.py")
 FORBIDDEN_NAMES = {"GroundTruthJourney", "GroundTruthEvent", "GROUND_TRUTH_SCHEMA"}
@@ -129,3 +129,9 @@ def test_b78_detector_modules_are_scanned_and_not_allow_listed() -> None:
     for module in ("app/domain/detector.py", "app/domain/reconcile.py", "app/services/detection.py",
                    "app/services/ingest.py", "app/api/monitoring.py"):
         assert module in scanned and module not in ALLOWED
+
+
+def test_m4_label_boundary_is_scanned_and_only_its_loader_is_allow_listed() -> None:
+    scanned = {rel for rel, _ in _python_files()}
+    assert "ml/coldchain_ml/labels.py" in scanned
+    assert "ml/coldchain_ml/features.py" in scanned and "ml/coldchain_ml/features.py" not in ALLOWED
