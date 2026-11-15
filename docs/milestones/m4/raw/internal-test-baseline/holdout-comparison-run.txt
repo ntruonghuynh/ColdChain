@@ -1,0 +1,214 @@
+{
+  "internal_test_baseline": {
+    "by_direction": {
+      "HIGH": {
+        "detections_raised": 8,
+        "matched": 8,
+        "reference_events": 9
+      },
+      "LOW": {
+        "detections_raised": 3,
+        "matched": 3,
+        "reference_events": 3
+      }
+    },
+    "detections_raised": 11,
+    "detections_with_final_basis_current": 11,
+    "false_alarms": 0,
+    "false_alarms_later_superseded_or_merged": 0,
+    "false_alarms_per_journey": 0.0,
+    "matched": 11,
+    "precision": 1.0,
+    "recall": 0.9167,
+    "reference_events": 12
+  },
+  "internal_test_delays": {
+    "max": 676.017,
+    "mean": 139.339,
+    "median": 45.583,
+    "min": 25.5,
+    "n": 11,
+    "p90_nearest_rank": 408.5
+  },
+  "internal_test_missing": {
+    "data_gap_incidents_final_basis_superseded": 0,
+    "data_gap_incidents_raised": 9,
+    "found_as_confirmed_gap": 63,
+    "found_with_identical_bounds": 63,
+    "gap_status_agreement": 63,
+    "gap_time_counted_in_range_note": "Zero by construction: the detector has no in-range-time measure; every confirmed gap is not-observed time (C-06).",
+    "gap_time_counted_in_range_s": 0,
+    "monitoring_end_gap_revisions_raised": 25,
+    "monitoring_end_gaps_in_final_state": 2,
+    "operational_confirmed_gaps_final": 63,
+    "operational_gaps_by_status": {
+      "SHORT_GAP": 51,
+      "UNKNOWN": 3,
+      "UNKNOWN_REVIEW_REQUIRED": 9
+    },
+    "recall_reference_excursions_with_delayed_readings": {
+      "detected": 3,
+      "recall": 1.0,
+      "reference_events": 3
+    },
+    "recall_reference_excursions_with_missing_readings": {
+      "detected": 1,
+      "recall": 1.0,
+      "reference_events": 1
+    },
+    "recall_reference_excursions_without_missing_readings": {
+      "detected": 10,
+      "recall": 0.9091,
+      "reference_events": 11
+    },
+    "reference_missing_data_intervals": 63
+  },
+  "internal_test_missing_reading_subgroups": {
+    "reference_events_with_delayed_readings": {
+      "baseline_matched": 3,
+      "baseline_recall": 1.0,
+      "ml_matched": 1,
+      "ml_recall": 0.3333333333333333,
+      "reference_events": 3
+    },
+    "reference_events_with_missing_readings": {
+      "baseline_matched": 1,
+      "baseline_recall": 1.0,
+      "ml_matched": 1,
+      "ml_recall": 1.0,
+      "reference_events": 1
+    },
+    "reference_events_without_missing_or_delayed_readings": {
+      "baseline_matched": 7,
+      "baseline_recall": 0.875,
+      "ml_matched": 8,
+      "ml_recall": 1.0,
+      "reference_events": 8
+    }
+  },
+  "validation_paired_delays": {
+    "baseline_only_reference_count": 1,
+    "baseline_only_reference_keys": [
+      [
+        "SIM-S11-J0134",
+        "EXCURSION_HIGH",
+        "2026-10-19T15:40:00+00:00"
+      ]
+    ],
+    "difference_between_shared_medians_ml_minus_baseline_min": -3.433,
+    "limitations": "Small matched-event intersection; no uncertainty interval; delays are causal emission delay to matched reference onset.",
+    "matched_by_both_count": 13,
+    "median_of_paired_differences_ml_minus_baseline_min": -4.066999999999993,
+    "ml_only_reference_count": 0,
+    "ml_only_reference_keys": [],
+    "paired_event_rows": [
+      {
+        "baseline_delay_min": 34.033,
+        "journey_id": "SIM-S11-J0005",
+        "ml_delay_min": 19.0,
+        "ml_minus_baseline_min": -15.033000000000001,
+        "reference_start": "2026-09-20T06:18:00+00:00",
+        "reference_type": "EXCURSION_HIGH"
+      },
+      {
+        "baseline_delay_min": 53.283,
+        "journey_id": "SIM-S11-J0018",
+        "ml_delay_min": 35.0,
+        "ml_minus_baseline_min": -18.283,
+        "reference_start": "2026-09-21T16:48:00+00:00",
+        "reference_type": "EXCURSION_HIGH"
+      },
+      {
+        "baseline_delay_min": 28.033,
+        "journey_id": "SIM-S11-J0038",
+        "ml_delay_min": 27.0,
+        "ml_minus_baseline_min": -1.0330000000000013,
+        "reference_start": "2026-09-12T11:01:00+00:00",
+        "reference_type": "EXCURSION_LOW"
+      },
+      {
+        "baseline_delay_min": 27.033,
+        "journey_id": "SIM-S11-J0038",
+        "ml_delay_min": 26.0,
+        "ml_minus_baseline_min": -1.0330000000000013,
+        "reference_start": "2026-09-13T16:17:00+00:00",
+        "reference_type": "EXCURSION_LOW"
+      },
+      {
+        "baseline_delay_min": 47.55,
+        "journey_id": "SIM-S11-J0063",
+        "ml_delay_min": 32.0,
+        "ml_minus_baseline_min": -15.549999999999997,
+        "reference_start": "2026-10-12T19:39:00+00:00",
+        "reference_type": "EXCURSION_HIGH"
+      },
+      {
+        "baseline_delay_min": 36.433,
+        "journey_id": "SIM-S11-J0084",
+        "ml_delay_min": 19.0,
+        "ml_minus_baseline_min": -17.433,
+        "reference_start": "2026-09-23T01:23:00+00:00",
+        "reference_type": "EXCURSION_HIGH"
+      },
+      {
+        "baseline_delay_min": 50.133,
+        "journey_id": "SIM-S11-J0107",
+        "ml_delay_min": 40.0,
+        "ml_minus_baseline_min": -10.133000000000003,
+        "reference_start": "2026-10-04T05:22:00+00:00",
+        "reference_type": "EXCURSION_HIGH"
+      },
+      {
+        "baseline_delay_min": 36.333,
+        "journey_id": "SIM-S11-J0122",
+        "ml_delay_min": 33.0,
+        "ml_minus_baseline_min": -3.3329999999999984,
+        "reference_start": "2026-10-13T13:30:00+00:00",
+        "reference_type": "EXCURSION_HIGH"
+      },
+      {
+        "baseline_delay_min": 157.317,
+        "journey_id": "SIM-S11-J0123",
+        "ml_delay_min": 171.0,
+        "ml_minus_baseline_min": 13.682999999999993,
+        "reference_start": "2026-09-21T15:37:00+00:00",
+        "reference_type": "EXCURSION_HIGH"
+      },
+      {
+        "baseline_delay_min": 189.05,
+        "journey_id": "SIM-S11-J0159",
+        "ml_delay_min": 201.0,
+        "ml_minus_baseline_min": 11.949999999999989,
+        "reference_start": "2026-10-21T04:19:00+00:00",
+        "reference_type": "EXCURSION_HIGH"
+      },
+      {
+        "baseline_delay_min": 30.433,
+        "journey_id": "SIM-S11-J0163",
+        "ml_delay_min": 15.0,
+        "ml_minus_baseline_min": -15.433,
+        "reference_start": "2026-10-18T18:39:00+00:00",
+        "reference_type": "EXCURSION_LOW"
+      },
+      {
+        "baseline_delay_min": 101.067,
+        "journey_id": "SIM-S11-J0185",
+        "ml_delay_min": 97.0,
+        "ml_minus_baseline_min": -4.066999999999993,
+        "reference_start": "2026-10-13T17:45:00+00:00",
+        "reference_type": "EXCURSION_HIGH"
+      },
+      {
+        "baseline_delay_min": 29.5,
+        "journey_id": "SIM-S11-J0196",
+        "ml_delay_min": 40.0,
+        "ml_minus_baseline_min": 10.5,
+        "reference_start": "2026-10-20T23:18:00+00:00",
+        "reference_type": "EXCURSION_LOW"
+      }
+    ],
+    "scope": "seed-11 validation; post-hoc paired analysis, not model selection",
+    "shared_baseline_median_delay_min": 36.433,
+    "shared_ml_median_delay_min": 33.0
+  }
+}

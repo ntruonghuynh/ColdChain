@@ -2,7 +2,7 @@
 
 Academic prototype for **IT in Logistics — Final project 03**. It monitors refrigerated shipments, tells real temperature excursions apart from missing or faulty sensor data, drafts a procedure-based response, and records custody and quality decisions on a local blockchain. A human Quality Officer always makes the release or quarantine decision.
 
-> **Status: Milestone 3 — ingestion, monitoring and the threshold baseline.** The stack validates and ingests sensor batches, shows monitoring states (CURRENT / STALE / UNKNOWN), confirms missing-data gaps, detects policy excursions with the conventional threshold baseline, and lists open incidents in an excursion queue. All data is **simulated**. ML, LLM, blockchain, quality decisions and login are **not implemented yet**; their pages say so. See [docs/implementation-plan.md](docs/implementation-plan.md).
+> **Status: Milestone 4 — causal advisory ML predictions.** The stack includes validated ingestion, monitoring, the policy threshold baseline, and a frozen Random Forest model exposed through a validated API. All data is **simulated**. ML output is advisory only; it never establishes product safety or authorizes a quality or warehouse action. LLM, blockchain, quality decisions and login are **not implemented yet**. See [docs/implementation-plan.md](docs/implementation-plan.md) and the [M4 report](docs/milestones/m4/README.md).
 
 > **Teaching boundary.** All data is simulated. Temperature limits and procedures are teaching policies, not clinical or regulatory standards. No ML output establishes product safety.
 
@@ -25,11 +25,11 @@ The start script checks that Docker is running (and tries to start it), creates 
 
 > **macOS:** the first time, macOS may block a downloaded script. Right-click `start.command` → **Open** → **Open**. If it says "permission denied", run `chmod +x start.command stop.command` once in Terminal from this folder.
 
-## What runs today (Milestones 1–3)
+## What runs today (Milestones 1–4)
 
 | Area | Status |
 |---|---|
-| PostgreSQL database with the schema (20 tables from Milestone 1; Milestone 2 adds `dataset_release` and a separate `ground_truth` schema; Milestone 3 adds 7 monitoring tables) and migrations | Available |
+| PostgreSQL database with the schema (20 tables from Milestone 1; Milestone 2 adds `dataset_release` and a separate `ground_truth` schema; Milestone 3 adds 7 monitoring tables; M4 adds append-only ML predictions) and migrations | Available |
 | Teaching policy, organizations and demo users loaded as configuration data | Available |
 | Backend API: health checks, system info, policies, organizations, shipments; ingestion (`POST /api/ingest/batches`), telemetry, sensor status, missing and delayed data, detections, warnings, incidents, monitoring summary | Available |
 | API documentation (OpenAPI / Swagger) | Available at http://localhost:3000/api/docs |
@@ -39,7 +39,8 @@ The start script checks that Docker is running (and tries to start it), creates 
 | Synthetic dataset (200 journeys, seed 11) with data dictionary, provenance and checksums | Available in `data/release/` (Milestone 2) |
 | Idempotent import of the dataset into PostgreSQL (simulated shipments, readings, context; labels in a separate `ground_truth` schema) | Available as a manual command (Milestone 2) |
 | Data ingestion API, gap detection, threshold baseline, incidents | Available (Milestone 3) |
-| ML detection · Blockchain · LLM drafts · Login | Milestones 4 · 5 · 6 · 5/7 |
+| Frozen ML inference API (`POST /api/predictions`, model readiness at `GET /api/predictions/model`) | Available (Milestone 4; advisory only) |
+| Blockchain · LLM drafts · Login | Milestones 5 · 6 · 5/7 |
 
 After a fresh start there are no shipments. To load the 200 **simulated** shipments of the canonical dataset (takes about 15 seconds; running it again changes nothing):
 

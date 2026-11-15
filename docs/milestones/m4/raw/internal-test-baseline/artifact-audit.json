@@ -1,0 +1,17 @@
+{
+  "feature_names_count": 25,
+  "feature_schema_version": "coldchain-window-v1",
+  "feature_spec_order_matches_inference_code": true,
+  "feature_spec_sha256": "9a61e69046bae9fb036c9cef0c16e102d90b5799c7d9e0343e3895c6ef9732bc",
+  "feature_spec_sha256_matches_manifest": true,
+  "loaded_model_type": "Pipeline",
+  "manifest_artifacts_and_sha256sums": "passed via load_verified",
+  "manifest_has_explicit_feature_names_array": false,
+  "model_loading": "checksum verification then joblib.load",
+  "model_loading_retrains": false,
+  "model_version": "coldchain-rf-v1.0.0",
+  "operational_adapter_ground_truth_import_or_query": false,
+  "prediction_api_ground_truth_import_or_query": false,
+  "prediction_persistence_target": "MLPrediction append-only audit row",
+  "prediction_service_disposition_or_release_write": false
+}

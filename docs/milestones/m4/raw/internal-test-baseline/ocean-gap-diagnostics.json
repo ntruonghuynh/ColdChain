@@ -1,0 +1,49 @@
+{
+  "event_count": 2,
+  "events": [
+    {
+      "delayed_observed_readings_in_interval": 45,
+      "delayed_readings_label_count": 45,
+      "event_readings": 45,
+      "insufficient_evidence_windows_during_excursion": 45,
+      "journey_id": "SIM-S11-J0083",
+      "m3_baseline_detection_ref": "INC-SIM-S11-J0083-SIM-S11-L0083-TEX-H-20260908T044800Z",
+      "m3_baseline_matched": "True",
+      "max_consecutive_threshold_positive_windows_near_event": 0,
+      "missing_readings_label_count": 0,
+      "ml_event_overlap_count": 0,
+      "prediction_windows_during_excursion": 45,
+      "readings_received_at_or_after_excursion_end": 45,
+      "reference_end": "2026-09-08T08:25:00+00:00",
+      "reference_id": "SIM-S11-J0083-E008",
+      "reference_start": "2026-09-08T04:42:00+00:00",
+      "required_consecutive_for_alert": 3,
+      "scenario_reporting_only": "OCEAN_COVERAGE_GAP",
+      "scored_windows_during_excursion": 0,
+      "threshold_positive_windows_during_excursion": 0
+    },
+    {
+      "delayed_observed_readings_in_interval": 26,
+      "delayed_readings_label_count": 26,
+      "event_readings": 26,
+      "insufficient_evidence_windows_during_excursion": 26,
+      "journey_id": "SIM-S11-J0191",
+      "m3_baseline_detection_ref": "INC-SIM-S11-J0191-SIM-S11-L0191-TEX-H-20260922T134100Z",
+      "m3_baseline_matched": "True",
+      "max_consecutive_threshold_positive_windows_near_event": 0,
+      "missing_readings_label_count": 0,
+      "ml_event_overlap_count": 0,
+      "prediction_windows_during_excursion": 26,
+      "readings_received_at_or_after_excursion_end": 26,
+      "reference_end": "2026-09-22T15:46:00+00:00",
+      "reference_id": "SIM-S11-J0191-E010",
+      "reference_start": "2026-09-22T13:36:00+00:00",
+      "required_consecutive_for_alert": 3,
+      "scenario_reporting_only": "OCEAN_COVERAGE_GAP",
+      "scored_windows_during_excursion": 0,
+      "threshold_positive_windows_during_excursion": 0
+    }
+  ],
+  "interpretation": "A score is operationally available only when the frozen sufficient-evidence flag is true. Raw offline probability values on abstaining windows are not scores. Window trace includes only readings with event_at in the prior 60 minutes, and separately counts those whose received_at exceeds as_of.",
+  "purpose": "diagnostic only; frozen ML scores and thresholds unchanged"
+}

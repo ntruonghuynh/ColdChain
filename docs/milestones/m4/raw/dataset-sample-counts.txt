@@ -1,0 +1,5 @@
+PYTHONPATH=ml:backend /private/tmp/coldchain-m4-py312/bin/python -m coldchain_ml training summary (build_partition; seed-11 train/validation only)
+train journeys 140 windows 80542 positive_windows 2396 sufficient 77247
+validation journeys 30 windows 17548 positive_windows 932 sufficient 16827
+
+The seed-11 test partition was not loaded for these counts. It was first accessed by the one-shot post-freeze command recorded in `internal-test-seed11.txt`.

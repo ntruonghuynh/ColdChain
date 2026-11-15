@@ -1,0 +1,6 @@
+ImportError while loading conftest '/Users/huynhnamtruong/Documents/ColdChain/ColdChain/backend/tests/conftest.py'.
+backend/tests/conftest.py:28: in <module>
+    from alembic import command  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   ModuleNotFoundError: No module named 'alembic'
+exit_code=4

@@ -1,0 +1,23 @@
+{
+  "reference_events_with_delayed_readings": {
+    "baseline_matched": 3,
+    "baseline_recall": 1.0,
+    "ml_matched": 1,
+    "ml_recall": 0.3333333333333333,
+    "reference_events": 3
+  },
+  "reference_events_with_missing_readings": {
+    "baseline_matched": 1,
+    "baseline_recall": 1.0,
+    "ml_matched": 1,
+    "ml_recall": 1.0,
+    "reference_events": 1
+  },
+  "reference_events_without_missing_or_delayed_readings": {
+    "baseline_matched": 7,
+    "baseline_recall": 0.875,
+    "ml_matched": 8,
+    "ml_recall": 1.0,
+    "reference_events": 8
+  }
+}

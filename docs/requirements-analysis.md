@@ -338,8 +338,8 @@ No unresolved rule blocks a correct M3 implementation.
 | D-09 | Accept approval of BR-06 to BR-15 | **BR-06 to BR-09 approved 2026-11-15** (§13.4; BR-09 amended by U-01). BR-10 to BR-15 reviewed for M3 (§13.5): no conflict; they stay proposed for M5 | M5 |
 | D-10 | Import the canonical dataset automatically at start-up, or only on request | **Approved 2026-11-15:** the final Docker demo release gets a **configurable, idempotent first-run import** of the canonical dataset (switch in `.env`; re-running it changes nothing, as the M2 importer already guarantees). Implemented with the release work (M10); until then the import is the manual command `python -m app.dataset import ...` | M10 |
 | D-11 | Approve interpretations A-12 (label layers) and A-13 (seed roles) | **Approved 2026-11-15** (A-13 changed: evaluation seeds are 22, 33, 44, 55, 66, not including the development seed 11) | — |
-| D-12 | Ground-truth access for ML | **Approved 2026-11-15** (§13.1): ground truth may be used as supervised targets for training and evaluation; features, inference, operational APIs and frontend never read it; explicit allow-list in M4; regression tests kept | M4 (implementation) |
-| D-13 | Dataset split and evaluation protocol | **Approved 2026-11-15** (§13.1): seed 11 = development, training, validation, internal regression; its test partition is not used for iterative tuning; seeds 22, 33, 44, 55, 66 = final evaluation only, after freezing model and preprocessing; model version, seed assignments and protocol recorded | M4, M9 |
+| D-12 | Ground-truth access for ML | **Approved and implemented in M4** (§13.1): ground truth may be used as supervised targets for training and evaluation; features, inference, operational APIs and frontend never read it; `ml/coldchain_ml/labels.py` is explicitly allow-listed; regression tests remain active | M4 |
+| D-13 | Dataset split and evaluation protocol | **Approved; M4 implementation:** seed 11 train and validation for fit/selection; seed-11 test is evaluated once after freeze; seeds 22, 33, 44, 55, 66 remain M9-only; model version, seed assignments and protocol recorded | M4, M9 |
 
 ## 16. Traceability summary
 
@@ -358,7 +358,7 @@ No unresolved rule blocks a correct M3 implementation.
 
 The implementation plan repeats the requirement IDs each milestone closes, so coverage can be checked from both sides.
 
-### 16.1 Milestone 3 traceability (implemented 2026-11-15, awaiting acceptance)
+### 16.1 Milestone 3 traceability (accepted and merged before M4)
 
 | Requirement | Implementation | Evidence (tests, runs) |
 |---|---|---|
@@ -374,3 +374,14 @@ The implementation plan repeats the requirement IDs each milestone closes, so co
 | FR-30, FR-31 (M3 part) | Temperature timeline and missing-data indicator pages | `monitoring.test.tsx` |
 | DATA-09, D-12 | Operational code never reads ground truth; evaluation isolated | `test_ground_truth_boundary.py` (incl. B78) |
 | EVAL-04, EVAL-05, A-01, A-02 | Offline development evaluation | `test_m3_evaluation.py`; `raw/03-dev-baseline-evaluation.txt` |
+
+### 16.2 Milestone 4 traceability
+
+| Requirement | Implementation | Evidence |
+|---|---|---|
+| FR-13, ML-07 | Validated `POST /api/predictions`, `GET /api/predictions/model`; observed-only adapter | `backend/tests/test_m4_prediction_api.py`; OpenAPI and API verification in M4 raw logs |
+| FR-14, ML-01, ML-02, ML-04, ML-09 | Causal 60-minute features; trend and spike residual; target boundary isolates true excursions | `backend/tests/test_m4_ml.py`; `docs/design/m4-feature-dictionary.md`; validation scenario metrics |
+| DATA-05, DATA-06, ML-08 | 140/30/30 journey-level canonical split; train on train, tune on validation; one-shot internal test after freeze | `ml/coldchain_ml/splits.py`, frozen manifest, one-shot holdout output |
+| ML-03, ML-05, EVAL-04, EVAL-05, EVAL-11, EVAL-12 | Logistic and Random Forest candidate comparison, validation threshold/run selection, M3 one-to-one event matcher | Raw validation predictions/events/metrics and same-partition M3 baseline evaluation in `ml/evaluation/dev/` |
+| ML-06, NFR-03, NFR-04, SUB-03 | Versioned training config, feature schema, preprocessing pipeline, model manifest and SHA-256 checksums | `ml/registry/coldchain-rf-v1.0.0/` |
+| ML-10, FR-25 | Explicit insufficient-evidence response; append-only ML output audit; no quality or warehouse state writes | M4 inference API tests, migration 0004 constraints and M4 report |

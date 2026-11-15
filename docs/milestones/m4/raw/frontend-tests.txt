@@ -1,0 +1,17 @@
+
+> coldchain-frontend@0.1.0 test
+> vitest run
+
+
+ RUN  v3.2.7 /Users/huynhnamtruong/Documents/ColdChain/ColdChain/frontend
+
+ ✓ src/api/client.test.ts (6 tests) 5ms
+ ✓ src/components/ConnectivityIndicator.test.tsx (3 tests) 51ms
+ ✓ src/pages/pages.test.tsx (8 tests) 147ms
+ ✓ src/pages/monitoring.test.tsx (7 tests) 164ms
+
+ Test Files  4 passed (4)
+      Tests  24 passed (24)
+   Start at  19:05:04
+   Duration  1.15s (transform 189ms, setup 211ms, collect 809ms, tests 367ms, environment 1.62s, prepare 251ms)
+

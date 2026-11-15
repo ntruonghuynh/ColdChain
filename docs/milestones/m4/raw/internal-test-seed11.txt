@@ -1,0 +1,106 @@
+{
+  "event_detection_count": 12,
+  "event_matched_count": 10,
+  "event_metrics_by_primary_scenario_reporting_only": {
+    "DOOR_OPENING": {
+      "detections": 0,
+      "event_precision": 0.0,
+      "event_recall": 0.0,
+      "journeys": 1,
+      "matched": 0,
+      "reference_events": 0
+    },
+    "GRADUAL_WARMING": {
+      "detections": 2,
+      "event_precision": 0.5,
+      "event_recall": 1.0,
+      "journeys": 4,
+      "matched": 1,
+      "reference_events": 1
+    },
+    "HIGH_EXCURSION": {
+      "detections": 5,
+      "event_precision": 0.8,
+      "event_recall": 1.0,
+      "journeys": 4,
+      "matched": 4,
+      "reference_events": 4
+    },
+    "LOW_EXCURSION": {
+      "detections": 3,
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "journeys": 3,
+      "matched": 3,
+      "reference_events": 3
+    },
+    "MISSING_READINGS": {
+      "detections": 2,
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "journeys": 4,
+      "matched": 2,
+      "reference_events": 2
+    },
+    "NORMAL": {
+      "detections": 0,
+      "event_precision": 0.0,
+      "event_recall": 0.0,
+      "journeys": 6,
+      "matched": 0,
+      "reference_events": 0
+    },
+    "OCEAN_COVERAGE_GAP": {
+      "detections": 0,
+      "event_precision": 0.0,
+      "event_recall": 0.0,
+      "journeys": 2,
+      "matched": 0,
+      "reference_events": 2
+    },
+    "SENSOR_BIAS_DRIFT": {
+      "detections": 0,
+      "event_precision": 0.0,
+      "event_recall": 0.0,
+      "journeys": 3,
+      "matched": 0,
+      "reference_events": 0
+    },
+    "SENSOR_SPIKE": {
+      "detections": 0,
+      "event_precision": 0.0,
+      "event_recall": 0.0,
+      "journeys": 3,
+      "matched": 0,
+      "reference_events": 0
+    }
+  },
+  "event_precision": 0.8333333333333334,
+  "event_recall": 0.8333333333333334,
+  "event_reference_count": 12,
+  "false_alarms_per_journey": 0.06666666666666667,
+  "journey_count": 30,
+  "matched_detection_delay_minutes": {
+    "mean": 40.3,
+    "median": 23.0,
+    "n": 10
+  },
+  "minimum_consecutive_windows": 3,
+  "partition": "test",
+  "threshold": 0.7,
+  "unmatched_reference_count": 2,
+  "window_confusion_matrix_labels_0_1": [
+    [
+      17520,
+      22
+    ],
+    [
+      18,
+      173
+    ]
+  ],
+  "window_precision": 0.8871794871794871,
+  "window_recall": 0.9057591623036649,
+  "windows_total": 18579,
+  "windows_with_sufficient_evidence": 17733
+}
