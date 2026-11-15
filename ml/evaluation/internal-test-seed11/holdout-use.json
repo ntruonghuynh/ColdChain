@@ -1,0 +1,9 @@
+{
+  "dataset_id": "coldchain-sim-v1.0.0-seed11",
+  "evaluated_at_utc": "2026-11-15T11:59:57.685865+00:00",
+  "frozen_bundle_sha256": "09e8d65a5be63d6bf659af255eeb771c33e9a7052c4784190fb1b64363540b16",
+  "model_version": "coldchain-rf-v1.0.0",
+  "one_shot": true,
+  "partition": "test",
+  "purpose": "post-freeze internal holdout check; no tuning permitted"
+}

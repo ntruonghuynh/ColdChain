@@ -1,0 +1,28 @@
+{
+  "dataset_fingerprint": "80c4aec06daf3554ba0eecea7ff63d3d14cd5545df43cc7b94601b1fe8a9970d",
+  "dataset_id": "coldchain-sim-v1.0.0-seed11",
+  "detector_code_version": "m3-baseline-1",
+  "detector_config": {
+    "code": "DET-BASELINE",
+    "content_sha256": "54be76251da6b4a7fa17f122d01a7e24fa0ae7240b59f23bda139ac5d2575ce5",
+    "max_continuous_interval_s": 450,
+    "nominal_sampling_interval_s": 300,
+    "version": "1.0.0"
+  },
+  "git_commit": "not recorded",
+  "journey_count": 30,
+  "matching": "one-to-one; same journey, same type, overlapping event-time intervals; ties: overlap desc, start distance asc, raised_at asc, detection id, reference id (app/evaluation/matching.py)",
+  "partitions": [
+    "validation"
+  ],
+  "policy": {
+    "code": "POL-CHILL-01",
+    "content_sha256": "73f757e24319791dd6cb8200cf1863aac362d97d6ef32fe01bfa89566b5e0a96",
+    "version": "1.0"
+  },
+  "protocol_version": "m3-dev-baseline-1",
+  "purpose": "M3 development measurement of the policy baseline; final evaluation is M9 on seeds 22-66 (D-13)",
+  "seed": 11,
+  "split_seed": 11,
+  "tuned_parameters": "none"
+}

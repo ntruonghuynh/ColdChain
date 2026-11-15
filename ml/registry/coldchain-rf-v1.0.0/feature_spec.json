@@ -1,0 +1,41 @@
+{
+  "feature_names": [
+    "temperature_mean_c",
+    "temperature_min_c",
+    "temperature_max_c",
+    "temperature_std_c",
+    "temperature_last_c",
+    "temperature_range_c",
+    "temperature_slope_c_per_hour",
+    "largest_step_c",
+    "observed_above_max_sample_minutes",
+    "observed_below_min_sample_minutes",
+    "longest_out_of_range_run_minutes",
+    "observed_reading_count",
+    "missing_fraction",
+    "coverage_ratio",
+    "longest_observed_gap_minutes",
+    "spike_score_c",
+    "ambient_mean_c",
+    "product_minus_ambient_mean_c",
+    "door_open_fraction",
+    "battery_min_pct",
+    "battery_slope_pct_per_hour",
+    "latest_received_age_minutes",
+    "ambient_observation_count",
+    "door_observation_count",
+    "battery_observation_count"
+  ],
+  "max_temperature_c": 8.0,
+  "min_temperature_c": 2.0,
+  "minimum_evidence": {
+    "coverage_ratio": 0.4,
+    "observations": 6
+  },
+  "missing_values": "No temperature interpolation; coverage and missing slots are explicit. Missing context is zero encoded with observation count features.",
+  "sample_minutes": 5,
+  "schema_version": "coldchain-window-v1",
+  "stride_minutes": 5,
+  "time_filter": "event_at <= prediction_at AND received_at <= prediction_at",
+  "window_minutes": 60
+}

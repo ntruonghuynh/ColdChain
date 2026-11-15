@@ -1,0 +1,52 @@
+{
+  "candidate_hyperparameters": {
+    "logistic": {
+      "class_weight": "balanced",
+      "max_iter": 500
+    },
+    "rf_deeper": {
+      "class_weight": "balanced_subsample",
+      "max_depth": 12,
+      "min_samples_leaf": 3,
+      "n_estimators": 180
+    },
+    "rf_shallow": {
+      "class_weight": "balanced_subsample",
+      "max_depth": 8,
+      "min_samples_leaf": 5,
+      "n_estimators": 120
+    }
+  },
+  "candidates": [
+    "logistic",
+    "rf_shallow",
+    "rf_deeper"
+  ],
+  "config_version": "m4-training-v1",
+  "dataset_fingerprint": "80c4aec06daf3554ba0eecea7ff63d3d14cd5545df43cc7b94601b1fe8a9970d",
+  "dataset_id": "coldchain-sim-v1.0.0-seed11",
+  "libraries": {
+    "joblib": "1.6.0",
+    "numpy": "2.5.4",
+    "python": "3.12.13",
+    "scikit_learn": "1.9.0"
+  },
+  "minimum_consecutive_windows": 3,
+  "partitions": {
+    "internal_test": 30,
+    "train": 140,
+    "validation": 30
+  },
+  "policy_limits_c": {
+    "maximum": 8.0,
+    "minimum": 2.0
+  },
+  "protocol_version": "m4-dev-v1",
+  "random_seed": 11,
+  "selected_candidate": "rf_deeper",
+  "selected_threshold": 0.7,
+  "selection_metric": "validation event-level F1; tie-break precision, recall, fewer false alarms",
+  "stride_minutes": 5,
+  "training_config_sha256": "621f395793f5d5a3a92939256c65678bf39fb658cbb3b712ad5173262c85093c",
+  "window_minutes": 60
+}

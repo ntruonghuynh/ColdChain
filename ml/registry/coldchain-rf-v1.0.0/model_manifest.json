@@ -1,0 +1,172 @@
+{
+  "artifacts": {
+    "feature_spec.json": "9a61e69046bae9fb036c9cef0c16e102d90b5799c7d9e0343e3895c6ef9732bc",
+    "model.joblib": "09e8d65a5be63d6bf659af255eeb771c33e9a7052c4784190fb1b64363540b16",
+    "model_card.md": "1b32bbcd13d71126a0aaf58eb972ed4e96d7860374f7c01f85e6dbb6c4960368",
+    "training_config.json": "f6341d7c5632d7a5b29d63dce3598ae9bcf0460a61abec9294ba23c845b2aa7d"
+  },
+  "candidate_hyperparameters": {
+    "logistic": {
+      "class_weight": "balanced",
+      "max_iter": 500
+    },
+    "rf_deeper": {
+      "class_weight": "balanced_subsample",
+      "max_depth": 12,
+      "min_samples_leaf": 3,
+      "n_estimators": 180
+    },
+    "rf_shallow": {
+      "class_weight": "balanced_subsample",
+      "max_depth": 8,
+      "min_samples_leaf": 5,
+      "n_estimators": 120
+    }
+  },
+  "candidates": [
+    "logistic",
+    "rf_shallow",
+    "rf_deeper"
+  ],
+  "config_version": "m4-training-v1",
+  "dataset_fingerprint": "80c4aec06daf3554ba0eecea7ff63d3d14cd5545df43cc7b94601b1fe8a9970d",
+  "dataset_id": "coldchain-sim-v1.0.0-seed11",
+  "evaluation_protocol_version": "m4-dev-v1",
+  "feature_schema_version": "coldchain-window-v1",
+  "libraries": {
+    "joblib": "1.6.0",
+    "numpy": "2.5.4",
+    "python": "3.12.13",
+    "scikit_learn": "1.9.0"
+  },
+  "minimum_consecutive_windows": 3,
+  "model_version": "coldchain-rf-v1.0.0",
+  "partitions": {
+    "internal_test": 30,
+    "train": 140,
+    "validation": 30
+  },
+  "policy_limits_c": {
+    "maximum": 8.0,
+    "minimum": 2.0
+  },
+  "policy_sha256": "73f757e24319791dd6cb8200cf1863aac362d97d6ef32fe01bfa89566b5e0a96",
+  "protocol_version": "m4-dev-v1",
+  "random_seed": 11,
+  "selected_candidate": "rf_deeper",
+  "selected_threshold": 0.7,
+  "selection_metric": "validation event-level F1; tie-break precision, recall, fewer false alarms",
+  "stride_minutes": 5,
+  "test_partition_usage": "not evaluated at freeze time",
+  "training_config_sha256": "621f395793f5d5a3a92939256c65678bf39fb658cbb3b712ad5173262c85093c",
+  "validation_metrics": {
+    "candidate": "rf_deeper",
+    "event_detection_count": 14,
+    "event_f1": 0.8666666666666666,
+    "event_matched_count": 13,
+    "event_metrics_by_primary_scenario_reporting_only": {
+      "DOOR_OPENING": {
+        "detections": 0,
+        "event_precision": 0.0,
+        "event_recall": 0.0,
+        "journeys": 1,
+        "matched": 0,
+        "reference_events": 0
+      },
+      "GRADUAL_WARMING": {
+        "detections": 3,
+        "event_precision": 0.6666666666666666,
+        "event_recall": 0.5,
+        "journeys": 4,
+        "matched": 2,
+        "reference_events": 4
+      },
+      "HIGH_EXCURSION": {
+        "detections": 4,
+        "event_precision": 1.0,
+        "event_recall": 1.0,
+        "journeys": 4,
+        "matched": 4,
+        "reference_events": 4
+      },
+      "LOW_EXCURSION": {
+        "detections": 4,
+        "event_precision": 1.0,
+        "event_recall": 1.0,
+        "journeys": 3,
+        "matched": 4,
+        "reference_events": 4
+      },
+      "MISSING_READINGS": {
+        "detections": 2,
+        "event_precision": 1.0,
+        "event_recall": 1.0,
+        "journeys": 2,
+        "matched": 2,
+        "reference_events": 2
+      },
+      "NORMAL": {
+        "detections": 0,
+        "event_precision": 0.0,
+        "event_recall": 0.0,
+        "journeys": 7,
+        "matched": 0,
+        "reference_events": 0
+      },
+      "OCEAN_COVERAGE_GAP": {
+        "detections": 1,
+        "event_precision": 1.0,
+        "event_recall": 0.5,
+        "journeys": 4,
+        "matched": 1,
+        "reference_events": 2
+      },
+      "SENSOR_BIAS_DRIFT": {
+        "detections": 0,
+        "event_precision": 0.0,
+        "event_recall": 0.0,
+        "journeys": 3,
+        "matched": 0,
+        "reference_events": 0
+      },
+      "SENSOR_SPIKE": {
+        "detections": 0,
+        "event_precision": 0.0,
+        "event_recall": 0.0,
+        "journeys": 2,
+        "matched": 0,
+        "reference_events": 0
+      }
+    },
+    "event_precision": 0.9285714285714286,
+    "event_recall": 0.8125,
+    "event_reference_count": 16,
+    "false_alarms_per_journey": 0.03333333333333333,
+    "journey_count": 30,
+    "matched_detection_delay_minutes": {
+      "mean": 58.07692307692308,
+      "median": 33.0,
+      "n": 13
+    },
+    "minimum_consecutive_windows": 3,
+    "partition": "validation",
+    "selection_score": 0.8666666666666666,
+    "threshold": 0.7,
+    "unmatched_reference_count": 3,
+    "window_confusion_matrix_labels_0_1": [
+      [
+        16014,
+        16
+      ],
+      [
+        72,
+        725
+      ]
+    ],
+    "window_precision": 0.9784075573549258,
+    "window_recall": 0.9096612296110415,
+    "windows_total": 17548,
+    "windows_with_sufficient_evidence": 16827
+  },
+  "window_minutes": 60
+}
