@@ -1,4 +1,5 @@
-"""Read-only shipment endpoints. Shipments are created by ingestion (Milestone 3)."""
+"""Read-only shipment endpoints. Shipments come from the dataset import or the internal demo command;
+registration through the API belongs to the custody workflow (Milestone 5)."""
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func, select
