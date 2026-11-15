@@ -1,0 +1,236 @@
+{
+  "context": {
+    "ambient_temperature_null": 3718,
+    "door_open": 192,
+    "rows": 114969
+  },
+  "events": {
+    "by_type": {
+      "DEFROST_CYCLE": 1094,
+      "DOOR_OPEN": 85,
+      "EXCURSION_HIGH": 70,
+      "EXCURSION_LOW": 23,
+      "GRADUAL_WARMING": 25,
+      "MISSING_DATA": 418,
+      "REEFER_FAILURE": 18,
+      "SENSOR_BIAS": 9,
+      "SENSOR_DRIFT": 14,
+      "SENSOR_SPIKE": 61,
+      "SETPOINT_FAULT_HIGH": 34,
+      "SETPOINT_FAULT_LOW": 23,
+      "TEMP_ABOVE_MAX": 98,
+      "TEMP_BELOW_MIN": 23,
+      "TRANSMISSION_DELAY": 755
+    },
+    "missing_data_by_policy_gap_status": {
+      "SHORT_GAP": 372,
+      "UNKNOWN": 7,
+      "UNKNOWN_REVIEW_REQUIRED": 39
+    },
+    "missing_data_overlapping_policy_excursion": 19,
+    "policy_excursions": {
+      "duration_min": {
+        "max": 2155,
+        "median": 151,
+        "min": 35
+      },
+      "high": 70,
+      "low": 23,
+      "with_delayed_readings_inside": 32,
+      "with_missing_readings_inside": 16
+    }
+  },
+  "journeys": {
+    "by_ambient_profile": {
+      "COLD": 40,
+      "HOT": 59,
+      "TEMPERATE": 71,
+      "VARIABLE": 30
+    },
+    "by_primary_scenario": {
+      "DOOR_OPENING": 10,
+      "GRADUAL_WARMING": 25,
+      "HIGH_EXCURSION": 25,
+      "LOW_EXCURSION": 20,
+      "MISSING_READINGS": 20,
+      "NORMAL": 40,
+      "OCEAN_COVERAGE_GAP": 20,
+      "SENSOR_BIAS_DRIFT": 20,
+      "SENSOR_SPIKE": 20
+    },
+    "by_route_type": {
+      "ROAD": 159,
+      "SEA_ROAD": 41
+    },
+    "count": 200,
+    "duration_h": {
+      "max": 70.83,
+      "mean": 48.53,
+      "min": 26.25
+    },
+    "scenario_by_ambient": {
+      "DOOR_OPENING": {
+        "COLD": 2,
+        "HOT": 3,
+        "TEMPERATE": 4,
+        "VARIABLE": 1
+      },
+      "GRADUAL_WARMING": {
+        "COLD": 5,
+        "HOT": 7,
+        "TEMPERATE": 9,
+        "VARIABLE": 4
+      },
+      "HIGH_EXCURSION": {
+        "COLD": 5,
+        "HOT": 7,
+        "TEMPERATE": 9,
+        "VARIABLE": 4
+      },
+      "LOW_EXCURSION": {
+        "COLD": 4,
+        "HOT": 6,
+        "TEMPERATE": 7,
+        "VARIABLE": 3
+      },
+      "MISSING_READINGS": {
+        "COLD": 4,
+        "HOT": 6,
+        "TEMPERATE": 7,
+        "VARIABLE": 3
+      },
+      "NORMAL": {
+        "COLD": 8,
+        "HOT": 12,
+        "TEMPERATE": 14,
+        "VARIABLE": 6
+      },
+      "OCEAN_COVERAGE_GAP": {
+        "COLD": 4,
+        "HOT": 6,
+        "TEMPERATE": 7,
+        "VARIABLE": 3
+      },
+      "SENSOR_BIAS_DRIFT": {
+        "COLD": 4,
+        "HOT": 6,
+        "TEMPERATE": 7,
+        "VARIABLE": 3
+      },
+      "SENSOR_SPIKE": {
+        "COLD": 4,
+        "HOT": 6,
+        "TEMPERATE": 7,
+        "VARIABLE": 3
+      }
+    },
+    "secondary_tags": {
+      "BATTERY_DEPLETED": 4,
+      "DOOR_OPENING": 29,
+      "HIDDEN_EXCURSION": 21,
+      "NO_AMBIENT_PROBE": 7,
+      "RANDOM_DROPOUT": 159,
+      "SEA_ROUTE_NO_OUTAGE": 21,
+      "SENSOR_BIAS": 6,
+      "SENSOR_BIAS_AND_DRIFT": 3,
+      "SENSOR_DRIFT": 11,
+      "SENSOR_SPIKE": 5,
+      "UPLOAD_RETRY": 198
+    },
+    "with_policy_excursion_by_primary_scenario": {
+      "DOOR_OPENING": 0,
+      "GRADUAL_WARMING": 13,
+      "HIGH_EXCURSION": 24,
+      "LOW_EXCURSION": 20,
+      "MISSING_READINGS": 8,
+      "NORMAL": 0,
+      "OCEAN_COVERAGE_GAP": 13,
+      "SENSOR_BIAS_DRIFT": 0,
+      "SENSOR_SPIKE": 0
+    },
+    "with_policy_excursion_total": 78
+  },
+  "note": "Computed from the generated files by coldchain_sim. Synthetic data; values describe the simulator.",
+  "readings": {
+    "delay_min": {
+      "max": 844.03,
+      "median": 8.12
+    },
+    "delayed_coverage_gap": 2244,
+    "delayed_retried_upload": 2184,
+    "expected": 116669,
+    "missing": 1700,
+    "observed": 114969,
+    "observed_out_of_range": 3935
+  },
+  "slots_true_state": {
+    "ABOVE_MAX": 2997,
+    "BELOW_MIN": 675,
+    "IN_RANGE": 112997
+  },
+  "splits": {
+    "by_partition": {
+      "test": 30,
+      "train": 140,
+      "validation": 30
+    },
+    "partition_by_ambient": {
+      "test": {
+        "COLD": 6,
+        "HOT": 9,
+        "TEMPERATE": 11,
+        "VARIABLE": 4
+      },
+      "train": {
+        "COLD": 28,
+        "HOT": 41,
+        "TEMPERATE": 50,
+        "VARIABLE": 21
+      },
+      "validation": {
+        "COLD": 6,
+        "HOT": 9,
+        "TEMPERATE": 10,
+        "VARIABLE": 5
+      }
+    },
+    "partition_by_primary_scenario": {
+      "test": {
+        "DOOR_OPENING": 1,
+        "GRADUAL_WARMING": 4,
+        "HIGH_EXCURSION": 4,
+        "LOW_EXCURSION": 3,
+        "MISSING_READINGS": 4,
+        "NORMAL": 6,
+        "OCEAN_COVERAGE_GAP": 2,
+        "SENSOR_BIAS_DRIFT": 3,
+        "SENSOR_SPIKE": 3
+      },
+      "train": {
+        "DOOR_OPENING": 8,
+        "GRADUAL_WARMING": 17,
+        "HIGH_EXCURSION": 17,
+        "LOW_EXCURSION": 14,
+        "MISSING_READINGS": 14,
+        "NORMAL": 27,
+        "OCEAN_COVERAGE_GAP": 14,
+        "SENSOR_BIAS_DRIFT": 14,
+        "SENSOR_SPIKE": 15
+      },
+      "validation": {
+        "DOOR_OPENING": 1,
+        "GRADUAL_WARMING": 4,
+        "HIGH_EXCURSION": 4,
+        "LOW_EXCURSION": 3,
+        "MISSING_READINGS": 2,
+        "NORMAL": 7,
+        "OCEAN_COVERAGE_GAP": 4,
+        "SENSOR_BIAS_DRIFT": 3,
+        "SENSOR_SPIKE": 2
+      }
+    }
+  },
+  "uploads": {
+    "count": 37136
+  }
+}
