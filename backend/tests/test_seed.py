@@ -48,3 +48,17 @@ def test_changed_policy_content_for_existing_version_is_rejected(db_session: Ses
     policy_file.write_text(json.dumps(document))
     with pytest.raises(SeedConflictError, match="immutable"):
         run_seed(db_session, data_dir)
+
+
+def test_detector_config_is_seeded_and_immutable(db_session: Session, tmp_path: Path) -> None:
+    """D-01 / C-01: the nominal interval lives in detector configuration, versioned like a policy."""
+    report = run_seed(db_session)
+    assert "detector config DET-BASELINE v1.0.0" in report.unchanged
+    data_dir = tmp_path / "data"
+    shutil.copytree(DATA_DIR, data_dir)
+    config_file = data_dir / "detector" / "DET-BASELINE_v1.0.0.json"
+    document = json.loads(config_file.read_text())
+    document["max_continuous_interval_s"] = 400
+    config_file.write_text(json.dumps(document))
+    with pytest.raises(SeedConflictError, match="immutable"):
+        run_seed(db_session, data_dir)

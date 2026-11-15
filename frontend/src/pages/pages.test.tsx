@@ -41,8 +41,6 @@ describe('application shell', () => {
   });
 
   it.each([
-    ['/temperature', 'Temperature Monitoring'],
-    ['/excursions', 'Excursion Queue'],
     ['/quality-review', 'Quality Review'],
     ['/audit', 'Audit History'],
   ])('%s says "Not implemented yet" and shows no data', (route, title) => {
@@ -71,7 +69,7 @@ describe('Overview', () => {
     expect(screen.getByText('Below 3.5 °C for at least 20 min')).toBeInTheDocument();
     expect(screen.getByText(/Gap longer than 12 min is UNKNOWN/)).toBeInTheDocument();
     expect(screen.getByText('Required for a gap of at least 33 min')).toBeInTheDocument();
-    expect(screen.getByText('None yet: ingestion arrives in M3')).toBeInTheDocument();
+    expect(screen.getByText('None yet: import the dataset or ingest readings')).toBeInTheDocument();
   });
 
   it('shows an error state with retry when the policy request fails', async () => {

@@ -15,9 +15,14 @@ EXPECTED_TABLES = {
     "incident", "disposition", "disposition_incident", "custody_event", "warehouse_release",
     "business_event", "outbox_entry", "chain_record",
     "dataset_release",  # Milestone 2
+    # Milestone 3: detector configuration, evaluations and append-only results
+    "detector_config", "detector_evaluation", "data_gap", "detection", "data_quality_warning",
+    "incident_revision", "decision_reassessment",
 }
 GROUND_TRUTH_TABLES = {"journey", "event"}  # schema ground_truth, Milestone 2 (DATA-09)
-M1_TABLES = EXPECTED_TABLES - {"dataset_release"}
+M3_TABLES = {"detector_config", "detector_evaluation", "data_gap", "detection", "data_quality_warning",
+             "incident_revision", "decision_reassessment"}
+M1_TABLES = EXPECTED_TABLES - {"dataset_release"} - M3_TABLES
 
 
 def test_upgrade_creates_all_tables_and_matches_models(migrations_engine: Engine) -> None:
@@ -74,3 +79,18 @@ def test_m2_migration_is_additive_and_reversible_to_m1(migrations_engine: Engine
     assert set(inspector.get_table_names()) == M1_TABLES | {"alembic_version"}
     assert "ground_truth" not in inspector.get_schema_names()
     assert {c["name"] for c in inspector.get_columns("shipment")} == m1_columns
+
+
+def test_0003_is_additive_and_downgrades_to_the_milestone_2_schema(migrations_engine: Engine) -> None:
+    """Milestone 3 only adds tables and nullable/defaulted columns; 0003 -> 0002 restores M2 exactly."""
+    with migrations_engine.begin() as conn:
+        command.upgrade(alembic_config(conn), "head")
+        command.downgrade(alembic_config(conn), "0002")
+    inspector = inspect(migrations_engine)
+    assert set(inspector.get_table_names()) == (EXPECTED_TABLES - M3_TABLES) | {"alembic_version"}
+    columns = {c["name"] for c in inspector.get_columns("ingest_batch")}
+    assert not {"duplicate_count", "ingest_mode"} & columns
+    assert not {"sensor_id", "detector_config_id", "opened_by_evaluation_id"} & {
+        c["name"] for c in inspector.get_columns("incident")}
+    with migrations_engine.begin() as conn:
+        command.upgrade(alembic_config(conn), "head")
