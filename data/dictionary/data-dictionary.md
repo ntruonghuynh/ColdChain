@@ -20,6 +20,8 @@
 | Provenance | [`provenance.md`](provenance.md) |
 | Requirements | SC-02, DATA-01, DATA-02, DATA-04, DATA-06 to DATA-09, NFR-03, NFR-05, NFR-06, EVAL-10, SUB-02 |
 
+M4's versioned observed-data model features and missing-context semantics are documented separately in [`docs/design/m4-feature-dictionary.md`](../../docs/design/m4-feature-dictionary.md). Ground-truth fields below remain targets/reporting references only and are excluded from feature extraction and inference.
+
 All counts quoted in this document come from `data/release/coldchain-sim-v1.0.0-seed11/statistics.json`, which the generator writes from the generated files.
 
 ---

@@ -1,0 +1,9 @@
+After `scripts/smoke_test.py --keep-running` shut down and restarted Compose, a read-only SQL query found both M4 inference rows still present:
+
+```
+prediction_id                         | status                | model_version       | risk_probability | alert | advisory_only
+12881826-dafe-4bfe-8221-df90a40d833b | INSUFFICIENT_EVIDENCE | coldchain-rf-v1.0.0  | NULL             | false | true
+1ae4f2a2-8cab-4188-a7f3-a3c2ae4e3438 | SCORED                | coldchain-rf-v1.0.0  | 0.00206582       | false | true
+```
+
+`GET /api/predictions/model` after restart returned `{"data":{"status":"ready","model_version":"coldchain-rf-v1.0.0","detail":null},"meta":null}`.

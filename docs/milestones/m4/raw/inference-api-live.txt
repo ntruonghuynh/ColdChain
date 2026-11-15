@@ -1,0 +1,25 @@
+GET /api/health
+HTTP 200; status=ok; database.status=ok; migration_revision=0004; expected_revision=0004.
+
+GET /api/predictions/model
+HTTP 200; status=ready; model_version=coldchain-rf-v1.0.0.
+
+POST /api/predictions
+Request: {"shipment_id":"SIM-S11-J0001","sensor_id":"SIM-S11-L0001","as_of":"2026-09-09T15:20:00Z"}
+HTTP 200 response: {"status":"SCORED","prediction_id":"1ae4f2a2-8cab-4188-a7f3-a3c2ae4e3438","as_of":"2026-09-09T15:20:00Z","model_version":"coldchain-rf-v1.0.0","feature_schema_version":"coldchain-window-v1","advisory_only":true,"temperature_safety_established":false,"risk_probability":0.002065820239366868,"alert":false,"threshold":0.7,"interpretation":"NO_MODEL_ALERT; this does not establish product safety","evidence":{"observed_reading_count":11,"coverage_ratio":0.8461538461538461,"latest_received_age_minutes":7.683333333333334}}.
+
+POST /api/predictions
+Request: {"shipment_id":"SIM-S11-J0001","sensor_id":"SIM-S11-L0001","as_of":"2026-09-09T14:20:00Z"} (the cutoff precedes the first reading receipt)
+HTTP 200 response: {"status":"INSUFFICIENT_EVIDENCE","prediction_id":"12881826-dafe-4bfe-8221-df90a40d833b","model_version":"coldchain-rf-v1.0.0","feature_schema_version":"coldchain-window-v1","advisory_only":true,"temperature_safety_established":false,"risk_probability":null,"alert":false,"message":"Insufficient recent observations; temperature risk is unknown."}.
+
+Read-only SQL verification against the Compose development database:
+
+```
+prediction_id                         | status                | model_version       | risk_probability | alert | advisory_only
+12881826-dafe-4bfe-8221-df90a40d833b | INSUFFICIENT_EVIDENCE | coldchain-rf-v1.0.0  | NULL             | false | true
+1ae4f2a2-8cab-4188-a7f3-a3c2ae4e3438 | SCORED                | coldchain-rf-v1.0.0  | 0.00206582       | false | true
+
+trigger: trg_ml_prediction_append_only (enabled)
+```
+
+The observed DB query showed both records persist with the frozen version. Backend regression tests confirm UPDATE is rejected by the trigger and the inference route does not write readings, incidents, dispositions, warehouse releases or shipment status.

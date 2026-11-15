@@ -27,7 +27,8 @@ FEATURES: list[FeatureStatus] = [
                   note="Live ingestion API (server receipt time), monitoring states, confirmed gaps, "
                        "policy-baseline excursions, incidents and excursion queue. Incidents stay open: "
                        "quality dispositions arrive in Milestone 5."),
-    FeatureStatus(key="ml", name="ML excursion detection", status="not_implemented", milestone="M4"),
+    FeatureStatus(key="ml", name="Frozen advisory ML excursion predictions", status="available", milestone="M4",
+                  note="Read-only causal inference; insufficient evidence is unknown and predictions cannot authorize release."),
     FeatureStatus(key="blockchain", name="Blockchain records and reconciliation",
                   status="not_implemented", milestone="M5"),
     FeatureStatus(key="quality_workflow", name="Quality disposition and release gate",

@@ -1,0 +1,49 @@
+{
+  "allowed_dataset_id": "coldchain-sim-v1.0.0-seed11",
+  "candidates": {
+    "logistic": {
+      "class_weight": "balanced",
+      "max_iter": 500
+    },
+    "rf_deeper": {
+      "class_weight": "balanced_subsample",
+      "max_depth": 12,
+      "min_samples_leaf": 3,
+      "n_estimators": 180
+    },
+    "rf_shallow": {
+      "class_weight": "balanced_subsample",
+      "max_depth": 8,
+      "min_samples_leaf": 5,
+      "n_estimators": 120
+    }
+  },
+  "config_version": "m4-training-v1",
+  "minimum_consecutive_windows": 3,
+  "partitions": {
+    "internal_test": 30,
+    "train": 140,
+    "validation": 30
+  },
+  "protocol_version": "m4-dev-v1",
+  "random_seed": 11,
+  "selected_candidate": "rf_deeper",
+  "selected_threshold": 0.7,
+  "selection": "event F1; ties prefer precision, recall, then fewer false alarms per journey",
+  "stride_minutes": 5,
+  "validation_minimum_consecutive_windows": [
+    1,
+    2,
+    3
+  ],
+  "validation_thresholds": [
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8
+  ],
+  "window_minutes": 60
+}

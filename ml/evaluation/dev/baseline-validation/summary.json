@@ -1,0 +1,106 @@
+{
+  "detection_delay_min": {
+    "alerts_raised_before_onset": 0,
+    "component_first_evidence_E1_minus_T0": {
+      "max": 121.0,
+      "mean": 16.571,
+      "median": 4.5,
+      "min": 1.0,
+      "n": 14,
+      "p90_nearest_rank": 57.0
+    },
+    "component_policy_duration_Ea_minus_E1": {
+      "max": 30.0,
+      "mean": 25.714,
+      "median": 30.0,
+      "min": 15.0,
+      "n": 14,
+      "p90_nearest_rank": 30.0
+    },
+    "component_transmission_Te_minus_Ea": {
+      "max": 247.45,
+      "mean": 36.261,
+      "median": 10.492,
+      "min": 0.033,
+      "n": 14,
+      "p90_nearest_rank": 158.05
+    },
+    "definition": "T0 = reference start (ground truth); Ea = confirmed_event_at; Te = raised_at of the earliest raised incident revision overlapping the reference. Matched events only.",
+    "emission_delay_Te_minus_T0": {
+      "max": 279.45,
+      "mean": 78.546,
+      "median": 41.992,
+      "min": 27.033,
+      "n": 14,
+      "p90_nearest_rank": 189.05
+    },
+    "event_time_delay_Ea_minus_T0": {
+      "max": 151.0,
+      "mean": 42.286,
+      "median": 33.5,
+      "min": 16.0,
+      "n": 14,
+      "p90_nearest_rank": 87.0
+    },
+    "missed_events_without_delay": 2
+  },
+  "evaluations": 5639,
+  "excursion_detection": {
+    "by_direction": {
+      "HIGH": {
+        "detections_raised": 10,
+        "matched": 10,
+        "reference_events": 12
+      },
+      "LOW": {
+        "detections_raised": 4,
+        "matched": 4,
+        "reference_events": 4
+      }
+    },
+    "detections_raised": 14,
+    "detections_with_final_basis_current": 14,
+    "false_alarms": 0,
+    "false_alarms_later_superseded_or_merged": 0,
+    "false_alarms_per_journey": 0.0,
+    "matched": 14,
+    "precision": 1.0,
+    "recall": 0.875,
+    "reference_events": 16
+  },
+  "journeys": 30,
+  "label": "DEVELOPMENT measurement on seed 11 (train + validation partitions). NOT the final M9 result.",
+  "missing_readings_behaviour": {
+    "data_gap_incidents_final_basis_superseded": 0,
+    "data_gap_incidents_raised": 3,
+    "found_as_confirmed_gap": 63,
+    "found_with_identical_bounds": 63,
+    "gap_status_agreement": 63,
+    "gap_time_counted_in_range_note": "Zero by construction: the detector has no in-range-time measure; every confirmed gap is not-observed time (C-06).",
+    "gap_time_counted_in_range_s": 0,
+    "monitoring_end_gap_revisions_raised": 18,
+    "monitoring_end_gaps_in_final_state": 0,
+    "operational_confirmed_gaps_final": 63,
+    "operational_gaps_by_status": {
+      "SHORT_GAP": 59,
+      "UNKNOWN": 1,
+      "UNKNOWN_REVIEW_REQUIRED": 3
+    },
+    "recall_reference_excursions_with_delayed_readings": {
+      "detected": 8,
+      "recall": 1.0,
+      "reference_events": 8
+    },
+    "recall_reference_excursions_with_missing_readings": {
+      "detected": 3,
+      "recall": 0.75,
+      "reference_events": 4
+    },
+    "recall_reference_excursions_without_missing_readings": {
+      "detected": 11,
+      "recall": 0.9167,
+      "reference_events": 12
+    },
+    "reference_missing_data_intervals": 63
+  }
+}

@@ -1,0 +1,6 @@
+Command: PYTHONPATH=ml:backend /private/tmp/coldchain-m4-py312/bin/python -m coldchain_ml train
+Runtime: Python 3.12.13, scikit-learn 1.9.0, NumPy 2.5.4, joblib 1.6.0.
+Exit: 0
+Stdout: /Users/huynhnamtruong/Documents/ColdChain/ColdChain/ml/registry/coldchain-rf-v1.0.0
+
+Selection used seed-11 train and validation only. The test partition was not read by the training command.

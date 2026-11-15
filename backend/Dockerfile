@@ -10,12 +10,15 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY requirements.txt ./
+COPY backend/requirements.txt ./
 RUN pip install -r requirements.txt
 
-COPY alembic.ini ./
-COPY migrations ./migrations
-COPY app ./app
+COPY backend/alembic.ini ./
+COPY backend/migrations ./migrations
+COPY backend/app ./app
+COPY ml/coldchain_ml ./ml/coldchain_ml
+COPY ml/registry ./ml/registry
+ENV PYTHONPATH=/app/ml
 
 RUN useradd --create-home --uid 10001 appuser
 USER appuser
@@ -31,9 +34,9 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-
 # Test image: runtime + test dependencies + tests. Used by `docker compose --profile test`.
 FROM runtime AS test
 USER root
-COPY requirements-dev.txt ./
+COPY backend/requirements-dev.txt ./
 RUN pip install -r requirements-dev.txt
-COPY pyproject.toml ./
-COPY tests ./tests
+COPY backend/pyproject.toml ./
+COPY backend/tests ./tests
 USER appuser
 CMD ["pytest", "-v", "-p", "no:cacheprovider"]

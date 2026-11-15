@@ -3,6 +3,7 @@
 from app.db.models.dataset import DatasetRelease
 from app.db.models.ground_truth import GroundTruthEvent, GroundTruthJourney
 from app.db.models.ledger import BusinessEvent, ChainRecord, OutboxEntry
+from app.db.models.ml import MLPrediction
 from app.db.models.monitoring import (
     DataGap,
     DataQualityWarning,
@@ -36,6 +37,7 @@ __all__ = [
     "GroundTruthJourney",
     "Incident",
     "IncidentRevision",
+    "MLPrediction",
     "IngestBatch",
     "Organization",
     "OutboxEntry",

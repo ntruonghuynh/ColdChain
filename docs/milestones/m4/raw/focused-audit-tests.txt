@@ -1,0 +1,11 @@
+ImportError while loading conftest '/Users/huynhnamtruong/Documents/ColdChain/ColdChain/backend/tests/conftest.py'.
+backend/tests/conftest.py:37: in <module>
+    from app.main import app  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^
+backend/app/main.py:16: in <module>
+    from app.api import health, ingest, monitoring, predictions, reference, shipments, system
+backend/app/api/predictions.py:14: in <module>
+    from app.integrations import ml_adapter
+backend/app/integrations/ml_adapter.py:9: in <module>
+    import joblib
+E   ModuleNotFoundError: No module named 'joblib'

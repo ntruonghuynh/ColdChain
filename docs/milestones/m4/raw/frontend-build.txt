@@ -1,0 +1,13 @@
+
+> coldchain-frontend@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v7.3.8 building client environment for production...
+transforming...
+✓ 2132 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.58 kB │ gzip:   0.34 kB
+dist/assets/index-vUaFn2dr.css   24.85 kB │ gzip:   5.54 kB
+dist/assets/index-BhIqwYYP.js   327.44 kB │ gzip: 101.93 kB
+✓ built in 747ms

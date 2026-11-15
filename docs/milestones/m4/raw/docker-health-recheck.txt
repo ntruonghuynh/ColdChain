@@ -1,0 +1,2 @@
+permission denied while trying to connect to the docker API at unix:///Users/huynhnamtruong/.docker/run/docker.sock
+exit_code=1

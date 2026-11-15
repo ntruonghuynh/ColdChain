@@ -42,7 +42,8 @@ services:
   migrate:
     # One-shot job: apply Alembic migrations, then load reference data (policy, organizations).
     build:
-      context: ./backend
+      context: .
+      dockerfile: backend/Dockerfile
       target: runtime
     image: coldchain-backend:local
     environment: *backend-env
@@ -88,7 +89,8 @@ services:
   backend-tests:
     profiles: ["test"]
     build:
-      context: ./backend
+      context: .
+      dockerfile: backend/Dockerfile
       target: test
     image: coldchain-backend:test
     environment:
@@ -97,7 +99,7 @@ services:
       # Tests create and drop this separate database; the main database is never touched.
       TEST_POSTGRES_DB: ${POSTGRES_DB:-coldchain}_test
       # Generator package and committed dataset come from the read-only repository mount.
-      PYTHONPATH: /workspace/data/generator
+      PYTHONPATH: /workspace/data/generator:/app/ml
       COLDCHAIN_REPO_DIR: /workspace
     volumes:
       - .:/workspace:ro
@@ -118,7 +120,7 @@ services:
     pull_policy: never
     environment:
       <<: *backend-env
-      PYTHONPATH: /app:/workspace/data/generator
+      PYTHONPATH: /app:/app/ml:/workspace/data/generator
       PYTHONDONTWRITEBYTECODE: "1"
     working_dir: /workspace
     volumes:

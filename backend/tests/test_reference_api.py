@@ -53,13 +53,14 @@ def test_shipments_list_returns_database_rows(client: TestClient, db_session: Se
     assert client.get("/api/shipments/TEST-SHP-API-1").status_code == 200
 
 
-def test_system_info_marks_future_features_not_implemented(client: TestClient) -> None:
+def test_system_info_marks_m4_available_and_future_features_not_implemented(client: TestClient) -> None:
     response = client.get("/api/system/info")
     assert response.status_code == 200
     data = response.json()["data"]
-    assert data["milestone"] == "M3"
+    assert data["milestone"] == "M4"
     features = {f["key"]: f for f in data["features"]}
-    for key in ["ml", "llm", "blockchain", "quality_workflow", "authentication"]:
+    assert features["ml"]["status"] == "available"
+    for key in ["llm", "blockchain", "quality_workflow", "authentication"]:
         assert features[key]["status"] == "not_implemented", key
     assert features["ingestion"]["status"] == "available"   # Milestone 3
     assert features["database"]["status"] == "available"

@@ -8,7 +8,7 @@ from sqlalchemy.engine import URL, make_url
 
 APP_NAME = "Cold Chain Monitoring and Excursion Response"
 APP_VERSION = "0.1.0"
-CURRENT_MILESTONE = "M3"
+CURRENT_MILESTONE = "M4"
 
 
 class Settings(BaseSettings):

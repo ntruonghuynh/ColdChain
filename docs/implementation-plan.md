@@ -90,6 +90,8 @@ Suggested timing for a 10-week course (adjust to the team): week 1 M0–M1, week
 
 ## M4 — ML pipeline
 
+**Status: implemented; final verification and report in `docs/milestones/m4/README.md`.** This milestone is complete pending project-owner review. Do not start M5 from this branch.
+
 | Field | Content |
 |---|---|
 | Objectives | Windowing and features, journey-level splits, baseline and candidate models, validation-only tuning, freezing, single test run per seed, validated prediction API in the backend. |

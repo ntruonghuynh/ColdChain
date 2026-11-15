@@ -2,7 +2,7 @@
 
 | Item | Value |
 |---|---|
-| Status | Final acceptance review completed 2026-11-15 on branch `feat/m3-monitoring-baseline`; **awaiting the owner's acceptance**. Not committed |
+| Status | Accepted and merged into `main` before Milestone 4 (project owner report, 2026-11-15) |
 | Specification | [M3 detector contract](../../design/m3-baseline-detector-contract.md) (BR-05, C-01 to C-10, BR-06 to BR-09, U-01 to U-08) |
 | Requirements addressed | FR-01, FR-02, FR-03, FR-04, FR-05, FR-10, FR-11, FR-12 (baseline side), FR-20, FR-30/FR-31 (M3 part), EVAL-01, EVAL-04/EVAL-05 (development measurement), EVAL-13, DATA-09, BR-02 to BR-09 (BR-09 amended by U-01), BR-13; traceability in requirements analysis §16.1 |
 | Unchanged | Policy `POL-CHILL-01` v1.0 (file and version), canonical dataset `coldchain-sim-v1.0.0-seed11` (checksums verified, `raw/08`), ground-truth labels |

@@ -1,0 +1,8 @@
+Canonical integrity verification:
+- Full backend/generator run passed `test_committed_release_matches_its_manifest`, `test_committed_release_is_the_canonical_synthetic_dataset`, `test_committed_release_regenerates_to_identical_content`, `test_policy_file_is_unchanged_since_the_labels_were_derived`, and the split isolation tests.
+- `git diff --exit-code -- backend/app/seed/data/policies/POL-CHILL-01_v1.0.json data/release/coldchain-sim-v1.0.0-seed11` returned 0.
+- `git status --short` for the policy, canonical dataset, and reserved seed-manifest paths was empty.
+- Canonical dataset ID: `coldchain-sim-v1.0.0-seed11`; manifest dataset fingerprint: `80c4aec06daf3554ba0eecea7ff63d3d14cd5545df43cc7b94601b1fe8a9970d`.
+- Canonical policy content hash recorded in both dataset and frozen model manifest: `73f757e24319791dd6cb8200cf1863aac362d97d6ef32fe01bfa89566b5e0a96`.
+- Frozen bundle `shasum -a 256 -c SHA256SUMS`: model.joblib, feature_spec.json, model_card.md, training_config.json and model_manifest.json all `OK`.
+- Ground-truth boundary tests passed; no operational inference/API module imports the label loader or evaluation package.

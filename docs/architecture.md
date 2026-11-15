@@ -2,9 +2,9 @@
 
 | Item | Value |
 |---|---|
-| Status | Milestone 0 design. **Milestone 1 implemented** the database schema (§5) and the infrastructure (§8). **Milestone 2 implemented** the synthetic data generator, dataset import and ground-truth schema (§3.7, §5, I-9). **Milestone 3 implemented** ingestion, telemetry monitoring, the policy-baseline detector, incidents and the excursion queue (§3.2, §5, §7.1; specification `docs/design/m3-baseline-detector-contract.md`). Everything else is still design |
+| Status | Milestones 1–3 implemented and merged. **Milestone 4 implemented** causal observed-data features, a frozen advisory model, append-only prediction audit records and a validated inference API (§3.2, §3.4, §5, §6). M5+ remains design |
 | Inputs | `docs/requirements-analysis.md` (requirement IDs referenced in brackets, e.g. [FR-24]) |
-| Last updated | 2026-11-15 (Milestone 3 implementation) |
+| Last updated | 2026-11-15 (Milestone 4 implementation) |
 
 ---
 
@@ -240,11 +240,11 @@ Change from the M0 design: the mutable delivery state (`status`, `attempts`, `ne
 | `shipment.source_dataset_id` | Nullable FK to `dataset_release`; NULL for shipments not created by an import |
 | schema `ground_truth`, tables `journey` and `event` | Simulator labels (scenario, ambient profile, parameters; labelled intervals with `label_source` and JSONB attributes), apart from the operational tables [DATA-09] |
 
-Only `app/db/models/ground_truth.py`, the model index and the importer may refer to the ground-truth models; `backend/tests/test_ground_truth_boundary.py` enforces this for every other application module (detection, features, API). Both live under the same database role in this prototype; a separate read-only role for detection is not configured (limitation).
+Only ground-truth model definitions, the model index, importer, M3 offline evaluation and the allow-listed M4 label loader may refer to ground-truth data; `backend/tests/test_ground_truth_boundary.py` enforces the boundary. Both operational and label tables currently share a database role in this prototype; a separate read-only role is not configured (limitation).
 
 **Implemented in Milestone 3** (migration `0003`, additive only; fields in `docs/design/m3-baseline-detector-contract.md` §5.14): `detector_config` (immutable detector configuration versions: nominal 5-min interval, 7 min 30 s continuity), `detector_evaluation` (one row per causal evaluation: `as_of`, input fingerprint, policy and configuration versions), `data_gap`, `detection` (observed runs, source `POLICY_BASELINE`), `data_quality_warning` and `incident_revision` (append-only revisions; `superseded_at` set once when replaced), `decision_reassessment` (U-04); new columns `incident.sensor_id`, `incident.detector_config_id`, `incident.opened_by_evaluation_id`, `ingest_batch.duplicate_count`, `ingest_batch.ingest_mode` (`IMPORT`/`LIVE`/`REPLAY`).
 
-**Added in later milestones** (not drawn as implemented): ML fields on `detection` (model version, window, class, score) in M4, `llm_draft` (prompt version, provider, model, source IDs, status, tokens, latency, cost) in M6, `audit_log` (hash-chained, signed entries for the comparison in EVAL-03) in M5.
+**Implemented in Milestone 4** (migration `0004`): `ml_prediction` stores immutable advisory output with model and feature schema versions, as-of time, score/threshold and evidence summary. Database triggers reject updates and deletes. **Future:** `llm_draft` (M6), signed `audit_log` (M5).
 
 Rules for the schema:
 
@@ -285,20 +285,15 @@ flowchart LR
     Z --> P["Serve via backend<br/>validated predict API<br/>(no ground truth)"]
 ```
 
-- **Windows** [ML-01]: resample to a 5-minute grid by `event_at`; missing slots stay `NaN` (no forward fill across a gap, P2). Window length and stride are configuration (starting proposal: 60 minutes, stride 5 minutes). Features use only data at or before the window end [ML-09].
-- **Features** (starting set, frozen in `feature_spec.json`): mean, min, max, standard deviation, last value, linear slope, largest step between consecutive readings, minutes above 8 °C, minutes below 2 °C, longest in-range-violating run, missing fraction, longest gap, spike score (largest deviation from rolling median), ambient mean, product-minus-ambient difference, door-open fraction, battery minimum and slope.
-- **Window classes** [ML-04]: `NORMAL`, `EXCURSION_GRADUAL` (true product temperature out of range, sustained), `SENSOR_SPIKE`, `SENSOR_BIAS`, `INSUFFICIENT_DATA`. Exact label rules are written into the data dictionary in M2.
-- **Models** [ML-02, ML-05]:
-  - B0 — policy threshold rule (the brief's baseline; not ML).
-  - B1 — ML baseline: logistic regression on the same features.
-  - C1 — candidate: gradient-boosted trees (`HistGradientBoostingClassifier`, handles `NaN`).
-  - C2 — optional: `IsolationForest` anomaly score as an extra spike/bias signal.
-  The final candidate is chosen on validation results only [ML-08].
-- **Event aggregation**: consecutive positive windows form a predicted event; the minimum run length is tuned on validation [EVAL-11].
+- **Windows** [ML-01, ML-09, D-12]: 60-minute closed windows sampled every five minutes. A reading is eligible only when both `event_at` and `received_at` are no later than the prediction timestamp. Missing slots remain missing; the feature schema reports coverage without assuming safety. Context has its own receipt-time cutoff.
+- **Target** [A-12, ML-02]: binary window-level classification of whether a policy-defined true excursion is active at the prediction timestamp. This is current-state detection, not forecasting. Alert direction is derived from observed temperatures. Simulator cause labels are not inference inputs or model features.
+- **Features**: 25 ordered, versioned values spanning observed temperature statistics/trend, sample-equivalent above/below-limit minutes, observed continuity and coverage, robust spike score, available ambient/door/battery context, context observation counts, and age of the latest receipt. Exact names and definitions are in `docs/design/m4-feature-dictionary.md`.
+- **Models** [ML-02, ML-05]: B0 is the unchanged M3 policy baseline; logistic regression is the simple ML comparator; Random Forest is the primary candidate (two compact hyperparameter configurations). Median imputation and missing indicators are frozen in the scikit-learn pipeline. Model and event threshold/run length are selected on validation only [ML-08, EVAL-11].
+- **Event aggregation**: at least the selected count of adjacent positive windows forms an advisory event. An insufficient-evidence window ends an active segment. The selected M4 model uses a 0.7 probability threshold and three adjacent five-minute samples; activation occurs at the third timestamp, ten minutes after the first. Configuration is in the frozen registry.
 - **Training-time labels vs inference-time features** [ML-09, D-12, approved 2026-11-15]: *labels* (targets) come from the simulator's ground-truth events. They are read by one explicitly allow-listed label-builder module, only during training and evaluation, and only for the journeys of the partition in use. *Features* are computed only from observed data (`reading`, `context_reading`, or the `observed/` files), identically in training and in inference. Inference, operational APIs and the frontend never read ground truth. `backend/tests/test_ground_truth_boundary.py` enforces this. M4 adds the label builder to its allow-list and the feature and predict modules stay forbidden.
 - **Seeds and partitions** [D-13, approved 2026-11-15]: seed 11 is used for development, training (train partition), model selection and threshold tuning (validation partition) and internal regression checks (test partition). The seed-11 test partition is never used for iterative tuning. Seeds 22, 33, 44, 55, 66 are final evaluation seeds. They do not influence feature selection, model selection, preprocessing or thresholds, and they are evaluated only after the model and preprocessing are frozen.
 - **Freeze** [ML-06]: `ml/registry/<model_version>/` holds the model file, `feature_spec.json`, preprocessing config, training-data manifest hash, validation metrics, model card and a SHA-256 of each file (D-05: committed, small, versioned). The freeze record also stores the seed assignments (development seed and split seed; final evaluation seeds) and the evaluation-protocol version. Final evaluation seeds are opened only after this record exists.
-- **Serving** [ML-07]: backend loads one model version (`ML_MODEL_VERSION`), validates feature frames against the spec, stores every prediction with its model version. Predictions open incidents for review only [BR-15].
+- **Serving** [ML-07]: backend verifies and loads one frozen model bundle, validates the ordered feature schema and policy hash, and exposes `POST /api/predictions`. Each response is saved as an append-only advisory row with model and feature-schema versions. It cannot open/close incidents or alter disposition, release or shipment state.
 
 ## 7. Key flows
 
