@@ -68,7 +68,9 @@ python-dotenv==1.2.4
     #   pydantic-settings
     #   uvicorn
 pyyaml==6.0.3
-    # via uvicorn
+    # via
+    #   coldchain-backend (pyproject.toml)
+    #   uvicorn
 sqlalchemy==2.1.8
     # via
     #   coldchain-backend (pyproject.toml)

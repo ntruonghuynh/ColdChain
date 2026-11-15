@@ -17,8 +17,11 @@ FEATURES: list[FeatureStatus] = [
                   status="available", milestone="M1",
                   note="Demo users have no login credentials yet."),
     FeatureStatus(key="shipments_read", name="Shipment list (read-only)", status="available", milestone="M1",
-                  note="No shipments exist until data ingestion is implemented."),
-    FeatureStatus(key="synthetic_data", name="Synthetic journey dataset", status="not_implemented", milestone="M2"),
+                  note="Empty until the synthetic dataset is imported (manual command, see README)."),
+    FeatureStatus(key="synthetic_data", name="Synthetic journey dataset and import", status="available",
+                  milestone="M2",
+                  note="Canonical simulated dataset in data/release/, imported with a manual command. "
+                       "No detection runs on it yet (Milestone 3)."),
     FeatureStatus(key="ingestion", name="Reading ingestion, gap detection and threshold baseline",
                   status="not_implemented", milestone="M3"),
     FeatureStatus(key="ml", name="ML excursion detection", status="not_implemented", milestone="M4"),

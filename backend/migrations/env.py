@@ -7,7 +7,7 @@ from sqlalchemy import Connection
 
 from app.core.config import get_settings
 from app.db import models  # noqa: F401  (registers all tables on Base.metadata)
-from app.db.base import Base
+from app.db.base import Base, include_name
 from app.db.session import build_engine
 
 config = context.config
@@ -23,6 +23,8 @@ def _configure(connection: Connection | None = None, **kwargs: object) -> None:
         target_metadata=target_metadata,
         compare_type=True,
         compare_server_default=True,
+        include_schemas=True,
+        include_name=include_name,
         **kwargs,
     )
 

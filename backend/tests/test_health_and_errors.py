@@ -23,7 +23,7 @@ def test_readiness_reports_database_ok_and_migration_head(client: TestClient) ->
     body = response.json()["data"]
     assert body["status"] == "ok"
     assert body["database"]["status"] == "ok"
-    assert body["database"]["migration_revision"] == expected_revision() == "0001"
+    assert body["database"]["migration_revision"] == expected_revision() == "0002"
     assert body["database"]["latency_ms"] >= 0
 
 

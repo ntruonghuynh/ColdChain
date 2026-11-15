@@ -1,6 +1,6 @@
 # backend/
 
-FastAPI service. **Milestone 1:** application skeleton, database schema and migrations, reference data, health checks and read-only endpoints. Business logic (ingestion, detection, dispositions, release gate, chain integration) arrives in Milestones 3, 5 and 6.
+FastAPI service. **Milestone 1:** application skeleton, database schema and migrations, reference data, health checks and read-only endpoints. **Milestone 2:** migration `0002` (dataset provenance, `ground_truth` schema) and the synthetic dataset importer `app/dataset/` (`python -m app.dataset verify|import|status`; see `data/README.md`). Business logic (ingestion, detection, dispositions, release gate, chain integration) arrives in Milestones 3, 5 and 6.
 
 | Path | Purpose |
 |---|---|
