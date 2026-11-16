@@ -1,0 +1,11 @@
+{
+  "active_project": "coldchain",
+  "block_number": 1191,
+  "chain_connected": true,
+  "chain_id": 31337,
+  "contract_address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "contract_code_bytes": 5670,
+  "failed_incident_outbox_entries": 147,
+  "incident_outbox_attempt_rows": 1177,
+  "open_incidents": 147
+}

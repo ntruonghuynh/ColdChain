@@ -1,0 +1,19 @@
+{
+  "data_origin": "SIMULATED",
+  "detection_count": 4,
+  "event_at_intervals_seconds": [
+    900,
+    900,
+    900
+  ],
+  "incident_count": 0,
+  "interpretation": "15-minute gaps exceed the detector 7m30s continuity bound; readings formed separate runs and did not open a temperature incident. This informed the successful isolated 5-minute cadence test; no detector or policy setting was changed.",
+  "quality_warning_count": 9,
+  "reading_count": 4,
+  "run": "isolated preliminary HTTP cadence exploration; preserved without cleanup",
+  "shipment_id": "M5HTTP-20261116-2759D06A",
+  "shipment_status": "IN_TRANSIT",
+  "temperature_c_values": [
+    "9.00"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "scope": "isolated test project only; no historical backfill was attempted",
+  "scenarios": [
+    {
+      "case": "unregistered shipment with a newly created M3 incident",
+      "result": "PASS",
+      "evidence": "Incident outbox stayed PENDING with zero attempts before registration; then incident anchor confirmed once after SHIPPER registration."
+    },
+    {
+      "case": "incident anchoring after shipment is already registered",
+      "result": "PASS",
+      "evidence": "Isolated HTTP sequence confirmed registration before the incident anchor; each had one chain confirmation."
+    },
+    {
+      "case": "multiple incidents on one shipment wait for registration",
+      "result": "PASS_UNIT",
+      "evidence": "Backend regression has two incident events and one sensor-batch event; none is claimable until same-shipment registration is confirmed."
+    },
+    {
+      "case": "later incident revisions during recovery",
+      "result": "NOT_RUN",
+      "evidence": "The isolated M3 demo incident had one revision; no recovery mapping exists to exercise revision rebinding."
+    },
+    {
+      "case": "duplicate historical recovery request",
+      "result": "NOT_RUN",
+      "evidence": "No historical recovery endpoint or recovery-case model exists. Duplicate same-reference SHIPPER registration requests were tested separately and returned the same event ID."
+    },
+    {
+      "case": "invalid SHIPPER authorization",
+      "result": "PASS",
+      "evidence": "Authenticated CARRIER registration request returned HTTP 403; no event was created for that request."
+    },
+    {
+      "case": "interrupted workflow and recovery after worker restart",
+      "result": "PASS",
+      "evidence": "With only the isolated worker stopped, two concurrent identical registrations produced one event ID and durable PENDING/0-attempt state; after restart it confirmed once. This was not a historical backfill."
+    },
+    {
+      "case": "complete 147-event recovery inventory",
+      "result": "NOT_RUN",
+      "evidence": "The design-only recovery-to-contract-reference mapping is not implemented. Live inventory remained read-only and unchanged."
+    },
+    {
+      "case": "no duplicated operational incidents",
+      "result": "PASS",
+      "evidence": "Isolated demo shipment retained one Incident ID and one revision after the workflow; duplicate registration did not create an incident."
+    }
+  ],
+  "evidence_files": [
+    "isolated-registration-order-http.json",
+    "isolated-worker-stop-pending.json",
+    "isolated-recovery-simulation-summary.json",
+    "backend-generator-tests-recovery-final.log"
+  ]
+}

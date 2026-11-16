@@ -1,0 +1,1 @@
+{"audit_valid": true, "duplicate_registration_http": 202, "incident_attempts": 1, "incident_outbox": "CONFIRMED", "reconciliation_counts": {"OK": 2}, "registration_attempts": 1, "registration_chain_verification": "MATCH", "registration_outbox": "CONFIRMED", "same_event_id_on_replay": true, "shipper_registration_http": 202, "wrong_role_registration_http": 403}

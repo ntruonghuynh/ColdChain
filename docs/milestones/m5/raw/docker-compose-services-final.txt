@@ -1,0 +1,8 @@
+NAME                       IMAGE                                                                     COMMAND                  SERVICE        CREATED          STATUS                    PORTS
+coldchain-backend-1        coldchain-backend:local                                                   "uvicorn app.main:ap…"   backend        33 seconds ago   Up 29 seconds (healthy)   8000/tcp
+coldchain-chain-1          coldchain-chain:local                                                     "docker-entrypoint.s…"   chain          2 hours ago      Up 2 hours (healthy)      127.0.0.1:8545->8545/tcp
+coldchain-chain-deploy-1   coldchain-chain:local                                                     "docker-entrypoint.s…"   chain-deploy   2 hours ago      Exited (0) 2 hours ago    
+coldchain-db-1             postgres:16-alpine                                                        "docker-entrypoint.s…"   db             23 hours ago     Up 23 hours (healthy)     5432/tcp
+coldchain-frontend-1       sha256:4dc62960a2c2dec357ce77edbd262e0d9161be470fb0d82d6d6c9eefb07f1f4f   "/docker-entrypoint.…"   frontend       23 hours ago     Up 23 hours (healthy)     127.0.0.1:3000->8080/tcp
+coldchain-migrate-1        sha256:b06d916270aa51fd8808cc074e44063bc0b73bb813874ada1e9802be56790f47   "sh -c 'alembic upgr…"   migrate        2 hours ago      Exited (0) 2 hours ago    
+coldchain-worker-1         coldchain-backend:local                                                   "python -m app.worke…"   worker         33 seconds ago   Up 29 seconds (healthy)   8000/tcp

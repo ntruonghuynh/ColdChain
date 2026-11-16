@@ -1,0 +1,24 @@
+{
+  "events": [
+    {
+      "attempt_rows": 1,
+      "business_ref": "INC-DEMO-OCEAN-SIM-S11-J0154-DEMO-SIM-S11-L0154-TEX-H-20261019T150200Z",
+      "event_type": "INCIDENT_OPENED",
+      "outbox_attempts": 1,
+      "outbox_status": "CONFIRMED"
+    },
+    {
+      "attempt_rows": 1,
+      "business_ref": "M5-ISOLATED-RECOVERY-SHIPPER-DEMO-OCEAN-001",
+      "event_type": "SHIPMENT_REGISTERED",
+      "outbox_attempts": 1,
+      "outbox_status": "CONFIRMED"
+    }
+  ],
+  "incident_revision_rows": 1,
+  "incident_rows": 1,
+  "no_duplicate_operational_incident": true,
+  "scope": "isolated database only",
+  "shipment_id": "DEMO-OCEAN-SIM-S11-J0154",
+  "unique_incident_ids": 1
+}

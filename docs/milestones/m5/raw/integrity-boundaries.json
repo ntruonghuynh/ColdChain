@@ -1,0 +1,21 @@
+{
+  "approved_policy_and_canonical_seed11_and_frozen_model_no_git_diff": true,
+  "path_checks": [
+    {
+      "path": "backend/app/seed/data/policies",
+      "tracked_worktree_diff": false
+    },
+    {
+      "path": "data/release/coldchain-sim-v1.0.0-seed11",
+      "tracked_worktree_diff": false
+    },
+    {
+      "path": "ml/registry/coldchain-rf-v1.0.0",
+      "tracked_worktree_diff": false
+    }
+  ],
+  "frozen_model_checksum_manifest": "ml/registry/coldchain-rf-v1.0.0/SHA256SUMS",
+  "frozen_model_checksum_validation": "passed",
+  "local_env_ignored": true,
+  "local_env_mode": "0o600"
+}

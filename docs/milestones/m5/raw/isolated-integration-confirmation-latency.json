@@ -1,0 +1,32 @@
+{
+  "measurement": "isolated PostgreSQL outbox-attempt-start to recorded chain confirmation; end-to-end integration sample, not in-process microbenchmark",
+  "p50_ms": 58.14,
+  "p95_ms": 82.662,
+  "sample_count": 3,
+  "samples": [
+    {
+      "attempt_number": 1,
+      "attempt_started_at": "2026-11-16T11:59:55.104425+00:00",
+      "block_number": 3,
+      "business_ref": "INC-DEMO-OCEAN-SIM-S11-J0154-DEMO-SIM-S11-L0154-TEX-H-20261019T150200Z",
+      "database_confirmed_at": "2026-11-16T11:59:55.145720+00:00",
+      "latency_ms": 41.295
+    },
+    {
+      "attempt_number": 1,
+      "attempt_started_at": "2026-11-16T12:02:21.618322+00:00",
+      "block_number": 4,
+      "business_ref": "M5-ISOLATED-INTERRUPT-RESTART-SIM-S11-J0002",
+      "database_confirmed_at": "2026-11-16T12:02:21.703709+00:00",
+      "latency_ms": 85.387
+    },
+    {
+      "attempt_number": 1,
+      "attempt_started_at": "2026-11-16T11:59:55.037981+00:00",
+      "block_number": 2,
+      "business_ref": "M5-ISOLATED-RECOVERY-SHIPPER-DEMO-OCEAN-001",
+      "database_confirmed_at": "2026-11-16T11:59:55.096121+00:00",
+      "latency_ms": 58.14
+    }
+  ]
+}

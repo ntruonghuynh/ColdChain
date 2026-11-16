@@ -1,0 +1,36 @@
+{
+  "proxy": "frontend nginx to backend",
+  "checks": [
+    {
+      "path": "/",
+      "status": 200,
+      "response_bytes": 575,
+      "pass": true
+    },
+    {
+      "path": "/shipments",
+      "status": 200,
+      "response_bytes": 575,
+      "pass": true
+    },
+    {
+      "path": "/api/health",
+      "status": 200,
+      "response_bytes": 204,
+      "pass": true
+    },
+    {
+      "path": "/api/health/ledger",
+      "status": 200,
+      "response_bytes": 134,
+      "pass": true
+    },
+    {
+      "path": "/api/docs",
+      "status": 200,
+      "response_bytes": 1047,
+      "pass": true
+    }
+  ],
+  "all_pass": true
+}

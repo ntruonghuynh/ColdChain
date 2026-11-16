@@ -1,0 +1,16 @@
+{
+  "additional_nonhistorical_rows": [
+    {
+      "attempt_rows": 1,
+      "business_ref": "INC-M5HTTP-20261116-061404F9-M5SENSOR-061404F9-TEX-H-20261116T105016992260Z",
+      "event_id": "17642ce6-fcb8-4eb2-8d4e-f68b094b9131",
+      "outbox_attempts": 1,
+      "status": "CONFIRMED"
+    }
+  ],
+  "historical_failed_attempt_rows": 1176,
+  "historical_failed_entries_with_exactly_8_attempts": 147,
+  "historical_failed_event_count": 147,
+  "incident_opened_event_count": 148,
+  "total_incident_attempt_rows": 1177
+}

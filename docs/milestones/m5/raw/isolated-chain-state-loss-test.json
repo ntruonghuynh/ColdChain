@@ -1,0 +1,33 @@
+{
+  "after_restart": {
+    "chain": {
+      "block_number": 0,
+      "chain_id": 31337,
+      "code_bytes": 0
+    },
+    "contract_health": "degraded",
+    "reconciliation_counts": {
+      "CHAIN_QUERY_ERROR": 5,
+      "FAILED": 1
+    },
+    "reconciliation_finding_for_confirmed_reference": "CHAIN_QUERY_ERROR",
+    "reference_verified": false,
+    "verification_status": "CHAIN_UNAVAILABLE"
+  },
+  "before": {
+    "chain": {
+      "block_number": 6,
+      "chain_id": 31337,
+      "code_bytes": 5670
+    },
+    "contract_health": "ok",
+    "reconciliation_counts": {
+      "FAILED": 1,
+      "OK": 5
+    },
+    "reference_verified": true
+  },
+  "false_confirmed_reported": false,
+  "restoration_supported": false,
+  "scope": "isolated project only; chain process restart intentionally discards ephemeral Hardhat state"
+}

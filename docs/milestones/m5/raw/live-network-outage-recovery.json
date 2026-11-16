@@ -1,0 +1,19 @@
+{
+  "fault_injection": "temporarily disconnected the existing Hardhat container from coldchain_default; container process was not stopped or recreated",
+  "business_ref": "M5-ACCEPTANCE-20261116-chain-network-recovery-0001",
+  "event_id": "10d43c5e-660e-4757-bfc1-0d1c0c82ce2a",
+  "shipment_id": "SIM-S11-J0002",
+  "outage_observed_outbox_states": ["PENDING|0", "PENDING|0", "SUBMITTED|1", "RETRY|1"],
+  "outage_worker_probe": {
+    "status": "alive_degraded",
+    "dependencies": {"chain": "unavailable", "database": "available"},
+    "reason": "external_dependency_unavailable"
+  },
+  "recovery_observed_outbox_states": ["RETRY|1", "RETRY|1", "SUBMITTED|2", "CONFIRMED|2"],
+  "chain_id": 31337,
+  "contract_address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "block_before": 1179,
+  "block_after": 1180,
+  "contract_code_present_after_recovery": true,
+  "final_worker_probe": "worker-health-after-network-recovery.json"
+}

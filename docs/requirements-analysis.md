@@ -4,7 +4,7 @@
 |---|---|
 | Source document | `docs/requirements/03_cold_chain_monitoring_and_excursion_response.pdf` (IT in Logistics, Final project 03, "Reviewed 8 November 2026", 3 pages) |
 | Source SHA-256 | `a75ce184abfa1cf53870d063ec5cbfb26ba8d1048d5210858688254fd7915499` |
-| Document status | Milestone 0 baseline accepted. Decisions approved 2026-11-14 (Milestone 1 and Milestone 2 instructions) and 2026-11-15 (Milestone 2 review) are recorded in §13.1; all other BR/A/D items remain proposals |
+| Document status | Milestone 0 baseline accepted. Decisions through M4 are recorded in §13.1; BR-10 to BR-15 and D-08 were approved by the owner for M5 on 2026-11-16 and recorded in §13.6 |
 | Last updated | 2026-11-15 |
 
 This document turns the assignment brief into numbered, testable requirements. Every requirement says where it comes from, how it will be checked, and which milestone delivers it (see `docs/implementation-plan.md`).
@@ -303,7 +303,24 @@ The wording in §13.2 is unchanged and these rules stay **proposed** (D-09) exce
 | BR-14 (custody acceptance events) | None (monitoring boundaries come from the documented sensor assignment, not custody) | No | — |
 | BR-15 (ML and LLM advisory; may open, never close) | None in M3 (no ML/LLM) | No | — |
 
-No unresolved rule blocks a correct M3 implementation.
+At that review these rules were proposals; the M5 owner instruction subsequently approved their implementation as recorded in §13.6.
+
+### 13.6 BR-10 to BR-15 and D-08 — M5 authorization (2026-11-16)
+
+The project owner instructed implementation of Milestone 5 under BR-10 to BR-15
+and answered the D-08 identity question: **MONITOR belongs to the Receiver
+organization**. The M5 implementation follows the existing rule wording; no
+temperature threshold, detector rule, canonical data, or ML artifact changes.
+
+| Rule | M5 enforcement | Status |
+|---|---|---|
+| BR-10 | Authenticated receiving Quality Officer only; disposition binds all open incidents and evidence references. | Approved and implemented |
+| BR-11 | Warehouse release requires a RELEASE decision confirmed on chain and the matching database event. | Approved and implemented |
+| BR-12 | Existing dispositions remain immutable; new evidence creates an explicit reassessment and requires Quality review. A physical release is not reversible. | Approved and implemented, with the finality boundary documented |
+| BR-13 | Business references are unique; same payload replays are idempotent at the API, conflicts fail; the contract rejects duplicate references. | Approved and implemented |
+| BR-14 | Carrier accepts pickup custody; Receiver warehouse role accepts delivery custody. | Approved and implemented |
+| BR-15 | Monitoring service can open evidence incidents but has no interactive credential; ML and future LLM have no disposition/release capability. | Approved and implemented |
+| D-08 | MONITOR signing account is mapped to the Receiver organization; its database service identity cannot log in. | Resolved by owner selection |
 
 ## 14. Interpretations of ambiguous brief items (need approval)
 
@@ -334,8 +351,8 @@ No unresolved rule blocks a correct M3 implementation.
 | D-05 | Commit the generated dataset and frozen model artifacts, or regenerate them on first start | **Approved 2026-11-15:** canonical dataset committed in `data/release/` with SHA-256 manifest (M2); future frozen model artifacts are committed too, kept small and reproducible, with versions and SHA-256 checksums (M4) | — |
 | D-06 | Whether the assignment PDF may be committed (licence, repository visibility) | Keep it in `docs/requirements/` only if the repository is private or redistribution is allowed | M0 |
 | D-07 | Whether to run a human-timed evidence-assembly exercise | Optional; report only if actually run | M9 |
-| D-08 | Which organization's account opens incidents on chain | A MONITOR service account owned by the Receiver organization | M5 |
-| D-09 | Accept approval of BR-06 to BR-15 | **BR-06 to BR-09 approved 2026-11-15** (§13.4; BR-09 amended by U-01). BR-10 to BR-15 reviewed for M3 (§13.5): no conflict; they stay proposed for M5 | M5 |
+| D-08 | Which organization's account opens incidents on chain | **Resolved 2026-11-16 by owner:** MONITOR service account is owned by the Receiver organization. | — |
+| D-09 | Accept approval of BR-06 to BR-15 | **BR-06 to BR-15 approved for implementation**: BR-06 to BR-09 decision recorded 2026-11-15 (§13.4; BR-09 amended by U-01); BR-10 to BR-15 approved by the owner's M5 instruction on 2026-11-16 (§13.6). | — |
 | D-10 | Import the canonical dataset automatically at start-up, or only on request | **Approved 2026-11-15:** the final Docker demo release gets a **configurable, idempotent first-run import** of the canonical dataset (switch in `.env`; re-running it changes nothing, as the M2 importer already guarantees). Implemented with the release work (M10); until then the import is the manual command `python -m app.dataset import ...` | M10 |
 | D-11 | Approve interpretations A-12 (label layers) and A-13 (seed roles) | **Approved 2026-11-15** (A-13 changed: evaluation seeds are 22, 33, 44, 55, 66, not including the development seed 11) | — |
 | D-12 | Ground-truth access for ML | **Approved and implemented in M4** (§13.1): ground truth may be used as supervised targets for training and evaluation; features, inference, operational APIs and frontend never read it; `ml/coldchain_ml/labels.py` is explicitly allow-listed; regression tests remain active | M4 |

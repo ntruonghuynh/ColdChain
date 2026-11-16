@@ -1,0 +1,1 @@
+{"http_statuses": [202, 202], "parallel_duplicate_requests": 2, "same_event_id": true, "shipment_id": "SIM-S11-J0002", "while_worker_stopped": {"attempts": 0, "outbox_status": "PENDING"}}

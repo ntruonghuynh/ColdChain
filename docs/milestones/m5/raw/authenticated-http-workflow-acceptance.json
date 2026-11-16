@@ -1,0 +1,222 @@
+{
+  "batch_idempotency": {
+    "http_status": 200,
+    "idempotent_replay": true
+  },
+  "business_reference_verification": [
+    {
+      "business_ref": "M5-HTTP-ACCEPTANCE-061404F9-REGISTER",
+      "status": 200,
+      "verification_status": "MATCH",
+      "verified": true
+    },
+    {
+      "business_ref": "M5-HTTP-ACCEPTANCE-061404F9-PICKUP",
+      "status": 200,
+      "verification_status": "MATCH",
+      "verified": true
+    },
+    {
+      "business_ref": "sensor-batch:M5-HTTP-ACCEPTANCE-061404F9-BATCH",
+      "status": 200,
+      "verification_status": "MATCH",
+      "verified": true
+    },
+    {
+      "business_ref": "INC-M5HTTP-20261116-061404F9-M5SENSOR-061404F9-TEX-H-20261116T105016992260Z",
+      "status": 200,
+      "verification_status": "MATCH",
+      "verified": true
+    },
+    {
+      "business_ref": "M5-HTTP-ACCEPTANCE-061404F9-DELIVERY",
+      "status": 200,
+      "verification_status": "MATCH",
+      "verified": true
+    },
+    {
+      "business_ref": "M5-HTTP-ACCEPTANCE-061404F9-DISPOSITION",
+      "status": 200,
+      "verification_status": "MATCH",
+      "verified": true
+    },
+    {
+      "business_ref": "M5-HTTP-ACCEPTANCE-061404F9-RELEASE",
+      "status": 200,
+      "verification_status": "MATCH",
+      "verified": true
+    }
+  ],
+  "expected_rejections": {
+    "carrier_wrong_stage_http": 403,
+    "premature_delivery_http": 409,
+    "premature_release_http": 409,
+    "wrong_role_quality_http": 403
+  },
+  "fixture_data_origin": "SIMULATED",
+  "incident_refs_opened_by_monitor": [
+    "INC-M5HTTP-20261116-061404F9-M5SENSOR-061404F9-TEX-H-20261116T105016992260Z"
+  ],
+  "integration_latency_samples": [
+    {
+      "attempt_start_to_chain_confirmation_ms": 60.555,
+      "attempts": 1,
+      "business_event_created_at": "2026-11-16T11:21:15.680890+00:00",
+      "business_ref": "M5-HTTP-ACCEPTANCE-061404F9-REGISTER",
+      "chain_confirmed_at": "2026-11-16T11:21:15.848118+00:00",
+      "confirmation_observed_at": "2026-11-16T11:21:15.958967+00:00",
+      "event_id": "4101f11e-a9ce-4731-9c53-7cd3aeb8e2eb",
+      "event_type": "SHIPMENT_REGISTERED",
+      "outbox_attempt_started_at": "2026-11-16T11:21:15.787563+00:00",
+      "outbox_status": "CONFIRMED",
+      "request_started_at": "2026-11-16T11:21:15.680299+00:00",
+      "request_to_observed_confirmation_ms": 278.668
+    },
+    {
+      "attempt_start_to_chain_confirmation_ms": 47.592,
+      "attempts": 1,
+      "business_event_created_at": "2026-11-16T11:21:15.968203+00:00",
+      "business_ref": "M5-HTTP-ACCEPTANCE-061404F9-PICKUP",
+      "chain_confirmed_at": "2026-11-16T11:21:16.924969+00:00",
+      "confirmation_observed_at": "2026-11-16T11:21:16.992248+00:00",
+      "event_id": "270e01e0-f93f-4759-8151-51e10164e4f8",
+      "event_type": "CUSTODY_ACCEPTED",
+      "outbox_attempt_started_at": "2026-11-16T11:21:16.877377+00:00",
+      "outbox_status": "CONFIRMED",
+      "request_started_at": "2026-11-16T11:21:15.967198+00:00",
+      "request_to_observed_confirmation_ms": 1025.05
+    },
+    {
+      "attempt_start_to_chain_confirmation_ms": 46.383,
+      "attempts": 1,
+      "business_event_created_at": "2026-11-16T11:21:16.993488+00:00",
+      "business_ref": "sensor-batch:M5-HTTP-ACCEPTANCE-061404F9-BATCH",
+      "chain_confirmed_at": "2026-11-16T11:21:18.006178+00:00",
+      "confirmation_observed_at": "2026-11-16T11:21:18.110509+00:00",
+      "event_id": "b207b712-ce9b-42e8-87cd-7a0b39a6690f",
+      "event_type": "SENSOR_BATCH_ANCHORED",
+      "outbox_attempt_started_at": "2026-11-16T11:21:17.959795+00:00",
+      "outbox_status": "CONFIRMED",
+      "request_started_at": "2026-11-16T11:21:16.992339+00:00",
+      "request_to_observed_confirmation_ms": 1118.17
+    },
+    {
+      "attempt_start_to_chain_confirmation_ms": 36.798,
+      "attempts": 1,
+      "business_event_created_at": "2026-11-16T11:21:16.993488+00:00",
+      "business_ref": "INC-M5HTTP-20261116-061404F9-M5SENSOR-061404F9-TEX-H-20261116T105016992260Z",
+      "chain_confirmed_at": "2026-11-16T11:21:18.051324+00:00",
+      "confirmation_observed_at": "2026-11-16T11:21:18.114808+00:00",
+      "event_id": "17642ce6-fcb8-4eb2-8d4e-f68b094b9131",
+      "event_type": "INCIDENT_OPENED",
+      "outbox_attempt_started_at": "2026-11-16T11:21:18.014526+00:00",
+      "outbox_status": "CONFIRMED",
+      "request_started_at": "2026-11-16T11:21:16.992339+00:00",
+      "request_to_observed_confirmation_ms": 1122.469
+    },
+    {
+      "attempt_start_to_chain_confirmation_ms": 45.101,
+      "attempts": 1,
+      "business_event_created_at": "2026-11-16T11:21:18.120168+00:00",
+      "business_ref": "M5-HTTP-ACCEPTANCE-061404F9-DELIVERY",
+      "chain_confirmed_at": "2026-11-16T11:21:19.133360+00:00",
+      "confirmation_observed_at": "2026-11-16T11:21:19.191206+00:00",
+      "event_id": "488f523c-43bb-439d-93eb-d7400d624da4",
+      "event_type": "CUSTODY_ACCEPTED",
+      "outbox_attempt_started_at": "2026-11-16T11:21:19.088259+00:00",
+      "outbox_status": "CONFIRMED",
+      "request_started_at": "2026-11-16T11:21:18.119527+00:00",
+      "request_to_observed_confirmation_ms": 1071.679
+    },
+    {
+      "attempt_start_to_chain_confirmation_ms": 57.398,
+      "attempts": 1,
+      "business_event_created_at": "2026-11-16T11:21:19.192478+00:00",
+      "business_ref": "M5-HTTP-ACCEPTANCE-061404F9-DISPOSITION",
+      "chain_confirmed_at": "2026-11-16T11:21:20.221796+00:00",
+      "confirmation_observed_at": "2026-11-16T11:21:20.299776+00:00",
+      "event_id": "dec10ca0-1f8b-4d0c-9ccc-76d92a079264",
+      "event_type": "DISPOSITION_RECORDED",
+      "outbox_attempt_started_at": "2026-11-16T11:21:20.164398+00:00",
+      "outbox_status": "CONFIRMED",
+      "request_started_at": "2026-11-16T11:21:19.191253+00:00",
+      "request_to_observed_confirmation_ms": 1108.523
+    },
+    {
+      "attempt_start_to_chain_confirmation_ms": 44.878,
+      "attempts": 1,
+      "business_event_created_at": "2026-11-16T11:21:20.301733+00:00",
+      "business_ref": "M5-HTTP-ACCEPTANCE-061404F9-RELEASE",
+      "chain_confirmed_at": "2026-11-16T11:21:21.299791+00:00",
+      "confirmation_observed_at": "2026-11-16T11:21:21.382878+00:00",
+      "event_id": "63fb50e0-badb-4581-af09-10e3e12f9480",
+      "event_type": "WAREHOUSE_RELEASED",
+      "outbox_attempt_started_at": "2026-11-16T11:21:21.254913+00:00",
+      "outbox_status": "CONFIRMED",
+      "request_started_at": "2026-11-16T11:21:20.299827+00:00",
+      "request_to_observed_confirmation_ms": 1083.051
+    }
+  ],
+  "login_results": [
+    {
+      "role": "SHIPPER",
+      "status": 200
+    },
+    {
+      "role": "CARRIER",
+      "status": 200
+    },
+    {
+      "role": "QUALITY",
+      "status": 200
+    },
+    {
+      "role": "WAREHOUSE",
+      "status": 200
+    },
+    {
+      "role": "ADMIN",
+      "status": 200
+    }
+  ],
+  "monitor_actor_evidence": [
+    {
+      "actor_org_id": "ORG-RECEIVER",
+      "actor_username": "monitor.service",
+      "business_ref": "INC-M5HTTP-20261116-061404F9-M5SENSOR-061404F9-TEX-H-20261116T105016992260Z"
+    }
+  ],
+  "reconciliation": {
+    "chain_connected": true,
+    "counts_by_finding": {
+      "DUPLICATE_SUBMISSION_ATTEMPTS": 2,
+      "FAILED": 147,
+      "OK": 11
+    },
+    "event_count": 160,
+    "http_status": 200
+  },
+  "registration_idempotency": {
+    "idempotent_replay": true,
+    "initial_event_id": "4101f11e-a9ce-4731-9c53-7cd3aeb8e2eb",
+    "replay_event_id": "4101f11e-a9ce-4731-9c53-7cd3aeb8e2eb",
+    "same_event": true
+  },
+  "run": "live authenticated HTTP acceptance; new unique simulated shipment",
+  "sensor_id": "M5SENSOR-061404F9",
+  "shipment_final_status": "RELEASED",
+  "shipment_id": "M5HTTP-20261116-061404F9",
+  "signed_audit_verification": {
+    "entry_count": null,
+    "http_status": 200,
+    "valid": true
+  },
+  "workflow_statuses": {
+    "delivery": 202,
+    "disposition": 202,
+    "ingest": 201,
+    "pickup": 202,
+    "registration": 202,
+    "release": 202
+  }
+}

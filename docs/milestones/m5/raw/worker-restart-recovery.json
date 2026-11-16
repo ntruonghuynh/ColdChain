@@ -1,0 +1,18 @@
+{
+  "attempt_count": 1,
+  "attempt_outcomes": [
+    "CONFIRMED"
+  ],
+  "attempt_tx_hashes": [
+    "0xa5c8a6718fb5d7245b2165cb10b1ec9239fa8d6bce94fd442873b0bfb8f37ae9"
+  ],
+  "business_ref": "M5-WORKER-RESTART-11E04EA7-REGISTER",
+  "chain_payload_hash_matches": true,
+  "chain_record_count": 1,
+  "chain_reference_present": true,
+  "chain_tx_hash": "0xa5c8a6718fb5d7245b2165cb10b1ec9239fa8d6bce94fd442873b0bfb8f37ae9",
+  "confirmation_observed_after_worker_restart": true,
+  "event_id": "7bb6820d-11de-43d5-a96a-f7b4d8e8a476",
+  "outbox_status": "CONFIRMED",
+  "pass": true
+}

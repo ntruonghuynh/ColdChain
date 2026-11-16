@@ -1,0 +1,1630 @@
+{
+  "audit_verification": {
+    "entries_checked": 161,
+    "errors": [],
+    "valid": true
+  },
+  "reconciliation": {
+    "chain_connected": true,
+    "checked_at": "2026-11-16T11:31:50.705920+00:00",
+    "counts_by_finding": {
+      "DUPLICATE_SUBMISSION_ATTEMPTS": 2,
+      "FAILED": 147,
+      "OK": 12
+    },
+    "event_count": 161,
+    "findings": [
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0080-SIM-S11-L0080-GAP-20260902T095300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0080"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0112-SIM-S11-L0112-TEX-L-20260902T152200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0112"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0112-SIM-S11-L0112-TEX-L-20260902T155200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0112"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0091-SIM-S11-L0091-TEX-L-20260902T170000Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0091"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0080-SIM-S11-L0080-GAP-20260902T203800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0080"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0177-SIM-S11-L0177-TEX-H-20260902T215900Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0177"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0051-SIM-S11-L0051-TEX-H-20260903T092600Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0051"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0132-SIM-S11-L0132-TEX-L-20260903T115500Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0132"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0184-SIM-S11-L0184-TEX-H-20260903T172700Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0184"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0184-SIM-S11-L0184-TEX-H-20260904T013700Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0184"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0080-SIM-S11-L0080-GAP-20260903T194800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0080"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0109-SIM-S11-L0109-TEX-H-20260904T092500Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0109"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0184-SIM-S11-L0184-TEX-H-20260904T103700Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0184"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0184-SIM-S11-L0184-TEX-H-20260904T125700Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0184"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0184-SIM-S11-L0184-TEX-H-20260904T164200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0184"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0184-SIM-S11-L0184-TEX-H-20260905T000700Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0184"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0138-SIM-S11-L0138-GAP-20260905T104200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0138"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0142-SIM-S11-L0142-GAP-20260907T071700Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0142"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0142-SIM-S11-L0142-GAP-20260907T102200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0142"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0142-SIM-S11-L0142-GAP-20260908T030700Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0142"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0064-SIM-S11-L0064-TEX-H-20260908T070400Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0064"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0083-SIM-S11-L0083-TEX-H-20260908T044800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0083"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0140-SIM-S11-L0140-GAP-20260908T142100Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0140"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0098-SIM-S11-L0098-TEX-H-20260908T161200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0098"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0130-SIM-S11-L0130-TEX-H-20260908T190300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0130"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0171-SIM-S11-L0171-TEX-H-20260909T033500Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0171"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0092-SIM-S11-L0092-TEX-L-20260909T054300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0092"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0171-SIM-S11-L0171-TEX-H-20260909T170500Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0171"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0092-SIM-S11-L0092-TEX-L-20260910T171800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0092"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0032-SIM-S11-L0032-GAP-20260911T063300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0032"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0032-SIM-S11-L0032-GAP-20260911T095800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0032"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0032-SIM-S11-L0032-TEX-H-20260911T113300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0032"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0038-SIM-S11-L0038-TEX-L-20260912T110300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0038"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0180-SIM-S11-L0180-TEX-L-20260912T185100Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0180"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0010-SIM-S11-L0010-TEX-H-20260912T184600Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0010"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0032-SIM-S11-L0032-GAP-20260912T160300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0032"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0056-SIM-S11-L0056-TEX-L-20260913T130100Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0056"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0038-SIM-S11-L0038-TEX-L-20260913T161800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0038"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0062-SIM-S11-L0062-TEX-H-20260914T055300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0062"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0035-SIM-S11-L0035-TEX-H-20260914T062000Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0035"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0062-SIM-S11-L0062-TEX-H-20260914T080300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0062"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0188-SIM-S11-L0188-GAP-20260914T231600Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0188"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0127-SIM-S11-L0127-TEX-L-20260915T220300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0127"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0009-SIM-S11-L0009-TEX-L-20260915T235700Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0009"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0009-SIM-S11-L0009-TEX-L-20260916T013200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0009"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0009-SIM-S11-L0009-TEX-L-20260916T022700Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0009"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0009-SIM-S11-L0009-TEX-L-20260916T031700Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0009"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0026-SIM-S11-L0026-TEX-H-20260916T071200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0026"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0100-SIM-S11-L0100-GAP-20260917T053400Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0100"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0100-SIM-S11-L0100-GAP-20260917T134900Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0100"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0100-SIM-S11-L0100-GAP-20260917T224900Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0100"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0037-SIM-S11-L0037-TEX-H-20260917T200600Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0037"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0145-SIM-S11-L0145-GAP-20260918T020800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0145"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0145-SIM-S11-L0145-TEX-H-20260918T035300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0145"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0145-SIM-S11-L0145-GAP-20260918T104800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0145"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0005-SIM-S11-L0005-TEX-H-20260920T062200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0005"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0103-SIM-S11-L0103-TEX-H-20260920T150500Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0103"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0189-SIM-S11-L0189-TEX-H-20260921T132900Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0189"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0189-SIM-S11-L0189-TEX-H-20260921T145900Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0189"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0018-SIM-S11-L0018-TEX-H-20260921T165800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0018"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0123-SIM-S11-L0123-GAP-20260921T143800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0123"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0123-SIM-S11-L0123-TEX-H-20260921T173800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0123"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0099-SIM-S11-L0099-TEX-L-20260922T023800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0099"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0147-SIM-S11-L0147-GAP-20260922T062000Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0147"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0147-SIM-S11-L0147-GAP-20260922T151000Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0147"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0191-SIM-S11-L0191-TEX-H-20260922T134100Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0191"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0084-SIM-S11-L0084-TEX-H-20260923T012700Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0084"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0050-SIM-S11-L0050-TEX-H-20260923T021400Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0050"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0121-SIM-S11-L0121-TEX-H-20260923T124000Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0121"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0123-SIM-S11-L0123-GAP-20260923T123300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0123"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0059-SIM-S11-L0059-GAP-20260924T041100Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0059"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0059-SIM-S11-L0059-TEX-H-20260924T034600Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0059"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0040-SIM-S11-L0040-TEX-H-20260924T071800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0040"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0040-SIM-S11-L0040-TEX-H-20260924T082800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0040"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0040-SIM-S11-L0040-TEX-H-20260924T114800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0040"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0040-SIM-S11-L0040-TEX-H-20260924T162800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0040"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0040-SIM-S11-L0040-TEX-H-20260924T180800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0040"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0114-SIM-S11-L0114-TEX-H-20260924T184200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0114"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0025-SIM-S11-L0025-GAP-20260927T064100Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0025"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0094-SIM-S11-L0094-TEX-L-20260928T021900Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0094"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0075-SIM-S11-L0075-TEX-H-20260929T004200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0075"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0194-SIM-S11-L0194-TEX-H-20260929T050000Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0194"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0069-SIM-S11-L0069-GAP-20260929T175500Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0069"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0069-SIM-S11-L0069-TEX-H-20260929T210000Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0069"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0194-SIM-S11-L0194-TEX-H-20260930T101000Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0194"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0036-SIM-S11-L0036-TEX-H-20260930T132300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0036"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0107-SIM-S11-L0107-TEX-H-20261004T053200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0107"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0110-SIM-S11-L0110-TEX-H-20261004T065200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0110"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0058-SIM-S11-L0058-TEX-H-20261005T042500Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0058"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0105-SIM-S11-L0105-GAP-20261005T162600Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0105"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0105-SIM-S11-L0105-GAP-20261006T063600Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0105"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0058-SIM-S11-L0058-TEX-H-20261006T103000Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0058"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0027-SIM-S11-L0027-GAP-20261007T023400Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0027"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0027-SIM-S11-L0027-GAP-20261007T044900Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0027"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0027-SIM-S11-L0027-GAP-20261008T051400Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0027"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0046-SIM-S11-L0046-GAP-20261008T140300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0046"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0079-SIM-S11-L0079-TEX-H-20261008T174700Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0079"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0027-SIM-S11-L0027-GAP-20261008T131900Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0027"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0095-SIM-S11-L0095-TEX-H-20261009T004500Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0095"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0046-SIM-S11-L0046-GAP-20261009T175300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0046"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0046-SIM-S11-L0046-GAP-20261009T210300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0046"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0012-SIM-S11-L0012-TEX-L-20261010T071600Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0012"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0029-SIM-S11-L0029-TEX-L-20261010T084300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0029"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0012-SIM-S11-L0012-TEX-L-20261010T092600Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0012"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0012-SIM-S11-L0012-TEX-L-20261011T020600Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0012"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0073-SIM-S11-L0073-TEX-H-20261011T091700Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0073"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0182-SIM-S11-L0182-TEX-L-20261011T194500Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0182"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0053-SIM-S11-L0053-TEX-H-20261011T164300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0053"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0120-SIM-S11-L0120-TEX-H-20261012T033400Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0120"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0178-SIM-S11-L0178-TEX-H-20261012T081400Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0178"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0063-SIM-S11-L0063-TEX-H-20261012T194600Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0063"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0178-SIM-S11-L0178-TEX-H-20261012T202400Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0178"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0122-SIM-S11-L0122-TEX-H-20261013T133300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0122"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0185-SIM-S11-L0185-GAP-20261013T162200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0185"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0185-SIM-S11-L0185-TEX-H-20261013T184200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0185"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0042-SIM-S11-L0042-GAP-20261015T082100Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0042"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0136-SIM-S11-L0136-TEX-H-20261015T143400Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0136"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0111-SIM-S11-L0111-TEX-L-20261015T211000Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0111"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0192-SIM-S11-L0192-TEX-L-20261017T034600Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0192"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0019-SIM-S11-L0019-TEX-H-20261017T051900Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0019"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0172-SIM-S11-L0172-GAP-20261018T012300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0172"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0192-SIM-S11-L0192-GAP-20261018T070100Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0192"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0163-SIM-S11-L0163-TEX-L-20261018T184400Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0163"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0172-SIM-S11-L0172-GAP-20261018T185300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0172"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0149-SIM-S11-L0149-GAP-20261019T082500Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0149"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0134-SIM-S11-L0134-TEX-H-20261019T154200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0134"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0154-SIM-S11-L0154-TEX-H-20261019T150200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0154"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-DEMO-OCEAN-SIM-S11-J0154-DEMO-SIM-S11-L0154-TEX-H-20261019T150200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "DEMO-OCEAN-SIM-S11-J0154"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0149-SIM-S11-L0149-GAP-20261019T223500Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0149"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0076-SIM-S11-L0076-TEX-H-20261020T192400Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0076"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0196-SIM-S11-L0196-TEX-L-20261020T232300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0196"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0108-SIM-S11-L0108-TEX-H-20261021T000800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0108"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0133-SIM-S11-L0133-TEX-H-20261021T034700Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0133"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0159-SIM-S11-L0159-TEX-H-20261021T042000Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0159"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0197-SIM-S11-L0197-TEX-L-20261021T102400Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0197"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0149-SIM-S11-L0149-GAP-20261020T222000Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0149"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0126-SIM-S11-L0126-TEX-L-20261021T141300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0126"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0086-SIM-S11-L0086-TEX-H-20261021T204300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0086"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0162-SIM-S11-L0162-TEX-L-20261022T000000Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0162"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0076-SIM-S11-L0076-TEX-H-20261022T061900Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0076"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0022-SIM-S11-L0022-TEX-H-20261023T182500Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0022"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0022-SIM-S11-L0022-TEX-H-20261023T204500Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0022"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0014-SIM-S11-L0014-TEX-H-20261024T194300Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0014"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0090-SIM-S11-L0090-TEX-L-20261024T221500Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0090"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0090-SIM-S11-L0090-TEX-L-20261024T230000Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0090"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0014-SIM-S11-L0014-TEX-H-20261025T045800Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0014"
+      },
+      {
+        "attempt_count": 8,
+        "business_ref": "INC-SIM-S11-J0054-SIM-S11-L0054-TEX-H-20261025T115200Z",
+        "chain_record_present": false,
+        "detail": "Web3RPCError: chain submission not confirmed",
+        "event_type": "INCIDENT_OPENED",
+        "finding": "FAILED",
+        "outbox_status": "FAILED",
+        "shipment_id": "SIM-S11-J0054"
+      },
+      {
+        "attempt_count": 3,
+        "business_ref": "M5-ACCEPTANCE-20261116-register-ocean-154",
+        "chain_record_present": true,
+        "detail": "3 attempts; on-chain effect remains unique",
+        "event_type": "SHIPMENT_REGISTERED",
+        "finding": "DUPLICATE_SUBMISSION_ATTEMPTS",
+        "outbox_status": "CONFIRMED",
+        "shipment_id": "DEMO-OCEAN-SIM-S11-J0154"
+      },
+      {
+        "attempt_count": 1,
+        "business_ref": "M5-ACCEPTANCE-20261116-chain-outage-recovery-0001",
+        "chain_record_present": true,
+        "detail": null,
+        "event_type": "SHIPMENT_REGISTERED",
+        "finding": "OK",
+        "outbox_status": "CONFIRMED",
+        "shipment_id": "SIM-S11-J0001"
+      },
+      {
+        "attempt_count": 2,
+        "business_ref": "M5-ACCEPTANCE-20261116-chain-network-recovery-0001",
+        "chain_record_present": true,
+        "detail": "2 attempts; on-chain effect remains unique",
+        "event_type": "SHIPMENT_REGISTERED",
+        "finding": "DUPLICATE_SUBMISSION_ATTEMPTS",
+        "outbox_status": "CONFIRMED",
+        "shipment_id": "SIM-S11-J0002"
+      },
+      {
+        "attempt_count": 1,
+        "business_ref": "M5-HTTP-ACCEPTANCE-2759D06A-REGISTER",
+        "chain_record_present": true,
+        "detail": null,
+        "event_type": "SHIPMENT_REGISTERED",
+        "finding": "OK",
+        "outbox_status": "CONFIRMED",
+        "shipment_id": "M5HTTP-20261116-2759D06A"
+      },
+      {
+        "attempt_count": 1,
+        "business_ref": "M5-HTTP-ACCEPTANCE-2759D06A-PICKUP",
+        "chain_record_present": true,
+        "detail": null,
+        "event_type": "CUSTODY_ACCEPTED",
+        "finding": "OK",
+        "outbox_status": "CONFIRMED",
+        "shipment_id": "M5HTTP-20261116-2759D06A"
+      },
+      {
+        "attempt_count": 1,
+        "business_ref": "sensor-batch:M5-HTTP-ACCEPTANCE-2759D06A-BATCH",
+        "chain_record_present": true,
+        "detail": null,
+        "event_type": "SENSOR_BATCH_ANCHORED",
+        "finding": "OK",
+        "outbox_status": "CONFIRMED",
+        "shipment_id": "M5HTTP-20261116-2759D06A"
+      },
+      {
+        "attempt_count": 1,
+        "business_ref": "M5-HTTP-ACCEPTANCE-061404F9-REGISTER",
+        "chain_record_present": true,
+        "detail": null,
+        "event_type": "SHIPMENT_REGISTERED",
+        "finding": "OK",
+        "outbox_status": "CONFIRMED",
+        "shipment_id": "M5HTTP-20261116-061404F9"
+      },
+      {
+        "attempt_count": 1,
+        "business_ref": "M5-HTTP-ACCEPTANCE-061404F9-PICKUP",
+        "chain_record_present": true,
+        "detail": null,
+        "event_type": "CUSTODY_ACCEPTED",
+        "finding": "OK",
+        "outbox_status": "CONFIRMED",
+        "shipment_id": "M5HTTP-20261116-061404F9"
+      },
+      {
+        "attempt_count": 1,
+        "business_ref": "sensor-batch:M5-HTTP-ACCEPTANCE-061404F9-BATCH",
+        "chain_record_present": true,
+        "detail": null,
+        "event_type": "SENSOR_BATCH_ANCHORED",
+        "finding": "OK",
+        "outbox_status": "CONFIRMED",
+        "shipment_id": "M5HTTP-20261116-061404F9"
+      },
+      {
+        "attempt_count": 1,
+        "business_ref": "INC-M5HTTP-20261116-061404F9-M5SENSOR-061404F9-TEX-H-20261116T105016992260Z",
+        "chain_record_present": true,
+        "detail": null,
+        "event_type": "INCIDENT_OPENED",
+        "finding": "OK",
+        "outbox_status": "CONFIRMED",
+        "shipment_id": "M5HTTP-20261116-061404F9"
+      },
+      {
+        "attempt_count": 1,
+        "business_ref": "M5-HTTP-ACCEPTANCE-061404F9-DELIVERY",
+        "chain_record_present": true,
+        "detail": null,
+        "event_type": "CUSTODY_ACCEPTED",
+        "finding": "OK",
+        "outbox_status": "CONFIRMED",
+        "shipment_id": "M5HTTP-20261116-061404F9"
+      },
+      {
+        "attempt_count": 1,
+        "business_ref": "M5-HTTP-ACCEPTANCE-061404F9-DISPOSITION",
+        "chain_record_present": true,
+        "detail": null,
+        "event_type": "DISPOSITION_RECORDED",
+        "finding": "OK",
+        "outbox_status": "CONFIRMED",
+        "shipment_id": "M5HTTP-20261116-061404F9"
+      },
+      {
+        "attempt_count": 1,
+        "business_ref": "M5-HTTP-ACCEPTANCE-061404F9-RELEASE",
+        "chain_record_present": true,
+        "detail": null,
+        "event_type": "WAREHOUSE_RELEASED",
+        "finding": "OK",
+        "outbox_status": "CONFIRMED",
+        "shipment_id": "M5HTTP-20261116-061404F9"
+      },
+      {
+        "attempt_count": 1,
+        "business_ref": "M5-WORKER-RESTART-11E04EA7-REGISTER",
+        "chain_record_present": true,
+        "detail": null,
+        "event_type": "SHIPMENT_REGISTERED",
+        "finding": "OK",
+        "outbox_status": "CONFIRMED",
+        "shipment_id": "M5RESTART-20261116-11E04EA7"
+      }
+    ],
+    "onchain_unknown_reference_hashes": []
+  }
+}

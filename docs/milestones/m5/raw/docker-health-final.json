@@ -1,0 +1,36 @@
+{
+  "services": [
+    {
+      "service": "backend",
+      "state": "running",
+      "health": "healthy",
+      "status": "Up 18 minutes (healthy)"
+    },
+    {
+      "service": "chain",
+      "state": "running",
+      "health": "healthy",
+      "status": "Up 2 hours (healthy)"
+    },
+    {
+      "service": "db",
+      "state": "running",
+      "health": "healthy",
+      "status": "Up 24 hours (healthy)"
+    },
+    {
+      "service": "frontend",
+      "state": "running",
+      "health": "healthy",
+      "status": "Up 24 hours (healthy)"
+    },
+    {
+      "service": "worker",
+      "state": "running",
+      "health": "healthy",
+      "status": "Up 7 minutes (healthy)"
+    }
+  ],
+  "running_services_healthy": true,
+  "one_shot_jobs_succeeded": true
+}

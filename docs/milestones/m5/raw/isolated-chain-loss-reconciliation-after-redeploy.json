@@ -1,0 +1,19 @@
+{
+  "after_isolated_chain_redeployment": "stale PostgreSQL confirmations are reconciled as missing on the new chain; none is reported OK",
+  "findings": [
+    {
+      "business_ref": "INC-DEMO-OCEAN-SIM-S11-J0154-DEMO-SIM-S11-L0154-TEX-H-20261019T150200Z",
+      "chain_record_present": true,
+      "detail": "Database event has no matching chain reference",
+      "finding": "MISSING_ON_CHAIN",
+      "outbox_status": "CONFIRMED"
+    },
+    {
+      "business_ref": "M5-ISOLATED-RECOVERY-SHIPPER-DEMO-OCEAN-001",
+      "chain_record_present": true,
+      "detail": "Database event has no matching chain reference",
+      "finding": "MISSING_ON_CHAIN",
+      "outbox_status": "CONFIRMED"
+    }
+  ]
+}

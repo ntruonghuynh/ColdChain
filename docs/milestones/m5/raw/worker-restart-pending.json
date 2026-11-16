@@ -1,0 +1,11 @@
+{
+  "attempts_while_worker_stopped": 0,
+  "business_ref": "M5-WORKER-RESTART-11E04EA7-REGISTER",
+  "chain_reference_present_while_worker_stopped": false,
+  "event_id": "7bb6820d-11de-43d5-a96a-f7b4d8e8a476",
+  "http_status": 202,
+  "outbox_status_while_worker_stopped": "PENDING",
+  "pass": true,
+  "run": "worker stopped; new event durably enqueued",
+  "shipment_id": "M5RESTART-20261116-11E04EA7"
+}

@@ -2,9 +2,9 @@
 
 | Item | Value |
 |---|---|
-| Status | Milestones 1–3 implemented and merged. **Milestone 4 implemented** causal observed-data features, a frozen advisory model, append-only prediction audit records and a validated inference API (§3.2, §3.4, §5, §6). M5+ remains design |
+| Status | Milestones 1–4 are preserved. **Milestone 5 implementation and recovery-ordering repair** add authenticated local-chain workflow, transactional outbox, reconciliation and signed audit log; final owner review remains pending. M6+ remains design |
 | Inputs | `docs/requirements-analysis.md` (requirement IDs referenced in brackets, e.g. [FR-24]) |
-| Last updated | 2026-11-15 (Milestone 4 implementation) |
+| Last updated | 2026-11-16 (Milestone 5 recovery and release-readiness review) |
 
 ---
 
@@ -244,7 +244,7 @@ Only ground-truth model definitions, the model index, importer, M3 offline evalu
 
 **Implemented in Milestone 3** (migration `0003`, additive only; fields in `docs/design/m3-baseline-detector-contract.md` §5.14): `detector_config` (immutable detector configuration versions: nominal 5-min interval, 7 min 30 s continuity), `detector_evaluation` (one row per causal evaluation: `as_of`, input fingerprint, policy and configuration versions), `data_gap`, `detection` (observed runs, source `POLICY_BASELINE`), `data_quality_warning` and `incident_revision` (append-only revisions; `superseded_at` set once when replaced), `decision_reassessment` (U-04); new columns `incident.sensor_id`, `incident.detector_config_id`, `incident.opened_by_evaluation_id`, `ingest_batch.duplicate_count`, `ingest_batch.ingest_mode` (`IMPORT`/`LIVE`/`REPLAY`).
 
-**Implemented in Milestone 4** (migration `0004`): `ml_prediction` stores immutable advisory output with model and feature schema versions, as-of time, score/threshold and evidence summary. Database triggers reject updates and deletes. **Future:** `llm_draft` (M6), signed `audit_log` (M5).
+**Implemented in Milestone 4** (migration `0004`): `ml_prediction` stores immutable advisory output with model and feature schema versions, as-of time, score/threshold and evidence summary. Database triggers reject updates and deletes. **Implemented in Milestone 5** (migration `0005`): `organization_chain_role`, `outbox_attempt`, `audit_log` and `reassessment_resolution`, plus append-only protections for audit and transaction history. **Future:** `llm_draft` (M6).
 
 Rules for the schema:
 
@@ -381,17 +381,17 @@ flowchart TB
 
 ### 7.4 Blockchain design and retry
 
-**Contract `ColdChainRegistry`** (Solidity, OpenZeppelin `AccessControl`):
+**Contract `ColdChainRegistry`** (Solidity / Hardhat, explicit local role mapping):
 
 | Function | Allowed role | Effect | Rejects |
 |---|---|---|---|
-| `registerShipment(ref, shipmentKey, policyVersion)` | SHIPPER | Shipment record `CREATED` | duplicate ref |
-| `acceptCustody(ref, shipmentKey, stage)` | CARRIER (pickup), WAREHOUSE (delivery) | `IN_TRANSIT` / `DELIVERED` | wrong role for stage, invalid transition, duplicate ref |
-| `anchorSensorBatch(ref, shipmentKey, batchHash, firstEventAt, lastEventAt, count)` | CARRIER | Batch anchored | duplicate ref |
-| `openIncident(ref, shipmentKey, category, evidenceHash)` | MONITOR | Incident open | duplicate ref, unknown shipment |
-| `recordDisposition(ref, shipmentKey, decision, incidentRefs[], evidenceHash)` | QUALITY | `RELEASE_APPROVED` / `QUARANTINED` | non-QUALITY caller, open incident not referenced, already decided, duplicate ref |
-| `recordWarehouseRelease(ref, shipmentKey)` | WAREHOUSE | `RELEASED` | no `RELEASE` disposition, duplicate ref |
-| `isReferenceUsed(ref)` (view) | anyone | — | — |
+| `registerShipment(ref, shipmentKey, payloadHash, policyHash)` | SHIPPER | Shipment record `CREATED` | duplicate ref, shipment already registered |
+| `acceptCustody(ref, shipmentKey, payloadHash, delivery)` | CARRIER (pickup), WAREHOUSE (delivery) | `IN_TRANSIT` / `DELIVERED` | wrong role for stage, invalid transition, duplicate ref |
+| `anchorSensorBatch(ref, shipmentKey, payloadHash)` | CARRIER | Batch hash anchored | duplicate ref, unknown/released shipment |
+| `openIncident(ref, shipmentKey, payloadHash)` | MONITOR | Incident opened; prior disposition may need review | duplicate ref, unknown shipment |
+| `recordDisposition(ref, shipmentKey, payloadHash, policyHash, release, incidentRefs[])` | QUALITY | `RELEASE_APPROVED` / `QUARANTINED` | wrong state, policy/reference mismatch, any open incident omitted, duplicate ref |
+| `recordWarehouseRelease(ref, shipmentKey, payloadHash)` | WAREHOUSE | `RELEASED` | no authorized RELEASE disposition, duplicate ref |
+| `getIncidentReferences(shipmentKey)` (view) | anyone | Read incident refs | — |
 
 Business references are `bytes32` hashes of the DB business reference string. `shipmentKey` is a hash of the shipment ID, so no business data is stored in clear [BC-11].
 
@@ -404,7 +404,9 @@ Business references are `bytes32` hashes of the DB business reference string. `s
 | Receiver | QUALITY, WAREHOUSE, MONITOR (service) | Hardhat dev accounts #3, #4, #5 |
 | Platform (deployer) | DEFAULT_ADMIN (grants roles only, no business actions) | Hardhat dev account #0 |
 
-Hardhat dev accounts come from Hardhat's public test mnemonic. They are only for the local chain and must never hold real value.
+Hardhat dev accounts come from the local demo mnemonic and are used only on the local chain. Role private keys stay in backend/deployment containers. MONITOR is owned by Receiver per the owner decision (D-08, 2026-11-16) and has no interactive password.
+
+The contract stores no raw sensor values or personal information. It records hashes and minimal action metadata. Hashes prove byte integrity against a submitted reference; they do not prove sensor truth, custody conditions, safe product state or regulatory compliance. Full trust assumptions, authentication boundaries and reset behavior are in `docs/design/m5-blockchain-workflow.md`.
 
 **Retry without duplicates** [BC-09, DEMO-04]:
 
@@ -433,7 +435,9 @@ sequenceDiagram
     Note over C: Contract also reverts a second write of ref
 ```
 
-Outage simulation for tests uses `docker compose pause chain` / `unpause`, which keeps the in-memory chain state (a restarted Hardhat node would lose it; see section 11).
+The relay does not claim `SENSOR_BATCH_ANCHORED` or `INCIDENT_OPENED` until the same shipment has a confirmed `SHIPMENT_REGISTERED` record. Such entries remain pending without attempts, preventing M3 demo/replay incident creation from producing repeated permanent contract reverts. The monitor service is not granted SHIPPER rights.
+
+Outage simulation uses `docker compose pause chain` / `unpause`, which keeps the in-memory chain state. Recreating the Hardhat container loses it; the deployment volume contains metadata only and reconciliation detects missing chain facts. PostgreSQL named-volume persistence does not preserve Hardhat state. Reliable chain backup/restore remains a release-readiness requirement for M10.
 
 **Comparison system** [EVAL-03]: a signed, hash-chained `audit_log` table in PostgreSQL. Each entry stores the previous entry's hash and an Ed25519 signature from the acting organization's key; the API applies the same role rules. Evaluation runs the same scenarios against both and compares coordination value and overhead.
 
@@ -449,7 +453,7 @@ Compose services (`docker-compose.yml`). Services marked M1 exist now; the other
 | `frontend` (M1) | multi-stage: `node:24-alpine` build → `nginx:1.28-alpine` | `127.0.0.1:3000` → 8080 | `GET /healthz` | Serves the SPA; reverse-proxies `/api/` to `backend:8000` |
 | `backend-tests` (M1, profile `test`) | `backend/` image, target `test` | none | pytest exit code | Uses separate `*_test` databases. Since M2 it mounts the repository read-only at `/workspace` and also runs `data/generator/tests` |
 | `data-tools` (M2, profile `tools`) | same image as `backend` | none | exit code | One-shot dataset tools: `python -m coldchain_sim ...` (generate, verify) and `python -m app.dataset ...` (verify, import, status). Mounts the repository at `/workspace` |
-| `chain` (M5) | built from `blockchain/` (Node LTS + Hardhat) | 8545 | — | In-memory chain; reset together with `db` |
+| `chain` (M5) | built from `blockchain/` (Node LTS + Hardhat) | 8545 | — | In-memory only; any container recreation resets chain state even while PostgreSQL persists |
 | `chain-deploy` (M5) | same as `chain` | none | — | One-shot: deploy, grant roles, write `deployment.json` |
 | `worker` (M5) | same image as `backend` | none | — | Outbox relay and scheduled jobs |
 
@@ -457,7 +461,7 @@ Compose services (`docker-compose.yml`). Services marked M1 exist now; the other
 - **One port:** only the frontend is published, on `127.0.0.1:${FRONTEND_PORT:-3000}` (`FRONTEND_BIND_ADDRESS` can widen it). The browser calls `/api/...` on the same origin, so no backend hostname or port is built into the frontend.
 - **Reverse proxy:** nginx resolves `backend` at request time through Docker's DNS (`resolver 127.0.0.11`), so the UI still loads when the backend is down and the proxy answers with a JSON error `{"error": {"code": "api_unreachable", ...}}` (HTTP 502). Backend responses, including its own 503 health report, pass through unchanged. nginx forwards or generates `X-Request-ID`.
 - **API conventions:** every route is under `/api`; success bodies are `{"data": ..., "meta": ...}`, errors are `{"error": {"code", "message", "details", "request_id"}}`. OpenAPI at `/api/openapi.json`, Swagger UI at `/api/docs`.
-- **Start/stop for non-technical users:** `start.command` / `stop.command` (macOS) and `start.bat` / `stop.bat` (Windows) at the repository root. They check Docker, create `.env` if missing, refuse to start if another program holds the port, run `up --wait`, verify `/api/health` through the proxy, and never delete data (`down` without `-v`).
+- **Start/stop for non-technical users:** `start.command` / `stop.command` (macOS) and `start.bat` / `stop.bat` (Windows) at the repository root. They check Docker, create `.env` if missing, refuse to start if another program holds the port, run `up --wait`, verify `/api/health` through the proxy, and never delete the PostgreSQL volume (`down` without `-v`). Recreating the chain container still loses in-memory chain history; the PostgreSQL volume alone is not a complete ledger backup.
 - **Line endings:** `.sh`, `.command`, `.py` and `Dockerfile` are LF; `.bat` is CRLF (`.gitattributes`).
 - **Configuration** comes from `.env` (copied from `.env.example`). Compose refuses to start without `POSTGRES_PASSWORD`; no secret is written into `docker-compose.yml`.
 
