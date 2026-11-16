@@ -11,7 +11,7 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import BigInteger, CheckConstraint, ForeignKey, Index, Integer, String, Text, UniqueConstraint, text
+from sqlalchemy import BigInteger, CheckConstraint, ForeignKey, Index, Integer, LargeBinary, String, Text, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -57,6 +57,53 @@ class OutboxEntry(Base):
     __table_args__ = (
         CheckConstraint("attempts >= 0", name="attempts_non_negative"),
         Index("ix_outbox_entry_status_next_attempt_at", "status", "next_attempt_at"),
+    )
+
+
+class OutboxAttempt(Base):
+    """Append-only record of each chain submission attempt."""
+
+    __tablename__ = "outbox_attempt"
+
+    attempt_id: Mapped[uuid.UUID] = uuid_pk()
+    event_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("outbox_entry.event_id"), nullable=False)
+    attempt_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    started_at: Mapped[datetime] = mapped_column(UTCDateTime(), nullable=False)
+    finished_at: Mapped[datetime | None] = mapped_column(UTCDateTime())
+    outcome: Mapped[str] = mapped_column(String(24), nullable=False)
+    tx_hash: Mapped[str | None] = mapped_column(String(66))
+    error: Mapped[str | None] = mapped_column(Text)
+
+    __table_args__ = (
+        UniqueConstraint("event_id", "attempt_number"),
+        CheckConstraint("attempt_number > 0", name="attempt_number_positive"),
+        CheckConstraint("outcome IN ('STARTED','SUBMITTED','CONFIRMED','RETRY','FAILED','UNCERTAIN')",
+                        name="outcome_allowed"),
+    )
+
+
+class AuditLogEntry(Base):
+    """Append-only signed, hash-chained conventional audit-log record."""
+
+    __tablename__ = "audit_log"
+
+    audit_id: Mapped[uuid.UUID] = uuid_pk()
+    sequence_no: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
+    business_ref: Mapped[str] = mapped_column(String(120), nullable=False, unique=True)
+    actor_user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("app_user.user_id"))
+    actor_org_id: Mapped[str | None] = mapped_column(ForeignKey("organization.org_id"))
+    action: Mapped[str] = mapped_column(String(80), nullable=False)
+    record: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    previous_hash: Mapped[str | None] = mapped_column(String(64))
+    entry_hash: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
+    signature: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
+    public_key: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
+    created_at: Mapped[datetime] = created_at_col()
+
+    __table_args__ = (
+        CheckConstraint("previous_hash IS NULL OR previous_hash ~ '^[0-9a-f]{64}$'", name="previous_hash_hex"),
+        CheckConstraint("entry_hash ~ '^[0-9a-f]{64}$'", name="entry_hash_hex"),
+        Index("ix_audit_log_business_ref", "business_ref"),
     )
 
 

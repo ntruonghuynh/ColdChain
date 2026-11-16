@@ -11,6 +11,7 @@ Rules:
 
 import hashlib
 import json
+import os
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
@@ -20,9 +21,13 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.db.models import AppUser, DetectorConfigVersion, Organization, Policy, Product, UserRole
+from app.db.models import (
+    AppUser, DetectorConfigVersion, Organization, OrganizationChainRole, Policy, Product, UserRole,
+)
 from app.db.models.enums import OrgType, PolicyStatus, Role
 from app.domain.rules import DetectorConfigError, parse_detector_config
+from app.core.security import hash_password
+from app.core.config import get_settings
 
 DATA_DIR = Path(__file__).parent / "data"
 
@@ -116,11 +121,22 @@ def load_organizations(session: Session, path: Path, report: SeedReport) -> None
             report.unchanged.append(f"organization {org['org_id']}")
     session.flush()
 
+    password_env = {
+        "shipper.demo": "SHIPPER_DEMO_PASSWORD", "carrier.demo": "CARRIER_DEMO_PASSWORD",
+        "quality.demo": "QUALITY_DEMO_PASSWORD", "warehouse.demo": "WAREHOUSE_DEMO_PASSWORD",
+        "platform.admin": "ADMIN_DEMO_PASSWORD",
+    }
+    def demo_password(username: str) -> str | None:
+        value = os.environ.get(password_env.get(username, ""), "")
+        return value if value and value != "change-me-local-only" else None
+
     for u in document["users"]:
+        password = demo_password(u["username"])
         user = session.scalar(select(AppUser).where(AppUser.username == u["username"]))
         if user is None:
             user = AppUser(username=u["username"], display_name=u["display_name"], org_id=u["org_id"],
-                           is_demo_user=True)
+                           is_demo_user=True,
+                           password_hash=hash_password(password) if password and u["username"] != "monitor.service" else None)
             session.add(user)
             session.flush()
             report.created.append(f"user {u['username']}")
@@ -128,10 +144,37 @@ def load_organizations(session: Session, path: Path, report: SeedReport) -> None
             raise SeedConflictError(f"user {u['username']} exists in a different organization")
         else:
             report.unchanged.append(f"user {u['username']}")
+            if user.password_hash is None and user.username != "monitor.service" and password:
+                user.password_hash = hash_password(password)
         for role in u["roles"]:
             if session.get(UserRole, (user.user_id, Role(role))) is None:
                 session.add(UserRole(user_id=user.user_id, role=Role(role)))
                 report.created.append(f"role {u['username']}:{role}")
+
+    # Deterministic local Hardhat role accounts. The mnemonic is public demo material only.
+    from eth_account import Account
+    Account.enable_unaudited_hdwallet_features()
+    settings = get_settings()
+    chain_roles = {
+        ("ORG-PLATFORM", Role.ADMIN): 0,
+        ("ORG-SHIPPER", Role.SHIPPER): settings.chain_account_index_shipper,
+        ("ORG-CARRIER", Role.CARRIER): settings.chain_account_index_carrier,
+        ("ORG-RECEIVER", Role.QUALITY): settings.chain_account_index_quality,
+        ("ORG-RECEIVER", Role.WAREHOUSE): settings.chain_account_index_warehouse,
+        ("ORG-RECEIVER", Role.MONITOR): settings.chain_account_index_monitor,
+    }
+    for (org_id, role), index in chain_roles.items():
+        account = Account.from_mnemonic(
+            settings.chain_mnemonic.get_secret_value(), account_path=f"m/44'/60'/0'/0/{index}"
+        )
+        existing = session.get(OrganizationChainRole, (org_id, role))
+        if existing is None:
+            session.add(OrganizationChainRole(org_id=org_id, role=role, chain_address=account.address))
+            report.created.append(f"chain role {org_id}:{role.value}")
+        elif existing.chain_address.lower() != account.address.lower():
+            raise SeedConflictError(f"chain role {org_id}:{role.value} differs from configured local account")
+        else:
+            report.unchanged.append(f"chain role {org_id}:{role.value}")
 
 
 def load_detector_config_file(session: Session, path: Path, report: SeedReport) -> None:

@@ -29,7 +29,7 @@ class Organization(Base):
     org_id: Mapped[str] = mapped_column(String(40), primary_key=True)
     name: Mapped[str] = mapped_column(String(200), nullable=False)
     org_type: Mapped[OrgType] = mapped_column(str_enum(OrgType, "org_type"), nullable=False)
-    # Filled in Milestone 5 when chain accounts are assigned.
+    # Legacy nullable display field; M5 role-specific accounts live in organization_chain_role.
     chain_address: Mapped[str | None] = mapped_column(String(42), unique=True)
     created_at: Mapped[datetime] = created_at_col()
 
@@ -64,6 +64,20 @@ class UserRole(Base):
 
     __table_args__ = (
         CheckConstraint("revoked_at IS NULL OR revoked_at >= granted_at", name="revoked_after_granted"),
+    )
+
+
+class OrganizationChainRole(Base):
+    """Organization-to-role account mapping used by the contract and relay."""
+
+    __tablename__ = "organization_chain_role"
+
+    org_id: Mapped[str] = mapped_column(ForeignKey("organization.org_id"), primary_key=True)
+    role: Mapped[Role] = mapped_column(str_enum(Role, "chain_role"), primary_key=True)
+    chain_address: Mapped[str] = mapped_column(String(42), nullable=False, unique=True)
+
+    __table_args__ = (
+        CheckConstraint("chain_address ~ '^0x[0-9a-fA-F]{40}$'", name="chain_address_hex"),
     )
 
 
