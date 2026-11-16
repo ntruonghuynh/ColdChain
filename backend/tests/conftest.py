@@ -33,7 +33,10 @@ from sqlalchemy.engine import URL  # noqa: E402
 from sqlalchemy.orm import Session  # noqa: E402
 
 from app.core.config import Settings, get_settings  # noqa: E402
+from app.core.security import issue_token  # noqa: E402
 from app.db.session import build_engine, get_db  # noqa: E402
+from app.db.models import AppUser  # noqa: E402
+from app.db.models.enums import Role  # noqa: E402
 from app.main import app  # noqa: E402
 from app.seed.loader import run_seed  # noqa: E402
 
@@ -104,6 +107,22 @@ def client(db_session: Session) -> Iterator[TestClient]:
     app.dependency_overrides[get_db] = _override
     try:
         with TestClient(app) as test_client:
+            yield test_client
+    finally:
+        app.dependency_overrides.pop(get_db, None)
+
+
+@pytest.fixture
+def carrier_client(db_session: Session) -> Iterator[TestClient]:
+    """Authenticated carrier client for the M5-protected live-ingestion API."""
+    def _override() -> Iterator[Session]:
+        yield db_session
+
+    app.dependency_overrides[get_db] = _override
+    try:
+        carrier = db_session.query(AppUser).filter_by(username="carrier.demo").one()
+        token = issue_token(carrier, [Role.CARRIER])
+        with TestClient(app, headers={"Authorization": f"Bearer {token}"}) as test_client:
             yield test_client
     finally:
         app.dependency_overrides.pop(get_db, None)

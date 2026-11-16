@@ -26,14 +26,16 @@ def test_policies_endpoint_returns_approved_teaching_policy(client: TestClient) 
     assert single.json()["data"]["content_sha256"] == policy["content_sha256"]
 
 
-def test_organizations_list_roles_and_no_credentials(client: TestClient) -> None:
+def test_organizations_list_roles_and_exposes_no_password_hashes(client: TestClient) -> None:
     response = client.get("/api/organizations")
     assert response.status_code == 200
     orgs = {o["org_id"]: o for o in response.json()["data"]}
     assert set(orgs) == {"ORG-SHIPPER", "ORG-CARRIER", "ORG-RECEIVER", "ORG-PLATFORM"}
     receiver_users = {u["username"]: u for u in orgs["ORG-RECEIVER"]["users"]}
     assert receiver_users["quality.demo"]["roles"] == ["QUALITY"]
-    assert all(not u["has_credentials"] for o in orgs.values() for u in o["users"])
+    users = [u for org in orgs.values() for u in org["users"]]
+    assert all("password_hash" not in user for user in users)
+    assert all(isinstance(user["has_credentials"], bool) for user in users)
 
 
 def test_shipments_list_is_empty_without_ingestion(client: TestClient) -> None:
@@ -53,15 +55,16 @@ def test_shipments_list_returns_database_rows(client: TestClient, db_session: Se
     assert client.get("/api/shipments/TEST-SHP-API-1").status_code == 200
 
 
-def test_system_info_marks_m4_available_and_future_features_not_implemented(client: TestClient) -> None:
+def test_system_info_marks_m5_available_and_only_future_features_not_implemented(client: TestClient) -> None:
     response = client.get("/api/system/info")
     assert response.status_code == 200
     data = response.json()["data"]
-    assert data["milestone"] == "M4"
+    assert data["milestone"] == "M5"
     features = {f["key"]: f for f in data["features"]}
     assert features["ml"]["status"] == "available"
-    for key in ["llm", "blockchain", "quality_workflow", "authentication"]:
-        assert features[key]["status"] == "not_implemented", key
+    for key in ["blockchain", "quality_workflow", "authentication", "signed_audit"]:
+        assert features[key]["status"] == "available", key
+    assert features["llm"]["status"] == "not_implemented"
     assert features["ingestion"]["status"] == "available"   # Milestone 3
     assert features["database"]["status"] == "available"
     assert features["synthetic_data"]["status"] == "available"

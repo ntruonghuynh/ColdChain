@@ -306,9 +306,10 @@ def test_u04_new_incident_after_a_disposition_flags_the_decision(db_session: Ses
 
 
 def test_b63_br09_only_a_quality_workflow_may_close_an_incident() -> None:
-    """Static guard: no application module writes status CLOSED or closed_at on incidents (M5 adds the
-    disposition service, which must be added here explicitly with a reason)."""
-    allowed: set[str] = set()
+    """Only the relay's confirmed QUALITY disposition may close an incident (BR-09)."""
+    # The outbox relay is the sole writer and performs closure only while confirming a
+    # disposition event on chain; pending/failed events do not reach this branch.
+    allowed = {"app/worker/outbox_relay.py"}
     problems = []
     for path in sorted(APP_DIR.rglob("*.py")):
         rel = path.relative_to(APP_DIR.parent).as_posix()
