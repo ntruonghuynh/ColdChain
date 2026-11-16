@@ -1,0 +1,12 @@
+M5 environment checks — 2026-11-16
+
+`docker compose config -q` with non-empty placeholder values for required local
+environment variables: exit 0 (configuration parsed).
+
+`docker compose ps`: failed before service inspection with:
+`permission denied while trying to connect to the Docker API at
+unix:///Users/huynhnamtruong/.docker/run/docker.sock`
+
+Therefore no Docker build, service health check, or Compose smoke result is
+claimed. A host-local Hardhat node and contract deployment were checked
+separately; those logs are local-chain evidence, not Docker evidence.

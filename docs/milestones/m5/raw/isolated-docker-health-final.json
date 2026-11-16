@@ -1,0 +1,44 @@
+[
+  {
+    "ExitCode": 0,
+    "Health": "healthy",
+    "Service": "backend",
+    "State": "running"
+  },
+  {
+    "ExitCode": 0,
+    "Health": "healthy",
+    "Service": "chain",
+    "State": "running"
+  },
+  {
+    "ExitCode": 0,
+    "Health": "",
+    "Service": "chain-deploy",
+    "State": "exited"
+  },
+  {
+    "ExitCode": 0,
+    "Health": "healthy",
+    "Service": "db",
+    "State": "running"
+  },
+  {
+    "ExitCode": 0,
+    "Health": "healthy",
+    "Service": "frontend",
+    "State": "running"
+  },
+  {
+    "ExitCode": 0,
+    "Health": "",
+    "Service": "migrate",
+    "State": "exited"
+  },
+  {
+    "ExitCode": 0,
+    "Health": "healthy",
+    "Service": "worker",
+    "State": "running"
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "placeholder_jwt_replaced": true,
+  "replacement_length_at_least_64": true,
+  "audit_key_preserved": true,
+  "other_demo_credentials_preserved": true,
+  "updated_keys": [
+    "JWT_SECRET"
+  ],
+  "mode": "0o600"
+}

@@ -1,0 +1,15 @@
+{
+  "after_correct_alias_reconnect": {
+    "attempts": 2,
+    "status": "CONFIRMED",
+    "verification": "MATCH",
+    "verified": true
+  },
+  "during_network_disconnect": {
+    "attempts": 1,
+    "last_error_class": "HTTPConnectionPool(host='chain', port=8545)",
+    "status": "RETRY"
+  },
+  "same_event_id_preserved": true,
+  "scope": "isolated project only"
+}

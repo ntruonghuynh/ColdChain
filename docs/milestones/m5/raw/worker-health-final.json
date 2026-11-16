@@ -1,0 +1,1 @@
+{"cycle": 28, "cycle_age_seconds": 0.7, "dependencies": {"chain": "unknown", "database": "available"}, "dependency_errors": {}, "last_business_ref": null, "last_error": null, "last_error_dependency": null, "last_result": "idle", "pid": 1, "reason": "relay_cycle_recent", "status": "alive"}

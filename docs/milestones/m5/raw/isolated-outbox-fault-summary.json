@@ -1,0 +1,45 @@
+{
+  "events": [
+    {
+      "attempt_outcomes": [
+        "CONFIRMED"
+      ],
+      "attempt_rows": 1,
+      "attempts": 1,
+      "business_ref": "M5-ISOLATED-CHAIN-PAUSE-RECOVERY-001",
+      "database_chain_record_present": true,
+      "last_error_class": null,
+      "outbox_status": "CONFIRMED"
+    },
+    {
+      "attempt_outcomes": [
+        "UNCERTAIN",
+        "UNCERTAIN",
+        "UNCERTAIN",
+        "UNCERTAIN",
+        "UNCERTAIN",
+        "UNCERTAIN",
+        "UNCERTAIN",
+        "UNCERTAIN"
+      ],
+      "attempt_rows": 8,
+      "attempts": 8,
+      "business_ref": "M5-ISOLATED-CHAIN-DISCONNECT-RECOVERY-001",
+      "database_chain_record_present": false,
+      "last_error_class": "HTTPConnectionPool(host='chain', port=8545)",
+      "outbox_status": "FAILED"
+    },
+    {
+      "attempt_outcomes": [
+        "CONFIRMED"
+      ],
+      "attempt_rows": 1,
+      "attempts": 1,
+      "business_ref": "M5-ISOLATED-CHAIN-RESTORED-001",
+      "database_chain_record_present": true,
+      "last_error_class": null,
+      "outbox_status": "CONFIRMED"
+    }
+  ],
+  "scope": "isolated database after chain-state-loss test"
+}

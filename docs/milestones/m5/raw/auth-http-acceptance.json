@@ -1,0 +1,76 @@
+{
+  "all_pass": true,
+  "anonymous_workflow_status": 401,
+  "authenticated_me_status": {
+    "ADMIN": 200,
+    "CARRIER": 200,
+    "QUALITY": 200,
+    "SHIPPER": 200,
+    "WAREHOUSE": 200
+  },
+  "disabled_account_login_status": 401,
+  "expected": {
+    "anonymous": 401,
+    "invalid_or_expired_or_disabled_or_forged": 401,
+    "login": 200,
+    "me": 200,
+    "wrong_role": 403
+  },
+  "expired_token_status": 401,
+  "forged_role_token_status": 401,
+  "invalid_password_login_status": 401,
+  "login_results": [
+    {
+      "expected_role": "SHIPPER",
+      "pass": true,
+      "roles": [
+        "SHIPPER"
+      ],
+      "status": 200,
+      "token_present": true,
+      "username": "shipper.demo"
+    },
+    {
+      "expected_role": "CARRIER",
+      "pass": true,
+      "roles": [
+        "CARRIER"
+      ],
+      "status": 200,
+      "token_present": true,
+      "username": "carrier.demo"
+    },
+    {
+      "expected_role": "QUALITY",
+      "pass": true,
+      "roles": [
+        "QUALITY"
+      ],
+      "status": 200,
+      "token_present": true,
+      "username": "quality.demo"
+    },
+    {
+      "expected_role": "WAREHOUSE",
+      "pass": true,
+      "roles": [
+        "WAREHOUSE"
+      ],
+      "status": 200,
+      "token_present": true,
+      "username": "warehouse.demo"
+    },
+    {
+      "expected_role": "ADMIN",
+      "pass": true,
+      "roles": [
+        "ADMIN"
+      ],
+      "status": 200,
+      "token_present": true,
+      "username": "platform.admin"
+    }
+  ],
+  "malformed_token_status": 401,
+  "wrong_role_workflow_status": 403
+}

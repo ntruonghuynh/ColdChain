@@ -1,0 +1,39 @@
+{
+  "all_pass": true,
+  "bytecode_bytes": 5670,
+  "chain_id": 31337,
+  "configured_chain_id": 31337,
+  "contract_address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "deployment_address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "deployment_chain_id": 31337,
+  "jwt_configured_securely": true,
+  "jwt_secret_value_emitted": false,
+  "role_mapping_checks": [
+    {
+      "database_mapping_matches_derived_signer": true,
+      "deployment_matches_derived_signer": true,
+      "role": "SHIPPER"
+    },
+    {
+      "database_mapping_matches_derived_signer": true,
+      "deployment_matches_derived_signer": true,
+      "role": "CARRIER"
+    },
+    {
+      "database_mapping_matches_derived_signer": true,
+      "deployment_matches_derived_signer": true,
+      "role": "QUALITY"
+    },
+    {
+      "database_mapping_matches_derived_signer": true,
+      "deployment_matches_derived_signer": true,
+      "role": "WAREHOUSE"
+    },
+    {
+      "database_mapping_matches_derived_signer": true,
+      "deployment_matches_derived_signer": true,
+      "role": "MONITOR"
+    }
+  ],
+  "rpc_connected": true
+}

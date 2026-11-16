@@ -2,7 +2,7 @@
 
 Academic prototype for **IT in Logistics — Final project 03**. It monitors refrigerated shipments, tells real temperature excursions apart from missing or faulty sensor data, drafts a procedure-based response, and records custody and quality decisions on a local blockchain. A human Quality Officer always makes the release or quarantine decision.
 
-> **Status: Milestone 4 — causal advisory ML predictions.** The stack includes validated ingestion, monitoring, the policy threshold baseline, and a frozen Random Forest model exposed through a validated API. All data is **simulated**. ML output is advisory only; it never establishes product safety or authorizes a quality or warehouse action. LLM, blockchain, quality decisions and login are **not implemented yet**. See [docs/implementation-plan.md](docs/implementation-plan.md) and the [M4 report](docs/milestones/m4/README.md).
+> **Status: Milestone 5 implementation, pending project-owner review.** The stack preserves M1–M4 and adds authenticated custody/quality workflow APIs, a local Hardhat registry, transactional outbox, reconciliation and signed audit verification. All journey data is **simulated**. ML is advisory; only a receiving Quality Officer may record a disposition, and warehouse release requires a confirmed RELEASE. See the [M5 report](docs/milestones/m5/README.md).
 
 > **Teaching boundary.** All data is simulated. Temperature limits and procedures are teaching policies, not clinical or regulatory standards. No ML output establishes product safety.
 
@@ -40,7 +40,8 @@ The start script checks that Docker is running (and tries to start it), creates 
 | Idempotent import of the dataset into PostgreSQL (simulated shipments, readings, context; labels in a separate `ground_truth` schema) | Available as a manual command (Milestone 2) |
 | Data ingestion API, gap detection, threshold baseline, incidents | Available (Milestone 3) |
 | Frozen ML inference API (`POST /api/predictions`, model readiness at `GET /api/predictions/model`) | Available (Milestone 4; advisory only) |
-| Blockchain · LLM drafts · Login | Milestones 5 · 6 · 5/7 |
+| Authenticated custody, quality disposition and release gate APIs; local blockchain and audit log | Implemented (Milestone 5; review pending) |
+| LLM drafts and full workflow dashboard | Milestones 6 and 7 |
 
 After a fresh start there are no shipments. To load the 200 **simulated** shipments of the canonical dataset (takes about 15 seconds; running it again changes nothing):
 
@@ -83,21 +84,36 @@ Detection logic that uses these values arrives in Milestone 3. A policy version 
 | API documentation (Swagger UI) | http://localhost:3000/api/docs |
 | API documentation (ReDoc) | http://localhost:3000/api/redoc |
 
+### Local M5 demonstration accounts
+
+On first start, `start.command`/`start.bat` generates unique local secrets in
+the ignored `.env` and never prints them. The seed loader creates these users:
+`shipper.demo`, `carrier.demo`, `quality.demo`, `warehouse.demo`, and
+`platform.admin`. Read each matching `*_DEMO_PASSWORD` value from your local
+`.env` for `/api/auth/login`; do not share those values. `monitor.service` is a
+non-login service identity. The setup procedure is also available as
+`python3 scripts/setup_local_env.py`.
+
 Only port 3000 is published, and only on this computer (`127.0.0.1`). The backend and database are reachable only inside the Docker network; the browser talks to the backend through the reverse proxy at `/api`.
 
 ## Architecture of the running stack
 
 ```
-Browser ──► frontend (nginx :3000) ──/api──► backend (FastAPI :8000) ──► db (PostgreSQL 16)
-                      │                                ▲
-                      └─ serves the React app          └── migrate (one-shot: Alembic + seed)
+Browser ─► frontend (:3000) ─/api─► backend ─► PostgreSQL
+                                      │
+                                      ├─ worker ─► chain-deploy ─► Hardhat node
+                                      └─ migrate (Alembic + reference data)
 ```
 
 | Service | Purpose | Health check |
 |---|---|---|
 | `db` | PostgreSQL 16, data in the named volume `coldchain_pgdata` | `pg_isready` |
 | `migrate` | One-shot job: `alembic upgrade head`, then load reference data; exits 0 on success | exit code |
-| `backend` | FastAPI app; starts only after `migrate` succeeded | `GET /api/health` (database + migration revision) |
+| `chain` | Local in-memory Hardhat JSON-RPC node; no value-bearing network | JSON-RPC `eth_chainId` |
+| `chain-deploy` | One-shot idempotent contract deployment and role metadata volume | exit code |
+| `backend` | FastAPI app; starts after migration and chain deployment | `GET /api/health` (database + migration revision) |
+| `worker` | Transactional outbox relay; retries and confirms blockchain writes | process/restart monitoring |
+| `frontend` | React app through nginx reverse proxy | `/healthz` |
 | `frontend` | nginx serving the built React app and proxying `/api` to `backend` | `GET /healthz` |
 
 Startup order is enforced with `depends_on` conditions: `db` healthy → `migrate` completed successfully → `backend` healthy → `frontend`.
@@ -123,12 +139,12 @@ cp .env.example .env      # the start scripts do this automatically if .env is m
 |---|---|---|
 | `COMPOSE_PROJECT_NAME` | `coldchain` | Prefix for containers and the data volume |
 | `POSTGRES_DB` / `POSTGRES_USER` | `coldchain` | Database name and user |
-| `POSTGRES_PASSWORD` | `change-me-local-only` | Database password (required; Compose refuses to start without it) |
+| `POSTGRES_PASSWORD` | Generated locally by the setup helper | Database password (required; existing nonempty value is preserved) |
 | `FRONTEND_PORT` | `3000` | Port of the dashboard on this computer |
 | `FRONTEND_BIND_ADDRESS` | `127.0.0.1` | `0.0.0.0` makes the app reachable from other devices on your network |
 | `APP_ENV` | `local` | Shown in System Settings |
 
-Other variables in `.env.example` are reserved for later milestones and are not used yet. `.env` is git-ignored; never commit it.
+The macOS and Windows start scripts generate missing `.env` secrets without displaying them; the Python and PowerShell helpers preserve existing nonempty values and replace the legacy weak JWT placeholder. `.env` is git-ignored; never commit it.
 
 ### Docker commands
 
@@ -136,7 +152,7 @@ Other variables in `.env.example` are reserved for later milestones and are not 
 docker compose up -d --build --wait     # build, start, and wait until all services are healthy
 docker compose ps                       # status
 docker compose logs -f backend          # follow backend logs
-docker compose down                     # stop; the data volume is KEPT
+docker compose down                     # stop; PostgreSQL volume is kept, but in-memory Hardhat history is lost
 docker compose down -v                  # stop AND DELETE ALL DATA (irreversible)
 ```
 
@@ -201,7 +217,7 @@ docker compose --profile tools run --rm data-tools python -m app.evaluation base
   data/release/coldchain-sim-v1.0.0-seed11 --out docs/evaluation/dev/m3-baseline-seed11
 ```
 
-Live ingestion: `POST /api/ingest/batches` (see http://localhost:3000/api/docs). The server sets the receipt time; a client can never send it. Specification: [M3 detector contract](docs/design/m3-baseline-detector-contract.md); endpoints: [docs/api/monitoring-api.md](docs/api/monitoring-api.md).
+Live ingestion: `POST /api/ingest/batches` (see http://localhost:3000/api/docs). The assigned carrier must log in; the server sets receipt time, and a client can never send it. M5 workflow commands require bearer auth; API details: [OpenAPI](http://localhost:3000/api/docs), [M5 role/workflow design](docs/design/m5-blockchain-workflow.md), [M3 monitoring API](docs/api/monitoring-api.md).
 
 ### Working outside Docker (optional)
 
@@ -232,20 +248,21 @@ Dependency versions are pinned in `backend/requirements*.txt` (compiled from `ba
 | "Port 3000 is already used by another program" | Close the other program, or set `FRONTEND_PORT=3001` (any free port) in `.env` and start again. Then use that port in the URL. |
 | Header shows **API unreachable** | The backend container is down. Run the start script again, or `docker compose ps` and `docker compose logs backend`. |
 | Header shows **API degraded** | The backend runs but the database is not ready or not migrated. Check `docker compose logs migrate db`. |
-| `migrate` fails with `password authentication failed` | You changed `POSTGRES_PASSWORD` after the first start; the existing data volume keeps the old password. Put the old password back in `.env`. (Only if you do not need the data: `docker compose down -v` deletes it and starts fresh.) |
+| `migrate` fails with `password authentication failed` | You changed `POSTGRES_PASSWORD` after the first start; the existing data volume keeps the old password. Put the old password back in `.env`. Do not remove the database volume when preserving data. |
 | `migrate` fails with `SEED FAILED ... immutable` | A policy file was edited for an existing version. Restore the file and publish a new `policy_version` instead. |
 | First start is very slow or fails while downloading | Check the internet connection and run the start script again; downloads resume. |
 | Build fails with "no space left on device" | Free Docker disk space in Docker Desktop → Troubleshoot → Clean / Purge data (this deletes unused images). |
 | Windows: the script window closes before you can read it | Open a Command Prompt in this folder (type `cmd` in the File Explorer address bar) and run `start.bat` there; the messages stay visible. Administrator rights are not needed. |
 
-## Known limitations (Milestones 1–3)
+## Known limitations
 
-- No login yet. Demo users exist (one per role) but have no credentials. All endpoints, including `POST /api/ingest/batches`, are open to anyone who can reach port 3000 (bound to 127.0.0.1 by default); live batches are attributed to the shipment's carrier until authentication arrives (Milestone 5).
-- No ML, LLM or blockchain yet. Incidents stay open: quality dispositions and the release gate arrive in Milestone 5.
-- No API to register shipments or sensor assignments yet (Milestone 5). Live ingestion is accepted only inside a documented monitoring window, so it works for shipments created by the import or the demo command.
+- Local demo authentication is not an external identity provider. Anyone with host access to `.env` can read demo passwords. The Hardhat mnemonic is public test material and must not be used on a public chain.
+- Hardhat state is in memory. Recreating its container loses chain history; reconciliation detects the gap, but does not rewrite or restore historical evidence. PostgreSQL persistence is not a complete ledger backup. Reliable chain-state restoration is deferred to M10 release work.
+- This is a simulated teaching prototype. A RELEASE disposition is not a regulatory or clinical guarantee of product safety.
+- No user-facing API creates shipments or assigns sensors; the M5 registration command anchors an existing imported or simulated shipment. Live ingestion is accepted only inside a documented monitoring window.
 - With 15-minute uploads the monitoring state briefly shows UNKNOWN before almost every upload (it truly has no data then); see the M3 report.
 - The dataset is synthetic. Its physics, sensor faults and labels are simplified; see the limitations in the [data dictionary](data/dictionary/data-dictionary.md#7-known-limitations-of-the-synthetic-data).
-- Importing the dataset is a manual command for now. A configurable first-run import is approved for the final release (D-10, Milestone 10). Imported shipments stay in status `CREATED` because the workflow arrives in Milestone 5.
+- Importing the dataset is a manual command for now. A configurable first-run import is approved for the final release (D-10, Milestone 10). Imported shipments stay in status `CREATED` until the M5 custody workflow advances them.
 - The nominal 5-minute sampling interval and the 7 min 30 s continuity limit live in the detector configuration `DET-BASELINE v1.0.0`, not in the immutable policy v1.0.
 - Windows scripts (`start.bat`, `stop.bat`) were written for Windows 10/11 but have not been executed on Windows yet.
 - Fully offline installation is not supported yet: the first start downloads Docker images and packages.
@@ -259,7 +276,7 @@ Dependency versions are pinned in `backend/requirements*.txt` (compiled from `ba
 | `frontend/` | React + TypeScript + Vite + Tailwind app, nginx config, tests, Dockerfile |
 | `scripts/` | `smoke_test.py`; later: demo scenarios, evaluation runners, packaging |
 | `data/` | Synthetic data generator, configuration, data dictionary, provenance, canonical dataset release |
-| `ml/`, `llm/`, `blockchain/` | Placeholders for Milestones 4, 6 and 5 |
+| `ml/`, `llm/`, `blockchain/` | Frozen advisory model, M6 LLM placeholder, and M5 Hardhat registry |
 | `docker-compose.yml` | The local stack |
 | `start.*` / `stop.*` | One-click start/stop for macOS (`.command`) and Windows (`.bat`) |
 
@@ -268,6 +285,7 @@ Dependency versions are pinned in `backend/requirements*.txt` (compiled from `ba
 - [Requirements analysis](docs/requirements-analysis.md)
 - [Architecture](docs/architecture.md)
 - [Implementation plan](docs/implementation-plan.md)
+- [M5 report](docs/milestones/m5/README.md) and [workflow design](docs/design/m5-blockchain-workflow.md)
 - [M3 detector contract](docs/design/m3-baseline-detector-contract.md), [monitoring API](docs/api/monitoring-api.md), [M3 report](docs/milestones/m3/README.md)
 - [Data dictionary](data/dictionary/data-dictionary.md) and [provenance](data/dictionary/provenance.md)
 - [Rules for Claude Code](CLAUDE.md)

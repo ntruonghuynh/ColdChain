@@ -1,0 +1,17 @@
+{
+  "measurement": "live HTTP/API + DB/outbox worker + existing local Hardhat chain; not an in-process microbenchmark",
+  "sample_count": 7,
+  "request_to_observed_confirmation_ms": {
+    "p50": 1083.051,
+    "p95_nearest_rank": 1122.469,
+    "min": 278.668,
+    "max": 1122.469
+  },
+  "relay_attempt_start_to_chain_record_confirmation_ms": {
+    "p50": 46.383,
+    "p95_nearest_rank": 60.555,
+    "min": 36.798,
+    "max": 60.555
+  },
+  "method_note": "p95 uses nearest-rank; client endpoint was called from inside backend container; confirmation observation polls the authenticated transaction API at 250 ms cadence."
+}

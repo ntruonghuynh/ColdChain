@@ -2,7 +2,7 @@
 
 | Item | Value |
 |---|---|
-| Status | M0 accepted · M1 implemented (2026-11-14) · M2 implemented and merged · **M3 implemented 2026-11-15, awaiting the owner's acceptance** (report `docs/milestones/m3/README.md`; contract `docs/design/m3-baseline-detector-contract.md` approved with U-01 to U-08) |
+| Status | M0–M4 completed and merged. **M5 implementation is under final owner review** (report `docs/milestones/m5/README.md`, design `docs/design/m5-blockchain-workflow.md`) |
 | Inputs | `docs/requirements-analysis.md`, `docs/architecture.md` |
 | Course window | 8 to 10 weeks (brief, page 1) |
 | Last updated | 2026-11-15 |
@@ -110,9 +110,9 @@ Suggested timing for a 10-week course (adjust to the team): week 1 M0–M1, week
 | Objectives | `ColdChainRegistry` contract with roles and state machine; deployment and role setup; backend outbox and worker relay with retry and duplicate protection; read-side reconciliation and verification endpoints; signed hash-chained DB audit log for the comparison. |
 | Files / modules | `blockchain/contracts/ColdChainRegistry.sol`, `blockchain/hardhat.config.ts`, `blockchain/scripts/deploy.ts`, `blockchain/test/*.ts`, `blockchain/Dockerfile`, `blockchain/ROLES.md`; `backend/app/integrations/chain_gateway.py`, `backend/app/worker/outbox_relay.py`, `backend/app/services/{dispositions.py, release.py, reconcile.py, verify.py}`, `backend/app/integrations/audit_log.py`; Compose services `chain`, `chain-deploy`, `worker` |
 | Dependencies | M3 (incidents, business events); D-08, D-09 |
-| Acceptance criteria | Only QUALITY can record a disposition (contract and API); release reverts without a confirmed RELEASE disposition; invalid transitions revert; duplicate business reference reverts on chain and is idempotent in the API; worker survives a paused chain and confirms after unpause with no duplicate effect; reconciliation lists every business reference with DB/outbox/chain status; altered file or record is reported as a hash mismatch; signed audit log detects edited or deleted entries. |
-| Tests | Hardhat tests for every function × allowed and forbidden role, each invalid transition, duplicate refs; backend tests for outbox idempotency, retry with `isReferenceUsed` check, reconciliation after outage (using `docker compose pause`), tamper detection, audit-log chain verification. |
-| Deliverables | Contract code, `ROLES.md` (role rules), deployment output format, M5 report. |
+| Acceptance criteria | Only QUALITY can record a disposition (contract and API); release reverts without a confirmed RELEASE disposition; invalid transitions revert; duplicate business reference reverts on chain and is idempotent in the API; reconciliation exposes mismatches read-only; signed audit log verifies signatures and hash chain. Outage retry and full-stack Docker verification are final-review items; see M5 report for evidence and environment limitation. |
+| Tests | Backend + generator: recorded suite output in `docs/milestones/m5/raw/`; Hardhat contract tests under `blockchain/test/`; Docker verification remains subject to local Docker socket availability. |
+| Deliverables | Contract code, role matrix, deployment, API, migration 0005, M5 design and report. |
 | Closes | SC-03, FR-23, FR-24, FR-26 (data), FR-35 (API), FR-36 (API), BC-01 to BC-14, NFR-07, SUB-04 |
 
 ## M6 — LLM / RAG module

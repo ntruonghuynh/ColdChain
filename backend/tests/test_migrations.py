@@ -19,12 +19,14 @@ EXPECTED_TABLES = {
     "detector_config", "detector_evaluation", "data_gap", "detection", "data_quality_warning",
     "incident_revision", "decision_reassessment",
     "ml_prediction",  # Milestone 4 advisory outputs
+    "outbox_attempt", "audit_log", "reassessment_resolution", "organization_chain_role",  # Milestone 5
 }
 GROUND_TRUTH_TABLES = {"journey", "event"}  # schema ground_truth, Milestone 2 (DATA-09)
 M3_TABLES = {"detector_config", "detector_evaluation", "data_gap", "detection", "data_quality_warning",
              "incident_revision", "decision_reassessment"}
 M4_TABLES = {"ml_prediction"}
-M1_TABLES = EXPECTED_TABLES - {"dataset_release"} - M3_TABLES - M4_TABLES
+M5_TABLES = {"outbox_attempt", "audit_log", "reassessment_resolution", "organization_chain_role"}
+M1_TABLES = EXPECTED_TABLES - {"dataset_release"} - M3_TABLES - M4_TABLES - M5_TABLES
 
 
 def test_upgrade_creates_all_tables_and_matches_models(migrations_engine: Engine) -> None:
@@ -89,7 +91,7 @@ def test_0003_is_additive_and_downgrades_to_the_milestone_2_schema(migrations_en
         command.upgrade(alembic_config(conn), "head")
         command.downgrade(alembic_config(conn), "0002")
     inspector = inspect(migrations_engine)
-    assert set(inspector.get_table_names()) == (EXPECTED_TABLES - M3_TABLES - M4_TABLES) | {"alembic_version"}
+    assert set(inspector.get_table_names()) == (EXPECTED_TABLES - M3_TABLES - M4_TABLES - M5_TABLES) | {"alembic_version"}
     columns = {c["name"] for c in inspector.get_columns("ingest_batch")}
     assert not {"duplicate_count", "ingest_mode"} & columns
     assert not {"sensor_id", "detector_config_id", "opened_by_evaluation_id"} & {
@@ -102,6 +104,15 @@ def test_0004_is_additive_and_downgrades_to_the_milestone_3_schema(migrations_en
     with migrations_engine.begin() as conn:
         command.upgrade(alembic_config(conn), "head")
         command.downgrade(alembic_config(conn), "0003")
-    assert set(inspect(migrations_engine).get_table_names()) == (EXPECTED_TABLES - M4_TABLES) | {"alembic_version"}
+    assert set(inspect(migrations_engine).get_table_names()) == (EXPECTED_TABLES - M4_TABLES - M5_TABLES) | {"alembic_version"}
+    with migrations_engine.begin() as conn:
+        command.upgrade(alembic_config(conn), "head")
+
+
+def test_0005_is_additive_and_downgrades_to_the_milestone_4_schema(migrations_engine: Engine) -> None:
+    with migrations_engine.begin() as conn:
+        command.upgrade(alembic_config(conn), "head")
+        command.downgrade(alembic_config(conn), "0004")
+    assert set(inspect(migrations_engine).get_table_names()) == (EXPECTED_TABLES - M5_TABLES) | {"alembic_version"}
     with migrations_engine.begin() as conn:
         command.upgrade(alembic_config(conn), "head")

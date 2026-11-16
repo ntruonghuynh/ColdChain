@@ -22,6 +22,7 @@ from sqlalchemy.orm import Session
 
 from app.api.schemas import DatabaseHealth, Envelope, HealthReport
 from app.db.session import get_db
+from app.integrations.chain_gateway import ChainGateway
 
 router = APIRouter(prefix="/health", tags=["health"])
 
@@ -80,3 +81,23 @@ def health(db: Session = Depends(get_db)) -> JSONResponse:
         status_code=200 if report.status == "ok" else 503,
         content=Envelope(data=report).model_dump(mode="json"),
     )
+
+
+@router.get("/ledger", summary="Blockchain RPC and deployment readiness")
+def ledger_health() -> JSONResponse:
+    try:
+        gateway = ChainGateway()
+        connected = gateway.web3.is_connected()
+        if not connected:
+            raise RuntimeError("RPC unavailable")
+        chain_id = gateway.web3.eth.chain_id
+        deployed_code = gateway.web3.eth.get_code(gateway.address)
+        if chain_id != gateway.settings.chain_id or not deployed_code:
+            raise RuntimeError("Chain ID mismatch or contract code is missing")
+        body = {"data": {"status": "ok", "chain_id": chain_id,
+                          "contract_address": gateway.address, "contract_code_present": True}}
+        return JSONResponse(status_code=200, content=body)
+    except Exception as exc:
+        return JSONResponse(status_code=503, content={"data": {
+            "status": "degraded", "detail": type(exc).__name__,
+        }})

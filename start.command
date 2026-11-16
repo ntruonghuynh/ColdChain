@@ -1,7 +1,7 @@
 #!/bin/bash
 # ColdChain Monitor - START (macOS)
 # Double-click this file in Finder. It starts the system with Docker Desktop
-# and opens it in your web browser. Your data is kept between runs.
+# and opens it in your web browser. PostgreSQL persists; Hardhat history is in memory.
 
 cd "$(dirname "$0")" || exit 1
 
@@ -61,6 +61,8 @@ if [ ! -f .env ]; then
   cp .env.example .env || fail "Could not create the settings file .env." "Check that this folder is not read-only."
   echo "Created settings file .env from .env.example."
 fi
+python3 scripts/setup_local_env.py || fail "Could not initialize local M5 credentials." \
+  "Run python3 scripts/setup_local_env.py from this folder, or fill the blank M5 secret values in .env."
 PORT="$(grep -E '^FRONTEND_PORT=' .env | tail -n 1 | cut -d= -f2 | tr -d '[:space:]')"
 PORT="${PORT:-3000}"
 URL="http://localhost:${PORT}"

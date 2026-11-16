@@ -10,7 +10,8 @@ Authorization relationships are enforced by the database, not only by code:
   CHECK that the decision is RELEASE, so a release can never point at a quarantine
   decision or at another shipment's decision.
 
-Workflow logic (state transitions, chain confirmation checks) is Milestone 5.
+Workflow services enforce transitions and wait for chain confirmation before
+applying confirmed shipment and incident state changes.
 """
 
 import uuid
@@ -180,4 +181,26 @@ class WarehouseRelease(Base):
             name="fk_warehouse_release_disposition",
         ),
         CheckConstraint("disposition_decision = 'RELEASE'", name="requires_release_decision"),
+    )
+
+
+class ReassessmentResolution(Base):
+    """Append-only link showing a Quality Officer reviewed a flagged prior decision."""
+
+    __tablename__ = "reassessment_resolution"
+
+    reassessment_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("decision_reassessment.reassessment_id"), primary_key=True
+    )
+    disposition_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("disposition.disposition_id"), nullable=False
+    )
+    resolved_by_user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("app_user.user_id"), nullable=False)
+    resolved_at: Mapped[datetime] = mapped_column(UTCDateTime(), nullable=False)
+    review_note_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    review_note: Mapped[str] = mapped_column(Text, nullable=False)
+
+    __table_args__ = (
+        CheckConstraint("review_note_sha256 ~ '^[0-9a-f]{64}$'", name="review_note_sha256_hex"),
+        CheckConstraint("length(trim(review_note)) > 0", name="review_note_not_blank"),
     )

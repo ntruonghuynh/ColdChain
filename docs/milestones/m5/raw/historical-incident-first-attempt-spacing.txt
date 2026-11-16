@@ -1,0 +1,5 @@
+ adjacent_first_attempt_intervals | min_ms | median_ms | max_ms 
+----------------------------------+--------+-----------+--------
+                              146 |   26.8 |      28.6 |  192.2
+(1 row)
+

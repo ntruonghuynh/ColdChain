@@ -1,16 +1,35 @@
-# blockchain/
+# Local blockchain registry (M5)
 
-**Status: not implemented.** Scheduled for Milestone 5.
+This Hardhat project runs a disposable local chain and deploys
+`ColdChainRegistry`. Docker Compose starts the chain, waits for its JSON-RPC
+health check, deploys the contract to a shared deployment volume, and then starts
+the API and outbox worker. The worker reads the deployed ABI/address and signs
+business actions with local role-specific accounts.
 
-Planned contents (see `docs/architecture.md` §7.4):
+## Local checks
 
-| Path | Purpose |
-|---|---|
-| `contracts/ColdChainRegistry.sol` | Roles, approval state machine, unique business references, batch hash anchoring |
-| `scripts/deploy.ts` | Deploy and grant roles on the local Hardhat network |
-| `test/` | Hardhat tests: every function × allowed and forbidden role, invalid transitions, duplicates |
-| `ROLES.md` | Role rules for submission (SUB-04) |
+```bash
+npm ci
+npx hardhat compile
+npx hardhat test
+```
 
-Only IDs, hashes, versions and accepted state changes go on chain. Local Hardhat dev accounts are test-only.
+For a host-local node and deployment, start `npx hardhat node` in one terminal,
+then run:
 
-Main requirements: BC-01 to BC-14, FR-23, FR-24.
+```bash
+CHAIN_RPC_URL=http://127.0.0.1:8545 npx hardhat run scripts/deploy.ts --network localhost
+```
+
+The deployment file contains the contract ABI, local role addresses and chain
+id. In Compose it is written to the `chain-deployments` volume and mounted
+read-only into the backend and worker. A repeated deploy on the same live chain
+reuses the existing contract when its code is present.
+
+Hardhat uses public test accounts with no real value. Do not connect the demo
+mnemonic to a public network. The chain is in-memory: recreating the node loses
+its state. The deployment volume is metadata only; see the recovery limits in
+[`docs/design/m5-blockchain-workflow.md`](../docs/design/m5-blockchain-workflow.md).
+
+Role/action assignments: [`ROLES.md`](ROLES.md). Acceptance evidence:
+[`docs/milestones/m5/README.md`](../docs/milestones/m5/README.md).

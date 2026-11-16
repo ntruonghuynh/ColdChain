@@ -72,14 +72,14 @@ def outcomes(result: Any) -> list[tuple[str, str, str | None]]:
 
 
 def test_fr03_c09_live_batch_uses_server_receipt_time_and_keeps_event_at(
-    client: TestClient, db_session: Session
+    carrier_client: TestClient, db_session: Session
 ) -> None:
     now = datetime.now(UTC)
     sid, sensor = setup(db_session, now - timedelta(hours=2))
     event = now - timedelta(minutes=3, microseconds=123)
     before = datetime.now(UTC)
     resp = post(
-        client,
+        carrier_client,
         {
             "business_ref": "LIVE-1",
             "shipment_id": sid,
@@ -95,7 +95,7 @@ def test_fr03_c09_live_batch_uses_server_receipt_time_and_keeps_event_at(
     assert row.temperature_c == Decimal("5.25")
 
 
-def test_b32_br13_same_reference_and_payload_returns_original_result(client: TestClient, db_session: Session) -> None:
+def test_b32_br13_same_reference_and_payload_returns_original_result(carrier_client: TestClient, db_session: Session) -> None:
     now = datetime.now(UTC)
     sid, sensor = setup(db_session, now - timedelta(hours=2))
     body = {
@@ -103,29 +103,29 @@ def test_b32_br13_same_reference_and_payload_returns_original_result(client: Tes
         "shipment_id": sid,
         "readings": [{"sensor_id": sensor, "event_at": iso(now - timedelta(minutes=5)), "temperature_c": 4}],
     }
-    first, second = post(client, body), post(client, body)
+    first, second = post(carrier_client, body), post(carrier_client, body)
     assert (first.status_code, second.status_code) == (201, 200)
     assert second.json()["data"]["idempotent_replay"] is True
     assert second.json()["data"]["batch_id"] == first.json()["data"]["batch_id"]
     assert db_session.scalar(select(func.count()).select_from(Reading).where(Reading.sensor_id == sensor)) == 1
 
 
-def test_br13_same_reference_different_payload_is_a_conflict(client: TestClient, db_session: Session) -> None:
+def test_br13_same_reference_different_payload_is_a_conflict(carrier_client: TestClient, db_session: Session) -> None:
     now = datetime.now(UTC)
     sid, sensor = setup(db_session, now - timedelta(hours=2))
     reading = {"sensor_id": sensor, "event_at": iso(now - timedelta(minutes=5)), "temperature_c": 4}
-    assert post(client, {"business_ref": "LIVE-C", "shipment_id": sid, "readings": [reading]}).status_code == 201
-    resp = post(client, {"business_ref": "LIVE-C", "shipment_id": sid, "readings": [{**reading, "temperature_c": 5}]})
+    assert post(carrier_client, {"business_ref": "LIVE-C", "shipment_id": sid, "readings": [reading]}).status_code == 201
+    resp = post(carrier_client, {"business_ref": "LIVE-C", "shipment_id": sid, "readings": [{**reading, "temperature_c": 5}]})
     assert resp.status_code == 409 and resp.json()["error"]["code"] == "batch_conflict"
 
 
-def test_b60_c09_client_cannot_supply_received_at(client: TestClient, db_session: Session) -> None:
+def test_b60_c09_client_cannot_supply_received_at(carrier_client: TestClient, db_session: Session) -> None:
     now = datetime.now(UTC)
     sid, sensor = setup(db_session, now - timedelta(hours=2))
-    resp = post(client, {"business_ref": "LIVE-R", "shipment_id": sid, "received_at": iso(now), "readings": []})
+    resp = post(carrier_client, {"business_ref": "LIVE-R", "shipment_id": sid, "received_at": iso(now), "readings": []})
     assert resp.status_code == 422
     resp = post(
-        client,
+        carrier_client,
         {
             "business_ref": "LIVE-R2",
             "shipment_id": sid,
@@ -143,7 +143,7 @@ def test_b60_c09_client_cannot_supply_received_at(client: TestClient, db_session
     assert resp.json()["data"]["records"][0]["reason_code"] == "UNEXPECTED_FIELD"
 
 
-def test_b39_br08_precision_is_checked_on_the_exact_json_number(client: TestClient, db_session: Session) -> None:
+def test_b39_br08_precision_is_checked_on_the_exact_json_number(carrier_client: TestClient, db_session: Session) -> None:
     now = datetime.now(UTC)
     sid, sensor = setup(db_session, now - timedelta(hours=2))
     t = [iso(now - timedelta(minutes=m)) for m in (1, 2, 3)]
@@ -153,16 +153,16 @@ def test_b39_br08_precision_is_checked_on_the_exact_json_number(client: TestClie
         '{"sensor_id":"%s","event_at":"%s","temperature_c":8.1000000000000001},'
         '{"sensor_id":"%s","event_at":"%s","temperature_c":8.100}]}'
     ) % (sid, sensor, t[0], sensor, t[1], sensor, t[2])
-    data = post(client, raw).json()["data"]
+    data = post(carrier_client, raw).json()["data"]
     assert [r["reason_code"] for r in data["records"]] == ["PRECISION_EXCEEDED", "PRECISION_EXCEEDED", None]
     assert db_session.scalars(select(Reading.temperature_c).where(Reading.sensor_id == sensor)).all() == [
         Decimal("8.10")
     ]
 
 
-def test_unknown_shipment_404_and_invalid_json_422(client: TestClient) -> None:
-    assert post(client, {"business_ref": "X-1", "shipment_id": "NO-SUCH", "readings": []}).status_code == 404
-    assert post(client, "{not json").status_code == 422
+def test_unknown_shipment_404_and_invalid_json_422(carrier_client: TestClient) -> None:
+    assert post(carrier_client, {"business_ref": "X-1", "shipment_id": "NO-SUCH", "readings": []}).status_code == 404
+    assert post(carrier_client, "{not json").status_code == 422
 
 
 # ------------------------------------------------------------------ validation (service, controlled received_at)

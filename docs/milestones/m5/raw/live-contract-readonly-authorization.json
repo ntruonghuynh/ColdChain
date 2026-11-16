@@ -1,0 +1,57 @@
+{
+  "all_pass": true,
+  "bytecode_bytes": 5670,
+  "chain_id": 31337,
+  "contract_address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "probes": [
+    {
+      "error_type": "ContractLogicError",
+      "expected_selector": "0x82b42900",
+      "pass": true,
+      "probe": "non-WAREHOUSE cannot release",
+      "result": "REVERT",
+      "selector": "0x82b42900"
+    },
+    {
+      "error_type": "ContractLogicError",
+      "expected_selector": "0xa6532e5d",
+      "pass": true,
+      "probe": "authorized WAREHOUSE cannot release without confirmed RELEASE state",
+      "result": "REVERT",
+      "selector": "0xa6532e5d"
+    },
+    {
+      "error_type": "ContractLogicError",
+      "expected_selector": "0x82b42900",
+      "pass": true,
+      "probe": "non-CARRIER cannot anchor sensor batch",
+      "result": "REVERT",
+      "selector": "0x82b42900"
+    },
+    {
+      "error_type": "ContractLogicError",
+      "expected_selector": "0x82b42900",
+      "pass": true,
+      "probe": "non-MONITOR cannot open incident",
+      "result": "REVERT",
+      "selector": "0x82b42900"
+    },
+    {
+      "error_type": "ContractLogicError",
+      "expected_selector": "0x82b42900",
+      "pass": true,
+      "probe": "non-QUALITY cannot decide disposition",
+      "result": "REVERT",
+      "selector": "0x82b42900"
+    },
+    {
+      "error_type": "ContractLogicError",
+      "expected_selector": "0x82b42900",
+      "pass": true,
+      "probe": "non-SHIPPER cannot register shipment",
+      "result": "REVERT",
+      "selector": "0x82b42900"
+    }
+  ],
+  "read_only_calls_only": true
+}

@@ -129,6 +129,7 @@ def ingest_batch(
     mode: IngestMode,
     received_at: datetime | None = None,
     source: IngestSource = IngestSource.GATEWAY,
+    submitted_by_org_id: str | None = None,
     data_origin: DataOrigin = DataOrigin.SIMULATED,
     evaluate: bool = True,
 ) -> IngestResult:
@@ -399,7 +400,7 @@ def ingest_batch(
             batch_id=batch_id,
             business_ref=business_ref,
             shipment_id=shipment_id,
-            submitted_by_org_id=shipment.carrier_org_id,
+            submitted_by_org_id=submitted_by_org_id or shipment.carrier_org_id,
             source=source,
             data_origin=data_origin,
             ingest_mode=mode,

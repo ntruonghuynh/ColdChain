@@ -1,0 +1,16 @@
+{
+  "blank_demo_passwords_generated": true,
+  "existing_audit_key_preserved": true,
+  "existing_database_password_preserved": true,
+  "existing_demo_password_preserved": true,
+  "generated_key_names": [
+    "JWT_SECRET",
+    "CARRIER_DEMO_PASSWORD",
+    "QUALITY_DEMO_PASSWORD",
+    "WAREHOUSE_DEMO_PASSWORD",
+    "ADMIN_DEMO_PASSWORD"
+  ],
+  "placeholder_jwt_replaced": true,
+  "python_setup_fixture": "PASS",
+  "secrets_emitted": false
+}

@@ -1,0 +1,1 @@
+{"cycle": 408, "cycle_age_seconds": 0.9, "dependencies": {"chain": "available", "database": "available"}, "last_business_ref": "M5-ACCEPTANCE-20261116-chain-network-recovery-0001", "last_error": null, "last_result": "idle", "pid": 1, "reason": "relay_cycle_recent", "status": "alive"}
