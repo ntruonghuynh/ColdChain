@@ -1,7 +1,7 @@
 @echo off
 REM ColdChain Monitor - START (Windows)
 REM Double-click this file. It starts the system with Docker Desktop and opens
-REM it in your web browser. Your data is kept between runs.
+REM it in your web browser. PostgreSQL persists; Hardhat history is in memory.
 setlocal EnableExtensions
 cd /d "%~dp0"
 title ColdChain Monitor - Start
@@ -55,6 +55,12 @@ if not exist ".env" (
     goto fail
   )
   echo Created settings file .env from .env.example.
+)
+powershell -NoProfile -ExecutionPolicy Bypass -File "scripts\setup_local_env.ps1"
+if errorlevel 1 (
+  echo PROBLEM: Could not initialize local M5 credentials.
+  echo WHAT TO DO: Run scripts\setup_local_env.ps1 from PowerShell or fill the blank M5 secrets in .env.
+  goto fail
 )
 set "PORT=3000"
 for /f "tokens=1,* delims==" %%A in ('findstr /b /c:"FRONTEND_PORT=" ".env"') do set "PORT=%%B"

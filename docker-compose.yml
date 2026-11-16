@@ -1,7 +1,7 @@
 # Cold Chain Monitoring and Excursion Response — local stack (Milestones 1-2)
 #
 #   docker compose up -d --build --wait     start everything and wait until healthy
-#   docker compose down                     stop (data in the "pgdata" volume is kept)
+#   docker compose down                     stops stack; PostgreSQL volume remains, in-memory Hardhat history is lost
 #   docker compose --profile test run --rm backend-tests    run backend + generator tests
 #   docker compose --profile tools run --rm data-tools python -m coldchain_sim ...   dataset generator
 #   docker compose --profile tools run --rm data-tools python -m app.dataset ...     dataset import
@@ -18,6 +18,26 @@ x-backend-env: &backend-env
   POSTGRES_DB: ${POSTGRES_DB:-coldchain}
   POSTGRES_USER: ${POSTGRES_USER:-coldchain}
   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is not set. Copy .env.example to .env first.}
+  JWT_SECRET: ${JWT_SECRET:?Set a random JWT_SECRET in .env before starting M5.}
+  JWT_EXPIRES_MIN: ${JWT_EXPIRES_MIN:-120}
+  SHIPPER_DEMO_PASSWORD: ${SHIPPER_DEMO_PASSWORD:?Set a unique shipper demo password in .env.}
+  CARRIER_DEMO_PASSWORD: ${CARRIER_DEMO_PASSWORD:?Set a unique carrier demo password in .env.}
+  QUALITY_DEMO_PASSWORD: ${QUALITY_DEMO_PASSWORD:?Set a unique Quality Officer demo password in .env.}
+  WAREHOUSE_DEMO_PASSWORD: ${WAREHOUSE_DEMO_PASSWORD:?Set a unique warehouse demo password in .env.}
+  ADMIN_DEMO_PASSWORD: ${ADMIN_DEMO_PASSWORD:?Set a unique admin demo password in .env.}
+  CHAIN_RPC_URL: http://chain:8545
+  CHAIN_ID: "31337"
+  CHAIN_MNEMONIC: ${CHAIN_MNEMONIC:-test test test test test test test test test test test junk}
+  CHAIN_CONFIRMATIONS: ${CHAIN_CONFIRMATIONS:-1}
+  OUTBOX_MAX_ATTEMPTS: ${OUTBOX_MAX_ATTEMPTS:-8}
+  OUTBOX_BASE_DELAY_MS: ${OUTBOX_BASE_DELAY_MS:-500}
+  CHAIN_DEPLOYMENT_FILE: /deployment/local.json
+  AUDIT_SIGNING_KEY: ${AUDIT_SIGNING_KEY:?Generate AUDIT_SIGNING_KEY in .env before starting M5.}
+  CHAIN_ACCOUNT_INDEX_SHIPPER: ${CHAIN_ACCOUNT_INDEX_SHIPPER:-1}
+  CHAIN_ACCOUNT_INDEX_CARRIER: ${CHAIN_ACCOUNT_INDEX_CARRIER:-2}
+  CHAIN_ACCOUNT_INDEX_QUALITY: ${CHAIN_ACCOUNT_INDEX_QUALITY:-3}
+  CHAIN_ACCOUNT_INDEX_WAREHOUSE: ${CHAIN_ACCOUNT_INDEX_WAREHOUSE:-4}
+  CHAIN_ACCOUNT_INDEX_MONITOR: ${CHAIN_ACCOUNT_INDEX_MONITOR:-5}
 
 services:
   db:
@@ -53,12 +73,55 @@ services:
         condition: service_healthy
     restart: "no"
 
+  chain:
+    build:
+      context: .
+      dockerfile: blockchain/Dockerfile
+    image: coldchain-chain:local
+    command: ["npx", "hardhat", "node", "--hostname", "0.0.0.0"]
+    environment:
+      CHAIN_MNEMONIC: ${CHAIN_MNEMONIC:-test test test test test test test test test test test junk}
+    ports:
+      - "${CHAIN_BIND_ADDRESS:-127.0.0.1}:${CHAIN_PORT:-8545}:8545"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8545',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_chainId',params:[]})}).then(r=>r.ok?process.exit(0):process.exit(1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 4s
+      retries: 20
+      start_period: 10s
+    restart: unless-stopped
+
+  chain-deploy:
+    image: coldchain-chain:local
+    pull_policy: never
+    command: ["npx", "hardhat", "run", "scripts/deploy.ts", "--network", "localhost"]
+    environment:
+      CHAIN_RPC_URL: http://chain:8545
+      CHAIN_MNEMONIC: ${CHAIN_MNEMONIC:-test test test test test test test test test test test junk}
+      CHAIN_ACCOUNT_INDEX_ADMIN: ${CHAIN_ACCOUNT_INDEX_ADMIN:-0}
+      CHAIN_ACCOUNT_INDEX_SHIPPER: ${CHAIN_ACCOUNT_INDEX_SHIPPER:-1}
+      CHAIN_ACCOUNT_INDEX_CARRIER: ${CHAIN_ACCOUNT_INDEX_CARRIER:-2}
+      CHAIN_ACCOUNT_INDEX_QUALITY: ${CHAIN_ACCOUNT_INDEX_QUALITY:-3}
+      CHAIN_ACCOUNT_INDEX_WAREHOUSE: ${CHAIN_ACCOUNT_INDEX_WAREHOUSE:-4}
+      CHAIN_ACCOUNT_INDEX_MONITOR: ${CHAIN_ACCOUNT_INDEX_MONITOR:-5}
+      CHAIN_DEPLOYMENT_DIR: /deployment
+    volumes:
+      - chain-deployments:/deployment
+    depends_on:
+      chain:
+        condition: service_healthy
+    restart: "no"
+
   backend:
     image: coldchain-backend:local
     pull_policy: never
     environment: *backend-env
+    volumes:
+      - chain-deployments:/deployment:ro
     depends_on:
       migrate:
+        condition: service_completed_successfully
+      chain-deploy:
         condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=4).status == 200 else 1)"]
@@ -66,6 +129,26 @@ services:
       timeout: 5s
       retries: 6
       start_period: 15s
+    restart: unless-stopped
+
+  worker:
+    image: coldchain-backend:local
+    pull_policy: never
+    command: ["python", "-m", "app.worker.outbox_relay"]
+    healthcheck:
+      test: ["CMD", "python", "-m", "app.worker.healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    environment: *backend-env
+    volumes:
+      - chain-deployments:/deployment:ro
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      chain-deploy:
+        condition: service_completed_successfully
     restart: unless-stopped
     # Not published: the browser reaches it through the frontend proxy at /api.
 
@@ -132,3 +215,4 @@ services:
 
 volumes:
   pgdata:
+  chain-deployments:
