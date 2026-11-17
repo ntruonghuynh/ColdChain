@@ -2,13 +2,13 @@
 
 from functools import lru_cache
 
-from pydantic import Field, SecretStr
+from pydantic import Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import URL, make_url
 
 APP_NAME = "Cold Chain Monitoring and Excursion Response"
 APP_VERSION = "0.1.0"
-CURRENT_MILESTONE = "M5"
+CURRENT_MILESTONE = "M6"
 
 
 class Settings(BaseSettings):
@@ -52,6 +52,26 @@ class Settings(BaseSettings):
     chain_account_index_quality: int = 3
     chain_account_index_warehouse: int = 4
     chain_account_index_monitor: int = 5
+
+    # M6 provider calls are disabled by default and never required for stack startup.
+    llm_provider: str = "disabled"
+    llm_model: str = ""
+    llm_api_base_url: str = ""
+    llm_corpus_dir: str = ""
+    llm_api_key: SecretStr = SecretStr("")
+    llm_timeout_s: float = 30.0
+    llm_max_retries: int = 1
+    llm_max_output_tokens: int = 1200
+    llm_fallback_enabled: bool = False
+    llm_price_input_per_mtok_usd: float | None = None
+    llm_price_output_per_mtok_usd: float | None = None
+    m6_runtime_version: str = "m6-source-unversioned"
+
+    @field_validator("llm_price_input_per_mtok_usd", "llm_price_output_per_mtok_usd", mode="before")
+    @classmethod
+    def empty_optional_prices_are_unset(cls, value: object) -> object:
+        """Compose may pass empty optional numeric variables as empty strings."""
+        return None if value == "" else value
 
     def sqlalchemy_url(self) -> URL:
         if self.database_url is not None and self.database_url.get_secret_value():
