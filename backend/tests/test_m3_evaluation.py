@@ -30,6 +30,7 @@ def iv(
 
 
 @pytest.mark.parametrize("seed", [22, 33, 44, 55, 66])
+@pytest.mark.m9_evaluation
 def test_d13_reserved_final_evaluation_seeds_are_refused(seed: int) -> None:
     with pytest.raises(EvaluationRefused, match="reserved"):
         check_protocol({"seed": seed}, ("train", "validation"))

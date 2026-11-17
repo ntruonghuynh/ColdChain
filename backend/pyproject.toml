@@ -26,7 +26,8 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-ra --strict-markers"
+addopts = "-ra --strict-markers -m 'not m9_evaluation'"
 markers = [
     "db: test needs a reachable PostgreSQL server",
+    "m9_evaluation: M9-only tests that inspect or regenerate reserved-seed artifacts; excluded from standard development test runs",
 ]

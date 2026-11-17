@@ -24,6 +24,12 @@ def test_database_url_override_takes_precedence() -> None:
     assert (url.host, url.port, url.database) == ("h", 6543, "x")
 
 
+def test_empty_optional_llm_prices_are_treated_as_unset() -> None:
+    settings = Settings(llm_price_input_per_mtok_usd="", llm_price_output_per_mtok_usd="")
+    assert settings.llm_price_input_per_mtok_usd is None
+    assert settings.llm_price_output_per_mtok_usd is None
+
+
 def test_utc_datetime_rejects_naive_timestamps() -> None:
     with pytest.raises(NaiveDatetimeError):
         UTCDateTime().process_bind_param(datetime(2026, 1, 1, 12, 0), dialect=None)  # type: ignore[arg-type]

@@ -1,0 +1,21 @@
+{"case_id":"M6C2-01","group":"relevant","scope":"valid","query":"giải thích số đo đã ghi nhận theo từng mốc đo và mốc máy chủ tiếp nhận","expected_top1_section":"MONITORING","distractor_section_id":"EVIDENCE_AUDIT"}
+{"case_id":"M6C2-02","group":"relevant","scope":"valid","query":"nhiệt độ khoang hàng vượt giới hạn phía trên đủ lâu để detector ghi nhận","expected_top1_section":"HIGH_EXCURSION","distractor_section_id":"LOW_EXCURSION"}
+{"case_id":"M6C2-03","group":"relevant","scope":"valid","query":"làm lạnh quá mức: đối chiếu số đo dưới giới hạn và khoảng thời gian","expected_top1_section":"LOW_EXCURSION","distractor_section_id":"HIGH_EXCURSION"}
+{"case_id":"M6C2-04","group":"relevant","scope":"valid","query":"một lần nhiệt kế nhảy vọt khác với chuỗi bất thường được detector xác nhận","expected_top1_section":"ISOLATED_SPIKE","distractor_section_id":"SENSOR_UNCERTAINTY"}
+{"case_id":"M6C2-05","group":"relevant","scope":"valid","query":"mất dữ liệu giám sát không đồng nghĩa nhiệt độ nằm trong giới hạn","expected_top1_section":"MISSING_TELEMETRY","distractor_section_id":"MONITORING"}
+{"case_id":"M6C2-06","group":"relevant","scope":"valid","query":"khoảng thời gian không có bản ghi phải giữ trạng thái chưa xác định","expected_top1_section":"MISSING_TELEMETRY","distractor_section_id":"HIGH_EXCURSION"}
+{"case_id":"M6C2-07","group":"relevant","scope":"valid","query":"thiết bị ghi nhiệt ngoài biển tải dữ liệu lưu đệm sau khi có kết nối","expected_top1_section":"DELAYED_OCEAN","distractor_section_id":"MISSING_TELEMETRY"}
+{"case_id":"M6C2-08","group":"relevant","scope":"valid","query":"phân biệt thời khắc cảm biến đo với lúc hệ thống nhận gói tin muộn","expected_top1_section":"DELAYED_OCEAN","distractor_section_id":"MONITORING"}
+{"case_id":"M6C2-09","group":"relevant","scope":"valid","query":"điểm số cảnh báo máy học không phải bằng chứng phê duyệt chất lượng","expected_top1_section":"SENSOR_UNCERTAINTY","distractor_section_id":"QUALITY_REVIEW"}
+{"case_id":"M6C2-10","group":"relevant","scope":"valid","query":"ai chịu trách nhiệm xem xét disposition trước thao tác kho","expected_top1_section":"QUALITY_REVIEW","distractor_section_id":"EVIDENCE_AUDIT"}
+{"case_id":"M6C2-11","group":"relevant","scope":"valid","query":"kiểm tra tham chiếu nguồn và đoạn SOP đã dùng, không tạo nguồn không tồn tại","expected_top1_section":"EVIDENCE_AUDIT","distractor_section_id":"QUALITY_REVIEW"}
+{"case_id":"M6C2-12","group":"relevant","scope":"valid","query":"quy trình theo dõi thường xuyên và phạm vi số liệu đã nhận","expected_top1_section":"MONITORING","distractor_section_id":"MISSING_TELEMETRY"}
+{"case_id":"M6C2-13","group":"insufficient_source","scope":"insufficient_source","query":"định lượng hàm lượng hoạt chất bằng sắc ký","expected_top1_section":null,"distractor_section_id":null}
+{"case_id":"M6C2-14","group":"insufficient_source","scope":"insufficient_source","query":"lịch bảo dưỡng máy nâng tại kho","expected_top1_section":null,"distractor_section_id":null}
+{"case_id":"M6C2-15","group":"insufficient_source","scope":"insufficient_source","query":"mức thuế nhập khẩu và mã biểu thuế hải quan","expected_top1_section":null,"distractor_section_id":null}
+{"case_id":"M6C2-16","group":"wrong_version","scope":"wrong_version","query":"so sánh số đo với khoảng nhiệt độ quy định","expected_top1_section":null,"distractor_section_id":null}
+{"case_id":"M6C2-17","group":"wrong_version","scope":"wrong_version","query":"xem xét Quality Officer và quyền phát hành","expected_top1_section":null,"distractor_section_id":null}
+{"case_id":"M6C2-18","group":"wrong_version","scope":"wrong_version","query":"bản ghi đến chậm sau khi thiết bị lưu ngoại tuyến","expected_top1_section":null,"distractor_section_id":null}
+{"case_id":"M6C2-19","group":"wrong_product","scope":"wrong_product","query":"đọc dữ liệu thiếu và UNKNOWN","expected_top1_section":null,"distractor_section_id":null}
+{"case_id":"M6C2-20","group":"wrong_product","scope":"wrong_product","query":"nhiệt độ cao kéo dài cần chuyển Quality xem xét","expected_top1_section":null,"distractor_section_id":null}
+{"case_id":"M6C2-21","group":"wrong_product","scope":"wrong_product","query":"lưu vết bằng chứng và kiểm tra citation","expected_top1_section":null,"distractor_section_id":null}

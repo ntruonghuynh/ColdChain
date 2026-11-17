@@ -1,7 +1,10 @@
-"""Fixtures for the simulator tests (no database needed).
+"""Fixtures for simulator development tests (no database needed).
 
 Run inside Docker together with the backend tests:
 ``docker compose --profile test run --rm --build backend-tests``.
+
+Tests marked ``m9_evaluation`` are excluded by default and must only run in the
+separate M9 evaluation procedure after project-owner authorization.
 """
 
 import json
