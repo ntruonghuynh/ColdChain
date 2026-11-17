@@ -35,7 +35,9 @@ FEATURES: list[FeatureStatus] = [
     FeatureStatus(key="quality_workflow", name="Custody, quality disposition and release gate",
                   status="available", milestone="M5",
                   note="Only an authenticated Quality Officer can record disposition; warehouse release requires confirmed RELEASE."),
-    FeatureStatus(key="llm", name="LLM response drafts (RAG)", status="not_implemented", milestone="M6"),
+    FeatureStatus(key="llm", name="Evidence-grounded incident explanations (RAG)", status="available", milestone="M6",
+                  note="Lexical retrieval and causal evidence work offline; LLM is optional/configurable. "
+                       "Without provider credentials, status is not_configured or an explicitly labeled fallback."),
     FeatureStatus(key="authentication", name="User login and role-based access",
                   status="available", milestone="M5",
                   note="Local-demo bearer auth; not a production identity provider."),

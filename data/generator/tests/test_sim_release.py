@@ -1,6 +1,7 @@
 """The committed canonical dataset is intact, synthetic, small and reproducible (SUB-02, D-05)."""
 
 import json
+import pytest
 
 from conftest import CANONICAL_SEED, EVALUATION_SEEDS, RELEASE_DIR, REPO_ROOT, SEED_MANIFEST_DIR
 
@@ -32,6 +33,7 @@ def test_a13_five_reserved_evaluation_seeds_are_independent_of_the_development_s
     assert EVALUATION_SEEDS == (22, 33, 44, 55, 66)
 
 
+@pytest.mark.m9_evaluation
 def test_reserved_seed_manifests_are_committed_complete_and_distinct() -> None:
     committed = sorted(p.name for p in SEED_MANIFEST_DIR.glob("*.manifest.json"))
     assert committed == [f"coldchain-sim-v1.0.0-seed{s}.manifest.json" for s in EVALUATION_SEEDS]

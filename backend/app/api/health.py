@@ -23,6 +23,7 @@ from sqlalchemy.orm import Session
 from app.api.schemas import DatabaseHealth, Envelope, HealthReport
 from app.db.session import get_db
 from app.integrations.chain_gateway import ChainGateway
+from app.integrations.llm_adapter import provider_readiness
 
 router = APIRouter(prefix="/health", tags=["health"])
 
@@ -101,3 +102,10 @@ def ledger_health() -> JSONResponse:
         return JSONResponse(status_code=503, content={"data": {
             "status": "degraded", "detail": type(exc).__name__,
         }})
+
+
+@router.get("/llm", summary="RAG index and optional LLM provider readiness")
+def llm_health() -> JSONResponse:
+    result = provider_readiness()
+    code = 200 if result.get("status") == "ok" else 503
+    return JSONResponse(status_code=code, content={"data": result})

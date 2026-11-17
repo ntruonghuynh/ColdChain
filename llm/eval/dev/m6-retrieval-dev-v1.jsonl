@@ -1,0 +1,27 @@
+{"case_id":"DV01","group":"monitoring","query":"theo dõi hàng ngày quan sát số đo và mốc đo nhận","expected_section_id":"MONITORING"}
+{"case_id":"DV02","group":"monitoring","query":"kiem tra chuoi so lieu da den he thong vao luc nao","expected_section_id":"MONITORING"}
+{"case_id":"DV03","group":"monitoring","query":"giám sát bình thường điểm ML chỉ hỗ trợ chứ không kết luận","expected_section_id":"MONITORING"}
+{"case_id":"DV04","group":"high","query":"nhiệt vượt ngưỡng trên mức cho phép kéo dài","expected_section_id":"HIGH_EXCURSION"}
+{"case_id":"DV05","group":"high","query":"dữ liệu nóng quá lâu đối chiếu mức cao và thời lượng","expected_section_id":"HIGH_EXCURSION"}
+{"case_id":"DV06","group":"high","query":"đọc nhiệt kế cao liên tiếp và khoảng UNKNOWN","expected_section_id":"HIGH_EXCURSION"}
+{"case_id":"DV07","group":"low","query":"nhiệt độ dưới mức tối thiểu kéo dài liên tục","expected_section_id":"LOW_EXCURSION"}
+{"case_id":"DV08","group":"low","query":"lô hàng bị lạnh quá thấp đối chiếu ngưỡng","expected_section_id":"LOW_EXCURSION"}
+{"case_id":"DV09","group":"low","query":"so sánh các số đo lạnh dưới mức và thời lượng","expected_section_id":"LOW_EXCURSION"}
+{"case_id":"DV10","group":"spike","query":"một đỉnh bất thường đơn độc so sánh phép đo lân cận","expected_section_id":"ISOLATED_SPIKE"}
+{"case_id":"DV11","group":"spike","query":"spike logger xuất hiện một lần, không tự sửa bản ghi","expected_section_id":"ISOLATED_SPIKE"}
+{"case_id":"DV12","group":"spike","query":"số đo nhảy vọt riêng lẻ chưa đủ chứng minh sensor hỏng","expected_section_id":"ISOLATED_SPIKE"}
+{"case_id":"DV13","group":"gap","query":"không có dữ liệu nhiệt trong một quãng thời gian","expected_section_id":"MISSING_TELEMETRY"}
+{"case_id":"DV14","group":"gap","query":"missing telemetry means unknown and cannot assume safe","expected_section_id":"MISSING_TELEMETRY"}
+{"case_id":"DV15","group":"gap","query":"đoạn trống không có quan trắc, cần thu thập bổ sung","expected_section_id":"MISSING_TELEMETRY"}
+{"case_id":"DV16","group":"ocean","query":"tàu biển mất sóng logger lưu đệm rồi gửi lên trễ","expected_section_id":"DELAYED_OCEAN"}
+{"case_id":"DV17","group":"ocean","query":"chuyến hàng ngoài khơi đồng bộ muộn, phân biệt giờ sự kiện với giờ nhận","expected_section_id":"DELAYED_OCEAN"}
+{"case_id":"DV18","group":"ocean","query":"delayed ocean transmission: event time versus received time","expected_section_id":"DELAYED_OCEAN"}
+{"case_id":"DV19","group":"sensor","query":"cảm biến lỗi pin yếu và số liệu chưa chắc chắn","expected_section_id":"SENSOR_UNCERTAINTY"}
+{"case_id":"DV20","group":"sensor","query":"độ tin cậy logger kém, cảnh báo chất lượng M3 hoặc M4","expected_section_id":"SENSOR_UNCERTAINTY"}
+{"case_id":"DV21","group":"sensor","query":"uncertain measurement advisory model score is not a disposition","expected_section_id":"SENSOR_UNCERTAINTY"}
+{"case_id":"DV22","group":"quality","query":"nhân viên quality xem xét và quyết định quarantine hoặc release","expected_section_id":"QUALITY_REVIEW"}
+{"case_id":"DV23","group":"quality","query":"ai được quyền phê duyệt xuất kho sau khi xác nhận","expected_section_id":"QUALITY_REVIEW"}
+{"case_id":"DV24","group":"quality","query":"disposition is restricted to an authorized quality officer","expected_section_id":"QUALITY_REVIEW"}
+{"case_id":"DV25","group":"audit","query":"ghi lại nguồn chứng cứ mã section và hash tài liệu","expected_section_id":"EVIDENCE_AUDIT"}
+{"case_id":"DV26","group":"audit","query":"kiểm tra lịch sử evidence citation không được bịa","expected_section_id":"EVIDENCE_AUDIT"}
+{"case_id":"DV27","group":"audit","query":"audit trail source reference immutable incident reading disposition","expected_section_id":"EVIDENCE_AUDIT"}

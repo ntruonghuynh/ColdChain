@@ -346,8 +346,8 @@ temperature threshold, detector rule, canonical data, or ML artifact changes.
 |---|---|---|---|
 | D-01 | Approve teaching policy values BR-01 to BR-05 | **Approved.** Values 2026-11-14; 5-minute nominal sampling interval approved for M3 on 2026-11-15, kept in detector configuration; BR-05 interpretation approved 2026-11-15 (§13.1, §13.3); its implementation details approved 2026-11-15 as C-01 to C-10 (`docs/design/m3-baseline-detector-contract.md` §2) | — |
 | D-02 | Data source | **Approved 2026-11-14 (M2):** synthetic generator written by the team (no external data licence needed) | — |
-| D-03 | Default LLM provider and model | Anthropic API, `claude-opus-5-5` (configurable). Without an API key the LLM feature reports "not configured". A local model provider (for example Ollama) is optional and only added on request. | M6 |
-| D-04 | Who pays for and holds the LLM API key during evaluation | Team decision; key goes in a local `.env`, never in Git | M6, M9 |
+| D-03 | Default LLM provider and model | **Resolved by project owner 2026-11-16 for M6:** configurable OpenAI Chat Completions-compatible provider, including local compatible endpoints; default `disabled`, no startup calls or downloads. Without provider config the API reports an explicit status. | — |
+| D-04 | Who pays for and holds the LLM API key during evaluation | **Evaluation decision remains with team:** credential, if any, belongs only in local `.env`, never Git. No key was supplied for this M6 implementation. | M9 |
 | D-05 | Commit the generated dataset and frozen model artifacts, or regenerate them on first start | **Approved 2026-11-15:** canonical dataset committed in `data/release/` with SHA-256 manifest (M2); future frozen model artifacts are committed too, kept small and reproducible, with versions and SHA-256 checksums (M4) | — |
 | D-06 | Whether the assignment PDF may be committed (licence, repository visibility) | Keep it in `docs/requirements/` only if the repository is private or redistribution is allowed | M0 |
 | D-07 | Whether to run a human-timed evidence-assembly exercise | Optional; report only if actually run | M9 |
@@ -402,3 +402,15 @@ The implementation plan repeats the requirement IDs each milestone closes, so co
 | ML-03, ML-05, EVAL-04, EVAL-05, EVAL-11, EVAL-12 | Logistic and Random Forest candidate comparison, validation threshold/run selection, M3 one-to-one event matcher | Raw validation predictions/events/metrics and same-partition M3 baseline evaluation in `ml/evaluation/dev/` |
 | ML-06, NFR-03, NFR-04, SUB-03 | Versioned training config, feature schema, preprocessing pipeline, model manifest and SHA-256 checksums | `ml/registry/coldchain-rf-v1.0.0/` |
 | ML-10, FR-25 | Explicit insufficient-evidence response; append-only ML output audit; no quality or warehouse state writes | M4 inference API tests, migration 0004 constraints and M4 report |
+
+### 16.3 M6 traceability (triage and implementation)
+
+| Requirement | Thực hiện | Bằng chứng |
+|---|---|---|
+| LLM-01, LLM-06 | SOP mô phỏng có metadata/hash; BM25 lọc procedure version/product/effective date; citation chỉ được phép trỏ source đã gửi | `llm/coldchain_llm/{corpus.py,retrieval.py,validate.py}`; `backend/tests/test_m6_rag.py` |
+| LLM-02–05 | Explanation schema phân tách observation, policy, advisory ML, hướng dẫn, unknown và cutoff; evidence adapter nhân quả | `backend/app/services/{evidence_package.py,llm_explanations.py}`; test cutoff trong `test_m6_rag.py` |
+| LLM-07, LLM-10 | Trạng thái insufficient, untrusted data prompt boundaries, loại citation/response sai; không index hostile samples | `llm/prompts/response_draft/v1.md`; `llm/corpus/untrusted_samples/`; retrieval/citation tests |
+| LLM-08–09, BR-15 | Đối số read-only được validate; endpoint xác thực theo role + organization; provider không có quyền workflow | `backend/app/api/llm.py`, `llm/coldchain_llm/tools.py`; auth/advisory API tests |
+| LLM-11, NFR-04 | Prompt/provider/model/usage/latency/cost/evidence được ghi trong migration `0006`; output append-only, idempotent theo request_ref | `backend/migrations/versions/0006_m6_llm_explanations.py`; migration/API tests |
+| LLM-12, D-03 | Provider OpenAI-compatible configurable, local endpoint, disabled default, retry/timeout bounded | `backend/app/integrations/llm_adapter.py`, `llm/coldchain_llm/providers/`; provider tests |
+| EVAL-07 | 40 ca định nghĩa thành bốn nhóm, runner kiểm thử retrieval/applicability; chất lượng sinh LLM thật chỉ báo cáo khi có inference thật và human review | `llm/eval/cases/m6-cases.jsonl`, `llm/eval/run_40_cases.py`, raw kết quả M6 |

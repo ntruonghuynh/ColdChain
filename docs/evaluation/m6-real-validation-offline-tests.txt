@@ -1,0 +1,30 @@
+ Container coldchain-m6-real-llm-db-1 Running 
+ Container coldchain-m6-real-llm-db-1 Waiting 
+ Container coldchain-m6-real-llm-db-1 Healthy 
+ Container coldchain-m6-real-llm-backend-tests-run-9031c86ece5c Creating 
+ Container coldchain-m6-real-llm-backend-tests-run-9031c86ece5c Created 
+.......................                                                  [100%]
+=============================== warnings summary ===============================
+../usr/local/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /usr/local/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+../usr/local/lib/python3.12/site-packages/web3/providers/legacy_websocket.py:24
+  /usr/local/lib/python3.12/site-packages/web3/providers/legacy_websocket.py:24: DeprecationWarning: websockets.client.connect is deprecated
+    from websockets.client import (
+
+../usr/local/lib/python3.12/site-packages/websockets/legacy/__init__.py:6
+  /usr/local/lib/python3.12/site-packages/websockets/legacy/__init__.py:6: DeprecationWarning: websockets.legacy is deprecated; see https://websockets.readthedocs.io/en/stable/howto/upgrade.html for upgrade instructions
+    warnings.warn(  # deprecated in 14.0 - 2024-11-09
+
+../usr/local/lib/python3.12/site-packages/web3/providers/persistent/websocket.py:18
+../usr/local/lib/python3.12/site-packages/web3/providers/persistent/websocket.py:18
+  /usr/local/lib/python3.12/site-packages/web3/providers/persistent/websocket.py:18: DeprecationWarning: websockets.WebSocketClientProtocol is deprecated
+    from websockets import (
+
+../usr/local/lib/python3.12/site-packages/web3/providers/persistent/websocket.py:21
+  /usr/local/lib/python3.12/site-packages/web3/providers/persistent/websocket.py:21: DeprecationWarning: websockets.client.connect is deprecated
+    from websockets.client import (
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+23 passed, 6 warnings in 1.08s

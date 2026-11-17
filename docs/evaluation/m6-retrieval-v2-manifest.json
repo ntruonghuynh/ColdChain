@@ -1,0 +1,10 @@
+{
+  "retrieval_version": "bm25-v2-title25-vn-aliases",
+  "retrieval_config_files": {
+    "llm/coldchain_llm/retrieval.py": "ee5e0c2181d12d954cfc81b2682ffebb4161503000f13b6b89537b14c616c08a",
+    "backend/app/api/llm.py": "9b7f3b0cab6d4d97dc0bd44cfbb7ccf2d94898527624be9e69b9bbf1cfa33841"
+  },
+  "development_fixture_sha256": "a82026a01ca26bea4622c1d705120852c043b3516890cb68944f222544ed6215",
+  "frozen_before_independent_challenge": "m6-retrieval-challenge-v2.jsonl",
+  "tuning_protocol": "Only the separate 27-case development fixture was used to choose these deterministic changes; challenge v1 was not rerun or used for tuning."
+}

@@ -1,18 +1,20 @@
-# llm/
+# Gói LLM/RAG (M6)
 
-**Status: not implemented.** Scheduled for Milestone 6.
+M6 cung cấp retrieval SOP mô phỏng, evidence adapter nhân quả, response schema có citation validation và provider OpenAI-compatible tùy chọn. Đây là tài liệu kỹ thuật cho đồ án; dữ liệu dự án hoàn toàn mô phỏng.
 
-Planned contents (see `docs/architecture.md` §7.3):
-
-| Path | Purpose |
+| Đường dẫn | Chức năng |
 |---|---|
-| `corpus/approved/` | Approved teaching procedures with version front matter |
-| `corpus/untrusted_samples/` | Untrusted evidence documents for testing (including hostile instructions) |
-| `prompts/<name>/vN.md` | Versioned prompt templates |
-| `coldchain_llm/` | Retrieval, provider adapters (Anthropic, disabled), read-only tools, schemas, output validation |
-| `eval/cases/` | At least 40 evaluation cases (10 normal, 10 missing evidence, 10 conflicting evidence, 10 hostile instructions) |
-| `tests/` | Unit tests; live-provider tests are opt-in |
+| `corpus/approved/` | SOP mô phỏng có metadata, checksum và manifest ghim phiên bản |
+| `corpus/untrusted_samples/` | Tài liệu prompt injection; không bao giờ được đưa vào index |
+| `prompts/response_draft/v1.md` | Prompt tiếng Việt có version, tách system instructions khỏi dữ liệu không tin cậy |
+| `coldchain_llm/` | Parser/chunker, BM25, provider interface, response schema, tool argument schema và citation validator |
+| `eval/cases/m6-cases.jsonl` | 40 ca: 10 bình thường, 10 thiếu evidence, 10 mâu thuẫn, 10 hostile instructions |
+| `eval/run_40_cases.py` | Kiểm tra retrieval và lọc applicability; không gọi LLM |
+| `backend/app/services/evidence_package.py` | Evidence adapter chỉ đọc dữ liệu sẵn có tại cutoff |
+| `backend/app/services/llm_explanations.py` | Điều phối retrieval/provider, fallback tùy chọn và ghi audit append-only |
 
-Without an API key the module returns an explicit `not_configured` status; it never shows a placeholder draft.
+Provider mặc định là `disabled`. Có thể cấu hình provider OpenAI Chat Completions-compatible bằng `LLM_PROVIDER=openai_compatible`, `LLM_API_BASE_URL`, `LLM_MODEL` và tùy chọn `LLM_API_KEY`. Endpoint local tương thích cũng được hỗ trợ. Không tải model hoặc gọi provider khi khởi động. Nếu thiếu cấu hình, API trả `not_configured` hoặc `insufficient_evidence`; fallback chỉ xuất hiện khi `LLM_FALLBACK_ENABLED=true` và luôn được đánh dấu `deterministic_fallback`.
 
-Main requirements: LLM-01 to LLM-12, FR-21, EVAL-07, NFR-11.
+SOP được gắn nhãn “Quy trình mô phỏng phục vụ đồ án – không phải hướng dẫn vận hành chính thức.” Không dùng giải thích hoặc dự đoán ML để thay Quality Officer. Xem [thiết kế M6](../docs/design/m6-rag-architecture.md) và [báo cáo M6](../docs/milestones/m6/README.md).
+
+Yêu cầu: LLM-01–LLM-12, FR-21, EVAL-07, NFR-11.

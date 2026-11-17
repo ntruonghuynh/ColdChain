@@ -1,0 +1,66 @@
+{
+  "chunks": [
+    {
+      "content_sha256": "500c2090d6203f4599d610035cf5d8c43b83f50de1c568180d9cf35cf0f1490d",
+      "section_id": "MONITORING",
+      "source_id": "SOP-EXC@1.0#MONITORING"
+    },
+    {
+      "content_sha256": "78388cfa62079f5cd55fbf8dc54ae90651e9e2da8f0f14f72f7b001ad6b0186b",
+      "section_id": "HIGH_EXCURSION",
+      "source_id": "SOP-EXC@1.0#HIGH_EXCURSION"
+    },
+    {
+      "content_sha256": "95c3f3b4431c676220c57ded0d496bfdbaaf2231de0589f09c7c80d2349a34f7",
+      "section_id": "LOW_EXCURSION",
+      "source_id": "SOP-EXC@1.0#LOW_EXCURSION"
+    },
+    {
+      "content_sha256": "e70ea3cd754335ec4e723c0e6e6539831cb7ffc2778dbffb3240e0754d7285a1",
+      "section_id": "ISOLATED_SPIKE",
+      "source_id": "SOP-EXC@1.0#ISOLATED_SPIKE"
+    },
+    {
+      "content_sha256": "36037ec89571197b63e140bc6421e0c041ce9421ef758ca4daa99436990e1fdc",
+      "section_id": "MISSING_TELEMETRY",
+      "source_id": "SOP-EXC@1.0#MISSING_TELEMETRY"
+    },
+    {
+      "content_sha256": "223fef6ee4cfe9bf7f0cb9ef90a462a7ec144ea84edf641899fdd5477be05ee0",
+      "section_id": "DELAYED_OCEAN",
+      "source_id": "SOP-EXC@1.0#DELAYED_OCEAN"
+    },
+    {
+      "content_sha256": "0654d965e4e3dbb1ae231f30abba99ff6708b3e73556a22b0581c65b32fd6853",
+      "section_id": "SENSOR_UNCERTAINTY",
+      "source_id": "SOP-EXC@1.0#SENSOR_UNCERTAINTY"
+    },
+    {
+      "content_sha256": "997247badf974ba01dc303f9a4313b649a63562dc47baa80e8e6da5960707d6e",
+      "section_id": "EVIDENCE_AUDIT",
+      "source_id": "SOP-EXC@1.0#EVIDENCE_AUDIT"
+    },
+    {
+      "content_sha256": "8e5946c6748a2f3ec65bc596485f1d5ee66cea44c011e8d40a82da40c7981c6b",
+      "section_id": "QUALITY_REVIEW",
+      "source_id": "SOP-EXC@1.0#QUALITY_REVIEW"
+    }
+  ],
+  "documents": [
+    {
+      "content_sha256": "537ed44eef6286c1f92c17981d9eb38156fed0a682a1d5ef140bd9e5464ae27d",
+      "doc_id": "SOP-EXC",
+      "procedure_version": "SOP-EXC v1.0",
+      "source_path": "SOP-EXC_v1.0.md",
+      "status": "teaching_approved",
+      "version": "1.0"
+    }
+  ],
+  "index_version": "bm25-v1",
+  "scoring": {
+    "algorithm": "BM25",
+    "b": 0.75,
+    "k1": 1.5
+  },
+  "tokenizer": "unicode-word-casefold-v1"
+}

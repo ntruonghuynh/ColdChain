@@ -77,11 +77,22 @@ def _committed_fingerprint(seed: int) -> str:
     return json.loads(path.read_text())["dataset_fingerprint"]
 
 
-@pytest.mark.parametrize("seed", (CANONICAL_SEED, *EVALUATION_SEEDS))
-def test_eval10_canonical_and_reserved_seeds_generate_200_journeys_reproducibly(seed: int, tmp_path: Path) -> None:
-    """Seed 11 (development) and the five reserved evaluation seeds regenerate to their committed fingerprints."""
+def test_seed11_canonical_dataset_regenerates_to_identical_content(tmp_path: Path) -> None:
+    """Regenerate only the approved development seed into a temporary directory; leave canonical files untouched."""
+    seed = CANONICAL_SEED
     manifest = generate_dataset(CONFIG, seed, tmp_path / f"seed{seed}", repo_root=REPO_ROOT)
     assert manifest["journey_count"] >= 200
     stats = json.loads((tmp_path / f"seed{seed}" / "statistics.json").read_text())
     assert set(stats["journeys"]["by_primary_scenario"]) == set(PRIMARY_SCENARIOS)
+    assert manifest["dataset_fingerprint"] == _committed_fingerprint(seed)
+    for rel in OUTPUT_FILES:
+        assert (tmp_path / f"seed{seed}" / rel).read_bytes() == (RELEASE_DIR / rel).read_bytes(), rel
+
+
+@pytest.mark.m9_evaluation
+@pytest.mark.parametrize("seed", EVALUATION_SEEDS)
+def test_m9_reserved_seed_reproducibility_requires_explicit_opt_in(seed: int, tmp_path: Path) -> None:
+    """M9-only: regenerates a reserved final-evaluation seed; never part of development regression."""
+    manifest = generate_dataset(CONFIG, seed, tmp_path / f"seed{seed}", repo_root=REPO_ROOT)
+    assert manifest["journey_count"] >= 200
     assert manifest["dataset_fingerprint"] == _committed_fingerprint(seed)
