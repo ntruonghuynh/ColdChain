@@ -2,7 +2,7 @@
 
 Academic prototype for **IT in Logistics — Final project 03**. It monitors refrigerated shipments, tells real temperature excursions apart from missing or faulty sensor data, drafts a procedure-based response, and records custody and quality decisions on a local blockchain. A human Quality Officer always makes the release or quarantine decision.
 
-> **Status: Milestone 5 implementation, pending project-owner review.** The stack preserves M1–M4 and adds authenticated custody/quality workflow APIs, a local Hardhat registry, transactional outbox, reconciliation and signed audit verification. All journey data is **simulated**. ML is advisory; only a receiving Quality Officer may record a disposition, and warehouse release requires a confirmed RELEASE. See the [M5 report](docs/milestones/m5/README.md).
+> **Trạng thái: M0–M5 đã hoàn thành; M6 implementation sẵn sàng cho project-owner review trên `feat/m6-llm-rag`.** M6 bổ sung RAG giải thích incident có xác thực; provider LLM là tùy chọn, không cần để khởi động stack. Mọi dữ liệu hành trình là **mô phỏng**. ML/LLM chỉ advisory; chỉ Quality Officer được ủy quyền mới ghi disposition, và xuất kho cần RELEASE đã xác nhận. Chưa có inference thật từ provider. Xem báo cáo [M5](docs/milestones/m5/README.md) và [M6](docs/milestones/m6/README.md).
 
 > **Teaching boundary.** All data is simulated. Temperature limits and procedures are teaching policies, not clinical or regulatory standards. No ML output establishes product safety.
 

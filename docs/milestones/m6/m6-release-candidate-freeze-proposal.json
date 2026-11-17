@@ -1,0 +1,106 @@
+{
+  "status": "PROPOSED_NOT_FROZEN",
+  "language": "vi",
+  "source": {
+    "branch": "feat/m6-llm-rag",
+    "head": "8c9bad1c57daaabebe374aeb5df920ec48b99ab1",
+    "worktree_dirty": true,
+    "tracked_and_untracked_status_entries": 211,
+    "runtime_build_input_manifest_sha256": "d4c6f93af6cc491b23f273899eb3d76f019f15e4eaa8d1bea38a3be58c4d076b",
+    "runtime_build_input_manifest_method": "SHA-256 of sorted JSON records {path,sha256,size_bytes} for files copied by backend/Dockerfile; ignores pycache and pyc",
+    "revision_label_embedded_in_image": false,
+    "source_content_match_scope": "Seven critical RAG/validation files were SHA-256 compared between running M6 container and worktree and matched; full clean-commit provenance is unavailable because worktree is dirty and image has no source revision label."
+  },
+  "backend_image": {
+    "reference": "coldchain-backend:m6-evalprep",
+    "image_id": "sha256:03bfdf2d8a6fc0802f7669fbd7e5fb6bf039660b7a2a8d4454d63629a1397d86",
+    "runtime_version": "m6-post-pilot-temporal-v3",
+    "base_image": "python:3.12-slim (tag not digest-pinned)"
+  },
+  "prompt": {
+    "version": "response_draft/v3",
+    "path": "llm/prompts/response_draft/v3.md",
+    "source_file_sha256": "a86e00ec3822eb8df4d1598fa7b0b79b1ebd1d4c70a4026ca8ab01fe5ac135cb",
+    "runtime_effective_prompt_sha256": "e1bc5cba92aa38af260213e0952daff95c0822b985fca9b3d1845f8024f8ad4b"
+  },
+  "schema": {
+    "version": "explanation-content/v2",
+    "path": "llm/coldchain_llm/schemas.py",
+    "source_file_sha256": "fbede17f8825d6a7dd423be888886b29d124e59e7852196068a4cc2fc8f5716a",
+    "runtime_structured_output_schema_sha256": "9a11f7453d8d5f0ac9f3e74a1f52fdc14f7fc1ec24b8fe4f2151f66bffe524a2"
+  },
+  "retriever": {
+    "version": "bm25-v2-title25-vn-aliases"
+  },
+  "provider_adapter": {
+    "version": "openai-chat-completions/v1",
+    "path": "llm/coldchain_llm/providers/openai_compatible.py",
+    "sha256": "1b20920a3ccfda5038f4a34f7540301d8fd8ddfbea147ad5956bdae84f3f7e0b"
+  },
+  "provider_configuration": {
+    "provider": "openai_compatible",
+    "model": "gpt-6-luna",
+    "base_url": "https://api.openai.com/v1",
+    "fallback_enabled": false,
+    "max_retries": 0,
+    "max_output_tokens": 3200,
+    "reasoning_effort": "none",
+    "strict_json_schema": true,
+    "provider_calls_in_this_validation": "NONE"
+  },
+  "evaluation": {
+    "runner_path": "llm/eval/run_explanation_eval.py",
+    "runner_sha256": "d5f05db0acf068c6c112e9387fa93f21ab4005d00e583a32afba3b3d691689f3",
+    "manifest_path": "docs/evaluation/m6-real-explanation-manifest-v1.json",
+    "manifest_file_sha256": "6922ea18e3fb78d059031c663aa01ff30e25a6592c0df53e89148ee77bd03599",
+    "manifest_canonical_sha256": "9bfe4d64fff7f03f5dbb538fd7352d834c4c1729b24220a79ca6fa6926bac244",
+    "manifest_version": "v1",
+    "historical_real_provider_cases": 5,
+    "remaining_cases": "NOT RUN"
+  },
+  "data_integrity": {
+    "accepted_historical_explanations_modified": false,
+    "frozen_manifest_modified": false,
+    "M5_active_deployment_modified": false,
+    "M9_reserved_seeds_accessed": false
+  },
+  "freeze_blockers": [
+    "owner-reported PASS decisions exist for all five cases, but independent substantiation is NOT ESTABLISHED: reviewer identity, reviewed_at, rationale and reviewer-selected supporting refs were not provided",
+    "M6R-016 historical draft contains KNOWN_MATERIAL_TEMPORAL_CONTRADICTION; effective acceptance remains blocked pending explicit defect disposition and supporting review evidence",
+    "M6R-006 LOW_EXCURSION and M6R-036 QUALITY_REVIEW are outside retrieved top-5; actual explanation semantic support and authorization safety remain unverified",
+    "worktree is dirty and image has no Git revision label; exact clean-source/image provenance is not established",
+    "35 remaining real-provider cases have not run; no broad semantic-quality claim is supported"
+  ],
+  "reproduction": "Use a clean source archive whose runtime_build_input_manifest_sha256 matches this proposal; build only to a unique M6 image tag; use project coldchain-m6-evalprep with its isolated env file and volumes; verify readiness, image ID, migration, diagnostics and manifest hash before any provider call. Provider generation requires separate explicit owner approval.",
+  "test_image": {
+    "reference": "coldchain-backend:m6-evalprep-test",
+    "image_id": "sha256:27fb66ace4e29d84cbae4a7cfaaae1d6e2758d6d9334c276eb7ee36b7416ae33",
+    "offline_tests": "35 passed, 6 warnings",
+    "provider_disabled": true
+  },
+  "human_review": {
+    "cases": [
+      "M6R-001",
+      "M6R-006",
+      "M6R-016",
+      "M6R-021",
+      "M6R-036"
+    ],
+    "provenance": "OWNER_REPORTED",
+    "recorded_decisions": 5,
+    "pass": 5,
+    "fail": 0,
+    "needs_more_evidence": 0,
+    "decisions_not_provided": 0,
+    "independent_review_fully_substantiated": "NOT ESTABLISHED",
+    "reviewer_identity_rationale_reviewed_at_and_reviewer_selected_refs": "NOT PROVIDED",
+    "recorded_at_utc": "2026-11-17T15:22:00Z",
+    "technical_gate": "NO-GO; owner-reported PASS values do not resolve known technical findings"
+  },
+  "docker_verification": {
+    "last_verified_image_id": "sha256:03bfdf2d8a6fc0802f7669fbd7e5fb6bf039660b7a2a8d4454d63629a1397d86",
+    "runtime_readiness_verified": true,
+    "test_image_readiness_matches_runtime": true,
+    "m5_active_stack_mutated": false
+  }
+}

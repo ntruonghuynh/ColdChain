@@ -5,8 +5,8 @@ Academic full-stack prototype: monitoring + ML + LLM/RAG + blockchain + web dash
 
 ## Current status
 
-- Milestones 0–4 are complete and preserved. **Milestone 5 implementation is under owner review**: local Hardhat ledger, authenticated workflow, outbox relay, reconciliation and signed audit log. See `docs/milestones/m5/README.md`. Do not start M6 without project-owner review.
-- Not implemented: LLM/RAG (M6) and full M7 dashboard. Keep `backend/app/api/system.py` `FEATURES` truthful.
+- Milestones 0–5 are complete and preserved. **Milestone 6 (LLM/RAG) is under final acceptance review** on `feat/m6-llm-rag`; do not start M7 without explicit approval.
+- M6 is advisory only. Provider is disabled by default, corpus is teaching-only, evidence is causal, citations are verified, and no LLM output may write a M5 disposition or warehouse action. Keep `backend/app/api/system.py` `FEATURES` truthful.
 - Approved teaching policy (2026-11-14) lives in `backend/app/seed/data/policies/POL-CHILL-01_v1.0.json`. Policy versions are immutable; never edit that file's values — publish a new version file after owner approval.
 - Canonical **development** dataset `data/release/coldchain-sim-v1.0.0-seed11/` is committed and immutable: never edit it in place. Seeds 22, 33, 44, 55, 66 are reserved for operational simulation evaluation (only their manifests are committed); never tune or develop on them (A-13). A changed generator, configuration or policy needs a new dataset version (new folder) and a regenerated manifest.
 - Ground truth (D-12): only the modules on the allow-list in `backend/tests/test_ground_truth_boundary.py` may read the `ground_truth` schema or the `ground_truth/` files. M4's only added label boundary is `ml/coldchain_ml/labels.py`; feature extraction, detection, inference, operational APIs and the frontend use observed data only. Never weaken or delete those regression tests to make code pass.
@@ -42,6 +42,14 @@ Academic full-stack prototype: monitoring + ML + LLM/RAG + blockchain + web dash
 13. **Do not commit, push, merge or create pull requests without explicit approval** from the project owner for that specific action. Staging for review is fine only when asked.
 14. **Report at the end of every task:** all modified/created/deleted files, every command executed, test results (with the real output summary, including failures), and unresolved issues or open decisions.
 
+## M6 specific boundaries
+
+- All M6 documentation, evaluation reports and saved results are written in Vietnamese. Standard API fields and code identifiers may remain English.
+- Operational explanation code reads observed/system evidence only. Preserve `event_at`/`received_at` and exclude revisions, predictions and confirmations unavailable by the evidence cutoff. Never import the ground-truth schema or label files.
+- SOPs authored for the prototype must be labelled as simulated teaching procedures, not official handling guidance. Policy values come only from the immutable approved policy.
+- LLM output is advisory. Only M5 authorization can create Quality dispositions or warehouse release actions. Do not expose tools, signing keys or workflow credentials to the model.
+- External inference is optional, bounded and absent from startup. Automated tests use mock provider responses; live inference is reported separately and only when configured.
+
 ## Engineering conventions
 
 - **Boundaries:** business rules live in `backend/app/domain/` as pure functions; API routes contain no business logic; the frontend contains no business logic.
@@ -63,7 +71,9 @@ Run from the repository root unless noted. `.env` must exist (`cp .env.example .
 |---|---|
 | Start stack and wait until healthy | `docker compose up -d --build --wait` |
 | Stop (keeps data) | `docker compose down` — never add `-v` without explicit owner approval (deletes all data) |
-| Backend + generator tests (in Docker, uses `*_test` databases) | `docker compose --profile test run --rm --build backend-tests` |
+| Development backend + generator tests (M9-marked tests excluded by default) | `docker compose --profile test run --rm --build backend-tests` |
+| Seed-11 deterministic generator regression only | `docker compose --profile test run --rm backend-tests pytest -q -p no:cacheprovider -c pyproject.toml /workspace/data/generator/tests/test_sim_determinism.py::test_seed11_canonical_dataset_regenerates_to_identical_content` |
+| M9 final evaluation suite | Separate, owner-authorized evaluation procedure only; never include it in development regression |
 | Generate a dataset (scratch) | `docker compose --profile tools run --rm data-tools python -m coldchain_sim generate --config data/generator/config/coldchain-sim-v1.yaml --seed 11 --out data/generated/seed11` |
 | Verify the canonical release (checksums + regeneration) | `docker compose --profile tools run --rm data-tools python -m coldchain_sim verify data/release/coldchain-sim-v1.0.0-seed11 --regenerate` |
 | Import the canonical dataset (idempotent) / show status | `docker compose --profile tools run --rm data-tools python -m app.dataset import data/release/coldchain-sim-v1.0.0-seed11` / `... python -m app.dataset status` |
