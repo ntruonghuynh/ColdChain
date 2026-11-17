@@ -8,7 +8,7 @@
 #
 # Values come from .env (copy .env.example). Required secrets have no defaults here.
 
-name: ${COMPOSE_PROJECT_NAME:-coldchain}
+name: ${COMPOSE_PROJECT_NAME:-coldchain-m6}
 
 x-backend-env: &backend-env
   APP_ENV: ${APP_ENV:-local}
@@ -38,6 +38,18 @@ x-backend-env: &backend-env
   CHAIN_ACCOUNT_INDEX_QUALITY: ${CHAIN_ACCOUNT_INDEX_QUALITY:-3}
   CHAIN_ACCOUNT_INDEX_WAREHOUSE: ${CHAIN_ACCOUNT_INDEX_WAREHOUSE:-4}
   CHAIN_ACCOUNT_INDEX_MONITOR: ${CHAIN_ACCOUNT_INDEX_MONITOR:-5}
+  LLM_PROVIDER: ${LLM_PROVIDER:-disabled}
+  LLM_MODEL: ${LLM_MODEL:-}
+  LLM_API_BASE_URL: ${LLM_API_BASE_URL:-}
+  LLM_CORPUS_DIR: ${LLM_CORPUS_DIR:-/app/llm/corpus/approved}
+  LLM_API_KEY: ${LLM_API_KEY:-}
+  LLM_TIMEOUT_S: ${LLM_TIMEOUT_S:-30}
+  LLM_MAX_RETRIES: ${LLM_MAX_RETRIES:-1}
+  LLM_MAX_OUTPUT_TOKENS: ${LLM_MAX_OUTPUT_TOKENS:-1200}
+  LLM_FALLBACK_ENABLED: ${LLM_FALLBACK_ENABLED:-false}
+  LLM_PRICE_INPUT_PER_MTOK_USD: ${LLM_PRICE_INPUT_PER_MTOK_USD:-}
+  LLM_PRICE_OUTPUT_PER_MTOK_USD: ${LLM_PRICE_OUTPUT_PER_MTOK_USD:-}
+  M6_RUNTIME_VERSION: ${M6_RUNTIME_VERSION:-m6-source-unversioned}
 
 services:
   db:
@@ -65,7 +77,7 @@ services:
       context: .
       dockerfile: backend/Dockerfile
       target: runtime
-    image: coldchain-backend:local
+    image: ${BACKEND_IMAGE:?Set BACKEND_IMAGE to a versioned, project-specific image tag}
     environment: *backend-env
     command: ["sh", "-c", "alembic upgrade head && python -m app.seed"]
     depends_on:
@@ -77,7 +89,7 @@ services:
     build:
       context: .
       dockerfile: blockchain/Dockerfile
-    image: coldchain-chain:local
+    image: ${CHAIN_IMAGE:?Set CHAIN_IMAGE to a versioned, project-specific image tag}
     command: ["npx", "hardhat", "node", "--hostname", "0.0.0.0"]
     environment:
       CHAIN_MNEMONIC: ${CHAIN_MNEMONIC:-test test test test test test test test test test test junk}
@@ -92,7 +104,7 @@ services:
     restart: unless-stopped
 
   chain-deploy:
-    image: coldchain-chain:local
+    image: ${CHAIN_IMAGE:?Set CHAIN_IMAGE to a versioned, project-specific image tag}
     pull_policy: never
     command: ["npx", "hardhat", "run", "scripts/deploy.ts", "--network", "localhost"]
     environment:
@@ -113,7 +125,7 @@ services:
     restart: "no"
 
   backend:
-    image: coldchain-backend:local
+    image: ${BACKEND_IMAGE:?Set BACKEND_IMAGE to a versioned, project-specific image tag}
     pull_policy: never
     environment: *backend-env
     volumes:
@@ -132,7 +144,7 @@ services:
     restart: unless-stopped
 
   worker:
-    image: coldchain-backend:local
+    image: ${BACKEND_IMAGE:?Set BACKEND_IMAGE to a versioned, project-specific image tag}
     pull_policy: never
     command: ["python", "-m", "app.worker.outbox_relay"]
     healthcheck:
@@ -155,7 +167,7 @@ services:
   frontend:
     build:
       context: ./frontend
-    image: coldchain-frontend:local
+    image: ${FRONTEND_IMAGE:?Set FRONTEND_IMAGE to a versioned, project-specific image tag}
     ports:
       - "${FRONTEND_BIND_ADDRESS:-127.0.0.1}:${FRONTEND_PORT:-3000}:8080"
     depends_on:
@@ -175,14 +187,14 @@ services:
       context: .
       dockerfile: backend/Dockerfile
       target: test
-    image: coldchain-backend:test
+    image: ${BACKEND_TEST_IMAGE:?Set BACKEND_TEST_IMAGE to a versioned, project-specific test tag}
     environment:
       <<: *backend-env
       APP_ENV: test
       # Tests create and drop this separate database; the main database is never touched.
       TEST_POSTGRES_DB: ${POSTGRES_DB:-coldchain}_test
       # Generator package and committed dataset come from the read-only repository mount.
-      PYTHONPATH: /workspace/data/generator:/app/ml
+      PYTHONPATH: /workspace/data/generator:/app/ml:/workspace/llm
       COLDCHAIN_REPO_DIR: /workspace
     volumes:
       - .:/workspace:ro
@@ -199,11 +211,11 @@ services:
     # The repository is mounted at /workspace; output goes to data/generated/ (git-ignored)
     # unless you deliberately write to data/release/.
     profiles: ["tools"]
-    image: coldchain-backend:local
+    image: ${BACKEND_IMAGE:?Set BACKEND_IMAGE to a versioned, project-specific image tag}
     pull_policy: never
     environment:
       <<: *backend-env
-      PYTHONPATH: /app:/app/ml:/workspace/data/generator
+      PYTHONPATH: /app:/app/ml:/app/llm:/workspace/data/generator
       PYTHONDONTWRITEBYTECODE: "1"
     working_dir: /workspace
     volumes:

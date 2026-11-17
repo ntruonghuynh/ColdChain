@@ -18,7 +18,10 @@ COPY backend/migrations ./migrations
 COPY backend/app ./app
 COPY ml/coldchain_ml ./ml/coldchain_ml
 COPY ml/registry ./ml/registry
-ENV PYTHONPATH=/app/ml
+COPY llm/coldchain_llm ./llm/coldchain_llm
+COPY llm/corpus ./llm/corpus
+COPY llm/prompts ./llm/prompts
+ENV PYTHONPATH=/app/ml:/app/llm
 
 RUN useradd --create-home --uid 10001 appuser
 USER appuser
