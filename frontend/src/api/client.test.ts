@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { mockFetch } from '../test/utils';
-import { ApiError, apiGet, getHealth } from './client';
+import { ApiError, apiGet, apiPost, getHealth, setBearerToken } from './client';
 
 describe('api client', () => {
   it('returns the parsed success envelope', async () => {
@@ -45,5 +45,22 @@ describe('api client', () => {
       },
     });
     await expect(getHealth()).rejects.toMatchObject({ kind: 'http', status: 502, code: 'api_unreachable' });
+  });
+
+  it('sends a bearer token and maps unauthorized access distinctly', async () => {
+    const fetch = mockFetch({ '/api/auth/me': { status: 401, body: { detail: 'Invalid or expired bearer token' } } });
+    setBearerToken('memory-token');
+    try {
+      await expect(apiGet('/auth/me')).rejects.toMatchObject({ status: 401, code: 'unauthorized' });
+      expect(fetch.mock.calls[0]?.[1]?.headers).toMatchObject({ Authorization: 'Bearer memory-token' });
+    } finally { setBearerToken(null); }
+  });
+
+  it('reports backend 403 as an authorization denial for authenticated writes', async () => {
+    mockFetch({ '/api/workflow/shipments/SHP-1/disposition': { status: 403, body: { detail: 'This account is not authorized for this action' } } });
+    setBearerToken('carrier-token');
+    try {
+      await expect(apiPost('/workflow/shipments/SHP-1/disposition', { decision: 'RELEASE' })).rejects.toMatchObject({ status: 403, code: 'forbidden' });
+    } finally { setBearerToken(null); }
   });
 });

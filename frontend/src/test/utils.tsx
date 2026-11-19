@@ -3,13 +3,15 @@ import type { ReactElement } from 'react';
 import { MemoryRouter } from 'react-router';
 import { vi } from 'vitest';
 import { ConnectivityProvider } from '../hooks/connectivity';
+import { AuthProvider } from '../auth/AuthContext';
+import { setBearerToken } from '../api/client';
 import type { HealthReport, Policy } from '../api/types';
 
 export type MockResponse = { status: number; body: unknown } | Error;
 
 /** Replaces global fetch. Keys are request paths (with query), e.g. "/api/shipments?limit=1". */
 export function mockFetch(routes: Record<string, MockResponse>) {
-  const fn = vi.fn(async (input: RequestInfo | URL) => {
+  const fn = vi.fn(async (input: RequestInfo | URL, _init?: RequestInit) => {
     const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
     const path = url.replace(/^https?:\/\/[^/]+/, '');
     const route = routes[path];
@@ -24,9 +26,10 @@ export function mockFetch(routes: Record<string, MockResponse>) {
 }
 
 export function renderApp(ui: ReactElement, route = '/') {
+  setBearerToken(null);
   return render(
     <MemoryRouter initialEntries={[route]}>
-      <ConnectivityProvider intervalMs={60_000}>{ui}</ConnectivityProvider>
+      <AuthProvider><ConnectivityProvider intervalMs={60_000}>{ui}</ConnectivityProvider></AuthProvider>
     </MemoryRouter>,
   );
 }
