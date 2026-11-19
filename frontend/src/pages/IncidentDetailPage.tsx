@@ -1,6 +1,10 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { Link, useParams } from 'react-router';
-import { api } from '../api/client';
+import { api, ApiError } from '../api/client';
+import type { BusinessVerification } from '../api/client';
+import type { IncidentDetail } from '../api/types';
+import { useAuth } from '../auth/AuthContext';
+import { ExplanationHistory } from '../components/incident/ExplanationHistory';
 import { BasisBadge, CategoryBadge, GapStatusBadge, SimulatedBadge } from '../components/monitoring/MonitoringBadges';
 import { TemperatureChart } from '../components/monitoring/TemperatureChart';
 import { Badge } from '../components/ui/Badge';
@@ -8,11 +12,45 @@ import { Card } from '../components/ui/Card';
 import { KeyValueList } from '../components/ui/KeyValueList';
 import { PageHeader } from '../components/ui/PageHeader';
 import { ErrorState, LoadingState } from '../components/ui/States';
+import { Button } from '../components/ui/Button';
 import { formatMinutes, formatOptionalUtc, formatUtc } from '../format';
 import { useApi } from '../hooks/useApi';
 
+function WarehouseRelease({ shipmentId, dispositions }: { shipmentId: string; dispositions: IncidentDetail['dispositions'] }) {
+  const disposition = dispositions.find((item) => item.decision === 'RELEASE');
+  const fetchVerification = useCallback((signal: AbortSignal) => disposition
+    ? api.verifyBusinessRef(disposition.business_ref, { signal })
+    : Promise.resolve({ data: { business_ref: '', event_type: '', outbox_status: '', chain_record_present: false, verified: false, verification_status: 'NOT_FOUND' } as BusinessVerification, meta: null }), [disposition]);
+  const verification = useApi(fetchVerification);
+  const [businessRef, setBusinessRef] = useState(`CC-WHREL-${globalThis.crypto?.randomUUID?.() ?? Date.now()}`);
+  const [confirm, setConfirm] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const confirmed = disposition && verification.status === 'success' && verification.data.data.business_ref === disposition.business_ref && verification.data.data.event_type === 'DISPOSITION_RECORDED' && verification.data.data.verified;
+
+  const release = async () => {
+    setBusy(true); setError(''); setMessage('');
+    try {
+      const result = await api.release(shipmentId, businessRef);
+      setMessage(`Warehouse release request accepted (${result.data.status}); chain confirmation will appear in Audit History.`);
+      setConfirm(false);
+      verification.reload();
+    } catch (reason) { setError(reason instanceof ApiError ? reason.message : 'Warehouse release was not recorded.'); }
+    finally { setBusy(false); }
+  };
+
+  return <Card className="mt-6" title="Warehouse physical release" description="A separate WAREHOUSE action is available only after the backend has confirmed a QUALITY RELEASE disposition.">
+    {verification.status === 'loading' && <LoadingState label="Checking disposition confirmation…" />}
+    {verification.status === 'error' && <ErrorState error={verification.error} onRetry={verification.reload} />}
+    {verification.status === 'success' && !confirmed && <p role="note" className="text-sm text-slate-600">No confirmed RELEASE disposition is available for this incident. Physical release is unavailable.</p>}
+    {verification.status === 'success' && confirmed && <div className="space-y-3"><p className="text-sm text-emerald-800">QUALITY RELEASE confirmed for reference <code className="font-mono">{disposition.business_ref}</code>.</p><label className="block text-xs font-medium text-slate-600">Unique warehouse release reference<input className="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 font-mono text-sm" value={businessRef} onChange={(e) => setBusinessRef(e.target.value)} /></label>{!confirm ? <Button variant="primary" disabled={!businessRef.trim()} onClick={() => setConfirm(true)}>Review physical release</Button> : <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm"><p>Confirm a physical release request for shipment <code>{shipmentId}</code>? The backend will enforce all remaining workflow rules.</p><div className="mt-3 flex gap-2"><Button variant="primary" disabled={busy || !businessRef.trim()} onClick={release}>{busy ? 'Submitting…' : 'Confirm warehouse release'}</Button><Button disabled={busy} onClick={() => setConfirm(false)}>Cancel</Button></div></div>}{message && <p role="status" className="text-sm text-emerald-800">{message}</p>}{error && <p role="alert" className="text-sm text-rose-800">{error}</p>}</div>}
+  </Card>;
+}
+
 export function IncidentDetailPage() {
   const { incidentId = '' } = useParams();
+  const { hasRole } = useAuth();
   const fetcher = useCallback((signal: AbortSignal) => api.incident(incidentId, { signal }), [incidentId]);
   const detail = useApi(fetcher);
 
@@ -41,7 +79,7 @@ export function IncidentDetailPage() {
       {inc.status === 'OPEN' && (
         <p role="note" className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
           This incident is advisory evidence from the policy baseline. Only the Quality Officer can decide on the shipment;
-          dispositions and release are implemented in Milestone 5. Nothing on this page releases goods.
+          dispositions are restricted to QUALITY. ML and explanation output never make a release decision.
         </p>
       )}
       {latest?.basis === 'SUPERSEDED_BY_DATA' && (
@@ -177,6 +215,8 @@ export function IncidentDetailPage() {
           )}
         </Card>
       </div>
+      <div className="mt-6"><ExplanationHistory incidentId={inc.incident_id} /></div>
+      {hasRole('WAREHOUSE') && <WarehouseRelease shipmentId={inc.shipment_id} dispositions={inc.dispositions} />}
     </>
   );
 }

@@ -50,7 +50,7 @@ export function OverviewPage() {
     <>
       <PageHeader
         title="Overview"
-        description="Status of the monitoring platform. Operational views fill in as later milestones are delivered."
+        description="Status of the M1–M6 monitoring, advisory and authenticated workflow services."
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

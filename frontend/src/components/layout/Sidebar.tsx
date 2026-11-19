@@ -34,7 +34,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-          {NAV_ITEMS.map(({ path, label, icon: Icon, plannedMilestone }) => (
+          {NAV_ITEMS.map(({ path, label, icon: Icon }) => (
             <NavLink
               key={path}
               to={path}
@@ -48,14 +48,6 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
             >
               <Icon className="h-4.5 w-4.5 shrink-0" aria-hidden="true" />
               <span className="flex-1 truncate">{label}</span>
-              {plannedMilestone && (
-                <span
-                  className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] font-medium text-slate-400"
-                  title={`Not implemented yet — planned for ${plannedMilestone}`}
-                >
-                  {plannedMilestone}
-                </span>
-              )}
             </NavLink>
           ))}
         </nav>

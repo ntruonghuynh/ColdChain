@@ -1,7 +1,10 @@
 import { FlaskConical, Menu } from 'lucide-react';
 import { ConnectivityIndicator } from '../ConnectivityIndicator';
+import { Link } from 'react-router';
+import { useAuth } from '../../auth/AuthContext';
 
 export function Header({ title, onMenu }: { title: string; onMenu: () => void }) {
+  const { identity, logout } = useAuth();
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6">
       <button
@@ -22,6 +25,8 @@ export function Header({ title, onMenu }: { title: string; onMenu: () => void })
         <span className="sm:hidden">Simulated</span>
       </span>
       <ConnectivityIndicator />
+      {identity ? <div className="flex items-center gap-2 text-xs"><span className="max-w-[8rem] truncate text-slate-600" title={`${identity.username} · ${identity.roles.join(', ')}`}>{identity.username} · {identity.roles.join(', ')}</span><button type="button" className="font-medium text-cyan-700 hover:underline" onClick={logout}>Sign out</button></div> :
+        <Link className="text-xs font-medium text-cyan-700 hover:underline" to="/login">Sign in</Link>}
     </header>
   );
 }
