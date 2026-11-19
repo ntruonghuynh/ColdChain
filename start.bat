@@ -64,6 +64,8 @@ if errorlevel 1 (
 )
 set "PORT=3000"
 for /f "tokens=1,* delims==" %%A in ('findstr /b /c:"FRONTEND_PORT=" ".env"') do set "PORT=%%B"
+set "CHAINPORT=8545"
+for /f "tokens=1,* delims==" %%A in ('findstr /b /c:"CHAIN_PORT=" ".env"') do set "CHAINPORT=%%B"
 set "URL=http://localhost:%PORT%"
 
 REM 4. Pre-flight: is another program already using the port? (Skipped if ColdChain itself is running.)
@@ -78,6 +80,16 @@ echo WHAT TO DO: Close that program, or edit .env and change FRONTEND_PORT to an
 echo            number (for example 3001), save, and run this file again.
 goto fail
 :port_ok
+set "OURCHAIN="
+for /f %%I in ('docker compose ps -q --status running chain 2^>nul') do set "OURCHAIN=1"
+if defined OURCHAIN goto chain_port_ok
+netstat -ano | findstr /r /c:":%CHAINPORT% .*LISTENING" >nul 2>&1
+if errorlevel 1 goto chain_port_ok
+echo.
+echo PROBLEM: Blockchain port %CHAINPORT% is already used by another program.
+echo WHAT TO DO: Edit .env and change CHAIN_PORT to another unused number, then run again.
+goto fail
+:chain_port_ok
 
 REM 5. Start all services and wait until they report healthy.
 echo Starting services. The first start downloads and builds everything and can take

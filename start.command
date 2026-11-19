@@ -65,6 +65,8 @@ python3 scripts/setup_local_env.py || fail "Could not initialize local M5 creden
   "Run python3 scripts/setup_local_env.py from this folder, or fill the blank M5 secret values in .env."
 PORT="$(grep -E '^FRONTEND_PORT=' .env | tail -n 1 | cut -d= -f2 | tr -d '[:space:]')"
 PORT="${PORT:-3000}"
+CHAIN_PORT="$(grep -E '^CHAIN_PORT=' .env | tail -n 1 | cut -d= -f2 | tr -d '[:space:]')"
+CHAIN_PORT="${CHAIN_PORT:-8545}"
 URL="http://localhost:${PORT}"
 
 # 4. Pre-flight: is another program already using the port? (Skipped if ColdChain itself is running.)
@@ -72,6 +74,11 @@ if [ -z "$(docker compose ps -q --status running frontend 2>/dev/null)" ] \
    && lsof -nP -iTCP:"${PORT}" -sTCP:LISTEN >/dev/null 2>&1; then
   fail "Port ${PORT} is already used by another program." \
        "Close that program, or open the file .env, change FRONTEND_PORT=${PORT} to another number (for example 3001), save, and run this file again."
+fi
+if [ -z "$(docker compose ps -q --status running chain 2>/dev/null)" ] \
+   && lsof -nP -iTCP:"${CHAIN_PORT}" -sTCP:LISTEN >/dev/null 2>&1; then
+  fail "Blockchain port ${CHAIN_PORT} is already used by another program." \
+       "Open .env, change CHAIN_PORT=${CHAIN_PORT} to an unused port, save, and run this file again."
 fi
 
 # 5. Start all services and wait until they report healthy.

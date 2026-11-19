@@ -2,7 +2,7 @@
 
 Academic prototype for **IT in Logistics — Final project 03**. It monitors refrigerated shipments, tells real temperature excursions apart from missing or faulty sensor data, drafts a procedure-based response, and records custody and quality decisions on a local blockchain. A human Quality Officer always makes the release or quarantine decision.
 
-> **Trạng thái: M0–M5 đã hoàn thành; M6 implementation sẵn sàng cho project-owner review trên `feat/m6-llm-rag`.** M6 bổ sung RAG giải thích incident có xác thực; provider LLM là tùy chọn, không cần để khởi động stack. Mọi dữ liệu hành trình là **mô phỏng**. ML/LLM chỉ advisory; chỉ Quality Officer được ủy quyền mới ghi disposition, và xuất kho cần RELEASE đã xác nhận. Chưa có inference thật từ provider. Xem báo cáo [M5](docs/milestones/m5/README.md) và [M6](docs/milestones/m6/README.md).
+> **Trạng thái: tích hợp M0–M6 có trong `main`.** Mọi dữ liệu hành trình là **mô phỏng**. ML/LLM chỉ advisory; chỉ Quality Officer được ủy quyền mới ghi disposition, và WAREHOUSE chỉ có thể yêu cầu xuất kho sau RELEASE đã xác nhận. M6 provider mặc định tắt; xem [M5](docs/milestones/m5/README.md) và [M6](docs/milestones/m6/README.md).
 
 > **Teaching boundary.** All data is simulated. Temperature limits and procedures are teaching policies, not clinical or regulatory standards. No ML output establishes product safety.
 
@@ -10,22 +10,22 @@ Academic prototype for **IT in Logistics — Final project 03**. It monitors ref
 
 ## Quick start (for everyone)
 
-**You need:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed (macOS or Windows), about 4 GB of free memory for Docker, and an internet connection the first time.
+**You need:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) with Docker Compose v2 (macOS or Windows), about 4 GB of free memory for Docker, and an internet connection for the first image/package downloads.
 
 | | macOS | Windows |
 |---|---|---|
 | Start | Double-click **`start.command`** | Double-click **`start.bat`** |
 | Stop | Double-click **`stop.command`** | Double-click **`stop.bat`** |
 
-The start script checks that Docker is running (and tries to start it), creates the settings file `.env` if it is missing, starts everything, waits until it is healthy, and opens the app in your browser.
+The start script creates `.env` from the template when needed, generates local-only credentials and unique Compose/image names, checks the web and chain ports, starts the stack, waits for health checks, and opens the app. It does not import the 200 journeys automatically; follow the [fresh-install demo setup](docs/deployment-handover.md#initialize-the-canonical-demo-data) after the stack is healthy.
 
-- Open the app: **http://localhost:3000**
+- Open the app at the `FRONTEND_PORT` shown in `.env` (default: **http://localhost:3000**).
 - The first start downloads and builds everything and can take several minutes. Later starts take seconds.
 - Stopping **keeps your data**. Nothing in these scripts deletes data.
 
 > **macOS:** the first time, macOS may block a downloaded script. Right-click `start.command` → **Open** → **Open**. If it says "permission denied", run `chmod +x start.command stop.command` once in Terminal from this folder.
 
-## What runs today (Milestones 1–4)
+## What runs today (Milestones 1–6)
 
 | Area | Status |
 |---|---|
@@ -33,23 +33,24 @@ The start script checks that Docker is running (and tries to start it), creates 
 | Teaching policy, organizations and demo users loaded as configuration data | Available |
 | Backend API: health checks, system info, policies, organizations, shipments; ingestion (`POST /api/ingest/batches`), telemetry, sensor status, missing and delayed data, detections, warnings, incidents, monitoring summary | Available |
 | API documentation (OpenAPI / Swagger) | Available at http://localhost:3000/api/docs |
-| Dashboard shell: navigation, header, API connectivity indicator, Overview, Shipments, System Settings | Available |
+| Dashboard: Overview, Shipments, Temperature Monitoring, Excursion Queue, Incident Details, Quality Review, Audit History, System Settings | Available |
 | Temperature monitoring (timeline, missing-data intervals, monitoring state, causal "view as of"), excursion queue, incident detail | Available (Milestone 3) |
-| Quality review, audit history | Not implemented yet (pages show this) |
+| Authenticated login and role-aware Quality/Audit views | Available; API authorization remains authoritative |
 | Synthetic dataset (200 journeys, seed 11) with data dictionary, provenance and checksums | Available in `data/release/` (Milestone 2) |
 | Idempotent import of the dataset into PostgreSQL (simulated shipments, readings, context; labels in a separate `ground_truth` schema) | Available as a manual command (Milestone 2) |
 | Data ingestion API, gap detection, threshold baseline, incidents | Available (Milestone 3) |
 | Frozen ML inference API (`POST /api/predictions`, model readiness at `GET /api/predictions/model`) | Available (Milestone 4; advisory only) |
-| Authenticated custody, quality disposition and release gate APIs; local blockchain and audit log | Implemented (Milestone 5; review pending) |
-| LLM drafts and full workflow dashboard | Milestones 6 and 7 |
+| Authenticated custody, QUALITY disposition and WAREHOUSE release gate; local blockchain and signed audit log | Available (Milestone 5) |
+| Stored M6 explanations, evidence cutoff and verified SOP citations | Read-only display available; opening an incident does not create an explanation |
+| M4 frozen model readiness | Available; frontend does not automatically score predictions |
 
-After a fresh start there are no shipments. To load the 200 **simulated** shipments of the canonical dataset (takes about 15 seconds; running it again changes nothing):
+After a fresh start there are no shipments. To load the 200 **simulated** journeys in canonical development seed 11 (idempotent; reserved evaluation seeds 22, 33, 44, 55, 66 are not used):
 
 ```bash
 docker compose --profile tools run --rm data-tools python -m app.dataset import data/release/coldchain-sim-v1.0.0-seed11
 ```
 
-The Shipments page then lists them, labelled `SIMULATED`. To run the threshold baseline over them, replaying every journey along its recorded receipt times (about 15 seconds; running it again changes nothing):
+The Shipments page then lists them as `SIMULATED`. Run the causal threshold replay to create monitoring incidents from recorded receipt times (idempotent):
 
 ```bash
 docker compose --profile tools run --rm data-tools python -m app.monitoring replay
@@ -94,7 +95,9 @@ the ignored `.env` and never prints them. The seed loader creates these users:
 non-login service identity. The setup procedure is also available as
 `python3 scripts/setup_local_env.py`.
 
-Only port 3000 is published, and only on this computer (`127.0.0.1`). The backend and database are reachable only inside the Docker network; the browser talks to the backend through the reverse proxy at `/api`.
+The frontend and local Hardhat JSON-RPC ports bind to `127.0.0.1` by default. The backend and database are reachable only inside the project-specific Docker network; the browser talks to the backend through the same-origin `/api` reverse proxy.
+
+For a clone-and-run procedure, verified deployment commands, read-only smoke checks, and safe cleanup instructions, see [Deployment handover](docs/deployment-handover.md).
 
 ## Architecture of the running stack
 
@@ -107,13 +110,12 @@ Browser ─► frontend (:3000) ─/api─► backend ─► PostgreSQL
 
 | Service | Purpose | Health check |
 |---|---|---|
-| `db` | PostgreSQL 16, data in the named volume `coldchain_pgdata` | `pg_isready` |
+| `db` | PostgreSQL 16, data in the project-scoped named volume `<COMPOSE_PROJECT_NAME>_pgdata` | `pg_isready` |
 | `migrate` | One-shot job: `alembic upgrade head`, then load reference data; exits 0 on success | exit code |
 | `chain` | Local in-memory Hardhat JSON-RPC node; no value-bearing network | JSON-RPC `eth_chainId` |
-| `chain-deploy` | One-shot idempotent contract deployment and role metadata volume | exit code |
+| `chain-deploy` | One-shot contract deployment and role metadata in `<COMPOSE_PROJECT_NAME>_chain-deployments` | exit code |
 | `backend` | FastAPI app; starts after migration and chain deployment | `GET /api/health` (database + migration revision) |
 | `worker` | Transactional outbox relay; retries and confirms blockchain writes | process/restart monitoring |
-| `frontend` | React app through nginx reverse proxy | `/healthz` |
 | `frontend` | nginx serving the built React app and proxying `/api` to `backend` | `GET /healthz` |
 
 Startup order is enforced with `depends_on` conditions: `db` healthy → `migrate` completed successfully → `backend` healthy → `frontend`.
@@ -137,10 +139,12 @@ cp .env.example .env      # the start scripts do this automatically if .env is m
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `COMPOSE_PROJECT_NAME` | `coldchain` | Prefix for containers and the data volume |
+| `COMPOSE_PROJECT_NAME` | Generated unique `coldchain-demo-*` name | Prefix for this install's containers, network and volumes |
+| `BACKEND_IMAGE`, `CHAIN_IMAGE`, `FRONTEND_IMAGE` | Generated project-specific tags | Prevents builds from replacing another local ColdChain image tag |
 | `POSTGRES_DB` / `POSTGRES_USER` | `coldchain` | Database name and user |
 | `POSTGRES_PASSWORD` | Generated locally by the setup helper | Database password (required; existing nonempty value is preserved) |
 | `FRONTEND_PORT` | `3000` | Port of the dashboard on this computer |
+| `CHAIN_PORT` | `8545` | Local-only Hardhat JSON-RPC port |
 | `FRONTEND_BIND_ADDRESS` | `127.0.0.1` | `0.0.0.0` makes the app reachable from other devices on your network |
 | `APP_ENV` | `local` | Shown in System Settings |
 
@@ -149,12 +153,14 @@ The macOS and Windows start scripts generate missing `.env` secrets without disp
 ### Docker commands
 
 ```bash
-docker compose up -d --build --wait     # build, start, and wait until all services are healthy
-docker compose ps                       # status
-docker compose logs -f backend          # follow backend logs
-docker compose down                     # stop; PostgreSQL volume is kept, but in-memory Hardhat history is lost
-docker compose down -v                  # stop AND DELETE ALL DATA (irreversible)
+docker compose config --quiet            # validate configuration after .env setup
+docker compose up -d --build --wait      # build, start, and wait until all services are healthy
+docker compose ps                        # status
+docker compose logs -f backend           # follow backend logs
+docker compose down                      # stop this .env project; named volumes are kept
 ```
+
+Do not run `docker compose down -v` unless you have confirmed the current `.env` project name and intend to delete only that project's database and chain deployment volumes. Never use Docker-wide prune commands to clean up this project.
 
 ### Database migrations
 
@@ -178,11 +184,10 @@ The test suite fails if models and migrations differ.
 ### Running tests
 
 ```bash
-# Backend (190 tests) + dataset generator (76 tests) inside Docker,
-# against separate *_test databases (main data untouched)
+# Backend and dataset generator tests inside Docker, against a separate *_test database
 docker compose --profile test run --rm --build backend-tests
 
-# Frontend unit/component tests (22 tests), type-check and production build
+# Frontend unit/component tests, type-check and production build
 cd frontend && npm ci && npm test && npm run typecheck && npm run build
 
 # End-to-end smoke test of the whole stack: startup, proxy, outage handling,
@@ -245,13 +250,13 @@ Dependency versions are pinned in `backend/requirements*.txt` (compiled from `ba
 | Symptom | Cause and fix |
 |---|---|
 | "Docker Desktop is not installed / not running" | Install or open Docker Desktop and wait for "Engine running", then start again. |
-| "Port 3000 is already used by another program" | Close the other program, or set `FRONTEND_PORT=3001` (any free port) in `.env` and start again. Then use that port in the URL. |
+| "Port is already used by another program" | Choose free `FRONTEND_PORT` and `CHAIN_PORT` values in `.env`, then start again. |
 | Header shows **API unreachable** | The backend container is down. Run the start script again, or `docker compose ps` and `docker compose logs backend`. |
 | Header shows **API degraded** | The backend runs but the database is not ready or not migrated. Check `docker compose logs migrate db`. |
 | `migrate` fails with `password authentication failed` | You changed `POSTGRES_PASSWORD` after the first start; the existing data volume keeps the old password. Put the old password back in `.env`. Do not remove the database volume when preserving data. |
 | `migrate` fails with `SEED FAILED ... immutable` | A policy file was edited for an existing version. Restore the file and publish a new `policy_version` instead. |
 | First start is very slow or fails while downloading | Check the internet connection and run the start script again; downloads resume. |
-| Build fails with "no space left on device" | Free Docker disk space in Docker Desktop → Troubleshoot → Clean / Purge data (this deletes unused images). |
+| Build fails with "no space left on device" | Check Docker Desktop disk usage and remove only resources you have identified as belonging to your disposable ColdChain project. Avoid Docker-wide Clean/Purge actions if other projects or protected M5/M6 data are present. |
 | Windows: the script window closes before you can read it | Open a Command Prompt in this folder (type `cmd` in the File Explorer address bar) and run `start.bat` there; the messages stay visible. Administrator rights are not needed. |
 
 ## Known limitations
@@ -262,7 +267,7 @@ Dependency versions are pinned in `backend/requirements*.txt` (compiled from `ba
 - No user-facing API creates shipments or assigns sensors; the M5 registration command anchors an existing imported or simulated shipment. Live ingestion is accepted only inside a documented monitoring window.
 - With 15-minute uploads the monitoring state briefly shows UNKNOWN before almost every upload (it truly has no data then); see the M3 report.
 - The dataset is synthetic. Its physics, sensor faults and labels are simplified; see the limitations in the [data dictionary](data/dictionary/data-dictionary.md#7-known-limitations-of-the-synthetic-data).
-- Importing the dataset is a manual command for now. A configurable first-run import is approved for the final release (D-10, Milestone 10). Imported shipments stay in status `CREATED` until the M5 custody workflow advances them.
+- Importing the canonical dataset and running the ocean demo are explicit commands; the handover guide documents these first-run steps. Imported shipments stay in status `CREATED` until M5 custody advances them.
 - The nominal 5-minute sampling interval and the 7 min 30 s continuity limit live in the detector configuration `DET-BASELINE v1.0.0`, not in the immutable policy v1.0.
 - Windows scripts (`start.bat`, `stop.bat`) were written for Windows 10/11 but have not been executed on Windows yet.
 - Fully offline installation is not supported yet: the first start downloads Docker images and packages.
@@ -283,6 +288,7 @@ Dependency versions are pinned in `backend/requirements*.txt` (compiled from `ba
 ## Documentation
 
 - [Requirements analysis](docs/requirements-analysis.md)
+- [Fresh-clone deployment handover](docs/deployment-handover.md)
 - [Architecture](docs/architecture.md)
 - [Implementation plan](docs/implementation-plan.md)
 - [M5 report](docs/milestones/m5/README.md) and [workflow design](docs/design/m5-blockchain-workflow.md)
