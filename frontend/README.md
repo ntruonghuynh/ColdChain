@@ -2,14 +2,17 @@
 
 React 19 + TypeScript (strict) + Vite 7 + Tailwind CSS 4. Built in Docker and served by nginx, which also reverse-proxies `/api` to the backend.
 
-**Milestone 1:** application shell. Overview, Shipments and System Settings show live API data (health, active teaching policy, shipment list, organizations, feature status). Quality Review and Audit History say "Not implemented yet" and show no data.
+**M1–M3:** Overview, Shipments, System Settings, Temperature Monitoring, Excursion Queue and Incident Details use live backend data. Monitoring is causal by "view as of"; missing intervals are never shown as in range.
 
-**Milestone 3:** Temperature Monitoring (event-time timeline with policy band, hatched missing-data intervals and not-yet-received tail, monitoring state, causal "view as of"), Excursion Queue (open incidents by category) and Incident detail (revisions, evidence, policy and detector versions, pending human review). The chart is plain SVG (no chart library); lines are never drawn across missing data.
+**M4–M6 frontend integrations:** sign-in uses in-memory bearer tokens; Quality Review exposes an explicitly confirmed QUALITY disposition; incident details read stored explanation history and citations without generating explanations; the Audit History page reads ledger, verification and signed-audit APIs. Reconciliation and signed-audit verification controls are ADMIN-only. Temperature Monitoring shows ML model readiness only. The backend currently has no prediction-history GET and its append-only scoring POST is unauthenticated, so the frontend does not invoke it.
+
+Warehouse release is a separate WAREHOUSE action and is shown on an incident only after the related QUALITY RELEASE verifies on chain. Viewing an incident never creates an explanation or prediction. Credentials are entered by the user and are not stored; the bearer token remains in memory and is cleared on reload or HTTP 401.
 
 | Path | Purpose |
 |---|---|
 | `src/api/` | Typed API client (`client.ts`: envelope parsing, `ApiError`, timeouts) and response types |
 | `src/hooks/` | `useApi` (loading / success / error with retry), `connectivity.tsx` (health polling every 15 s) |
+| `src/auth/` | In-memory sign-in state, `/auth/me`, bearer attachment and session invalidation |
 | `src/components/layout/` | App layout, sidebar navigation, header |
 | `src/components/ui/` | Card, Badge, Button, loading / empty / error states, Not-implemented panel, key-value list |
 | `src/components/ConnectivityIndicator.tsx` | Header indicator: connected / degraded / unreachable |
