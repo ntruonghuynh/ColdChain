@@ -10,6 +10,7 @@ from app.core.config import get_settings
 from app.core.security import Principal, get_current_principal, issue_token, verify_password
 from app.db.models import AppUser, UserRole
 from app.db.session import get_db
+from app.local_demo import is_local_demo_username
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -30,6 +31,9 @@ class LoginOut(BaseModel):
 
 @router.post("/login", response_model=Envelope[LoginOut], summary="Create a local-demo bearer token")
 def login(body: LoginIn, db: Session = Depends(get_db)) -> Envelope[LoginOut]:
+    settings = get_settings()
+    if is_local_demo_username(body.username) and not settings.local_demo_mode:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
     user = db.scalar(select(AppUser).where(AppUser.username == body.username))
     if (user is None or user.username == "monitor.service" or not user.is_active
             or not verify_password(body.password, user.password_hash)):
@@ -37,7 +41,6 @@ def login(body: LoginIn, db: Session = Depends(get_db)) -> Envelope[LoginOut]:
     roles = list(db.scalars(select(UserRole.role).where(
         UserRole.user_id == user.user_id, UserRole.revoked_at.is_(None)
     )).all())
-    settings = get_settings()
     return Envelope(data=LoginOut(
         access_token=issue_token(user, roles), expires_in_seconds=settings.jwt_expires_min * 60,
         username=user.username, organization_id=user.org_id,

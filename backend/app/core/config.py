@@ -2,7 +2,9 @@
 
 from functools import lru_cache
 
-from pydantic import Field, SecretStr, field_validator
+from ipaddress import ip_address
+
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine import URL, make_url
 
@@ -35,6 +37,10 @@ class Settings(BaseSettings):
     # Comma-separated list; empty means same-origin only (the nginx proxy serves /api).
     cors_allow_origins: str = ""
 
+    # Easy classroom accounts are permitted only on an explicitly local loopback demo.
+    local_demo_mode: bool = False
+    frontend_bind_address: str = "127.0.0.1"
+
     # Local-demo authentication. Do not use these demo secrets outside an isolated demo.
     jwt_secret: SecretStr = SecretStr("")
     jwt_expires_min: int = 120
@@ -66,6 +72,19 @@ class Settings(BaseSettings):
     llm_price_input_per_mtok_usd: float | None = None
     llm_price_output_per_mtok_usd: float | None = None
     m6_runtime_version: str = "m6-source-unversioned"
+
+    @model_validator(mode="after")
+    def local_demo_must_be_loopback_only(self) -> "Settings":
+        if self.local_demo_mode:
+            try:
+                loopback_only = ip_address(self.frontend_bind_address).is_loopback
+            except ValueError:
+                loopback_only = False
+            if self.app_env.lower() != "local" or not loopback_only:
+                raise ValueError(
+                    "LOCAL_DEMO_MODE requires APP_ENV=local and FRONTEND_BIND_ADDRESS set to a loopback IP"
+                )
+        return self
 
     @field_validator("llm_price_input_per_mtok_usd", "llm_price_output_per_mtok_usd", mode="before")
     @classmethod

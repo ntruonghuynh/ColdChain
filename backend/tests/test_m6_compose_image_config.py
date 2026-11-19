@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+import sys
 
 import yaml
 
@@ -35,7 +36,7 @@ def test_m6_compose_uses_explicit_project_specific_image_variables() -> None:
         assert not image.endswith(":local")
         assert not image.endswith(":test")
         assert "container_name" not in compose["services"][service], service
-    assert compose["name"] == "${COMPOSE_PROJECT_NAME:-coldchain-m6}"
+    assert compose["name"] == "${COMPOSE_PROJECT_NAME:?Run the local environment setup script to create a unique project name}"
     assert all(not (volume or {}).get("external", False)
                for volume in compose.get("volumes", {}).values())
 
@@ -47,7 +48,7 @@ def test_m6_example_images_are_distinct_from_historical_m5_tags() -> None:
         if "=" in line and not line.lstrip().startswith("#"):
             key, value = line.split("=", 1)
             values[key] = value
-    assert values["COMPOSE_PROJECT_NAME"] == "coldchain-m6"
+    assert values["COMPOSE_PROJECT_NAME"] == "coldchain-demo-template"
     image_keys = ("BACKEND_IMAGE", "BACKEND_TEST_IMAGE", "CHAIN_IMAGE", "FRONTEND_IMAGE")
     image_tags = [values[key] for key in image_keys]
     historical_m5_tags = {
@@ -55,5 +56,28 @@ def test_m6_example_images_are_distinct_from_historical_m5_tags() -> None:
         "coldchain-chain:local", "coldchain-frontend:local",
     }
     assert len(set(image_tags)) == len(image_tags)
-    assert all(":m6-" in tag for tag in image_tags)
+    assert all("demo-template" in tag for tag in image_tags)
     assert not historical_m5_tags.intersection(image_tags)
+
+
+def test_local_setup_makes_project_and_image_tags_unique_and_is_idempotent() -> None:
+    root = _repo_root()
+    sys.path.insert(0, str(root / "scripts"))
+    try:
+        from setup_local_env import ensure_installation_namespace
+    finally:
+        sys.path.pop(0)
+
+    lines = (root / ".env.example").read_text(encoding="utf-8").splitlines()
+    ensure_installation_namespace(lines)
+    configured = {line.split("=", 1)[0]: line.split("=", 1)[1] for line in lines if "=" in line}
+    project = configured["COMPOSE_PROJECT_NAME"]
+    suffix = project.removeprefix("coldchain-demo-")
+    assert project.startswith("coldchain-demo-") and suffix != "template"
+    assert configured["BACKEND_IMAGE"] == f"coldchain-backend:{suffix}"
+    assert configured["BACKEND_TEST_IMAGE"] == f"coldchain-backend:test-{suffix}"
+    assert configured["CHAIN_IMAGE"] == f"coldchain-chain:{suffix}"
+    assert configured["FRONTEND_IMAGE"] == f"coldchain-frontend:{suffix}"
+    first_run = list(lines)
+    ensure_installation_namespace(lines)
+    assert lines == first_run

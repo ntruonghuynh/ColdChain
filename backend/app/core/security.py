@@ -26,8 +26,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 _ITERATIONS = 310_000
 
 
-def hash_password(password: str) -> str:
-    if len(password) < 12:
+def hash_password(password: str, *, allow_short_local_demo_password: bool = False) -> str:
+    if len(password) < 12 and not allow_short_local_demo_password:
         raise ValueError("demo password must be at least 12 characters")
     salt = secrets.token_bytes(16)
     digest = hashlib.pbkdf2_hmac("sha256", password.encode(), salt, _ITERATIONS)
