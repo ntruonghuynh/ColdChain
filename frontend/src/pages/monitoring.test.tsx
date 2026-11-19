@@ -88,6 +88,7 @@ const summary = {
 const routes = {
   '/api/health': { status: 200, body: { data: healthOk, meta: null } },
   '/api/monitoring/summary': { status: 200, body: summary },
+  '/api/predictions/model': { status: 200, body: { data: { status: 'ready', model_version: 'frozen-v1', detail: null }, meta: null } },
   '/api/incidents?status=OPEN&limit=25&offset=0': { status: 200, body: { data: [incident], meta: { total: 1, limit: 25, offset: 0 } } },
   '/api/shipments?limit=500&offset=0': {
     status: 200,
@@ -129,6 +130,8 @@ describe('Temperature monitoring', () => {
     expect(screen.getByRole('img', { name: /3 readings, 1 confirmed gaps/ })).toBeInTheDocument();
     expect(screen.getAllByText(/Policy POL-TEST v7.3/).length).toBeGreaterThan(0);
     expect(screen.getByText(/detector DET-TEST v9.9.9/)).toBeInTheDocument();
+    expect(screen.getByText('frozen-v1')).toBeInTheDocument();
+    expect(screen.getByText(/Prediction history is not available through a GET API/)).toBeInTheDocument();
   });
 
   it('shows an error state with retry when telemetry fails', async () => {
@@ -167,7 +170,7 @@ describe('Communication status (presentation only)', () => {
 
 describe('Incident detail', () => {
   it('shows revisions, versions and pending review, and offers no release action', async () => {
-    mockFetch(routes);
+    const fetch = mockFetch(routes);
     renderApp(<AppRoutes />, '/incidents/inc-1');
     expect(await screen.findByText('Pending human quality review')).toBeInTheDocument();
     const revisions = screen.getByRole('table');
@@ -176,5 +179,7 @@ describe('Incident detail', () => {
     expect(screen.getByText(/DET-TEST v9.9.9, nominal 5 min/)).toBeInTheDocument();
     expect(screen.getByText('Incident Details', { selector: 'p' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /release|approve|quarantine|disposition|close incident/i })).not.toBeInTheDocument();
+    expect(await screen.findByText(/Sign in to view stored M6 explanation history/)).toBeInTheDocument();
+    expect(fetch.mock.calls.some(([input, init]) => String(input).includes('/llm/') || init?.method === 'POST')).toBe(false);
   });
 });

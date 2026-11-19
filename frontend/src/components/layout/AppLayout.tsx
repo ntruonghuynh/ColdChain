@@ -8,7 +8,7 @@ export function AppLayout() {
   const [navOpen, setNavOpen] = useState(false);
   const { pathname } = useLocation();
   const current = NAV_ITEMS.find((item) => (item.path === '/' ? pathname === '/' : pathname.startsWith(item.path)));
-  const title = pathname.startsWith('/incidents/') ? 'Incident Details' : current?.label ?? 'Page not found';
+  const title = pathname.startsWith('/incidents/') ? 'Incident Details' : pathname === '/login' ? 'Sign in' : current?.label ?? 'Page not found';
 
   return (
     <div className="flex h-full">

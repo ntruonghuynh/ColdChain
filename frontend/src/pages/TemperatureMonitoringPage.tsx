@@ -5,6 +5,7 @@ import { api } from '../api/client';
 import type { SensorTelemetry, Telemetry } from '../api/types';
 import { GapStatusBadge, MonitoringStateBadge, SimulatedBadge } from '../components/monitoring/MonitoringBadges';
 import { TelemetryStatusPanel } from '../components/monitoring/TelemetryStatusPanel';
+import { ModelReadinessCard } from '../components/monitoring/ModelReadinessCard';
 import { TemperatureChart } from '../components/monitoring/TemperatureChart';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
@@ -163,6 +164,7 @@ export function TemperatureMonitoringPage() {
         title="Temperature Monitoring"
         description="Sensor event-time timeline with policy limits, confirmed missing-data intervals and the current monitoring state."
       />
+      <div className="mb-6"><ModelReadinessCard /></div>
       <Card className="mb-6">
         {shipments.status === 'loading' && <LoadingState label="Loading shipments…" />}
         {shipments.status === 'error' && <ErrorState error={shipments.error} onRetry={shipments.reload} />}

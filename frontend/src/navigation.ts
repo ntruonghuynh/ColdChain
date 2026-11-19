@@ -13,8 +13,6 @@ export interface NavItem {
   path: string;
   label: string;
   icon: LucideIcon;
-  /** Milestone in which the view becomes functional; undefined = available now. */
-  plannedMilestone?: string;
 }
 
 export const NAV_ITEMS: NavItem[] = [
@@ -22,7 +20,7 @@ export const NAV_ITEMS: NavItem[] = [
   { path: '/shipments', label: 'Shipments', icon: Package },
   { path: '/temperature', label: 'Temperature Monitoring', icon: Thermometer },
   { path: '/excursions', label: 'Excursion Queue', icon: ListChecks },
-  { path: '/quality-review', label: 'Quality Review', icon: ClipboardCheck, plannedMilestone: 'M5–M7' },
-  { path: '/audit', label: 'Audit History', icon: History, plannedMilestone: 'M5' },
+  { path: '/quality-review', label: 'Quality Review', icon: ClipboardCheck },
+  { path: '/audit', label: 'Audit History', icon: History },
   { path: '/settings', label: 'System Settings', icon: Settings },
 ];

@@ -55,7 +55,7 @@ export function ExcursionQueuePage() {
       )}
       <Card
         title={shipmentId ? `Open incidents of ${shipmentId}` : 'Open incidents'}
-        description="No incident is closed automatically. Quality dispositions are recorded in Milestone 5; until then every incident stays pending."
+        description="No incident is closed automatically. Only an authenticated receiving-organization QUALITY disposition can close an incident."
         actions={
           <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by category">
             {FILTERS.map((f) => (

@@ -113,7 +113,7 @@ export function SettingsPage() {
 
         <Card
           title="Organizations and roles"
-          description="Demo accounts for the three participants. Login is not implemented yet; these users have no credentials."
+          description="Participant accounts and assigned roles exposed by the backend. Sign-in credentials are configured outside the frontend."
           className="lg:col-span-2"
         >
           {orgs.status === 'loading' && <LoadingState />}
