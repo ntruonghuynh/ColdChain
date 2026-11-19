@@ -1,12 +1,11 @@
-# scripts/
+# Tài liệu thư mục `scripts/`
 
-| Path | Purpose | Status |
+| Đường dẫn | Mục đích | Tình trạng |
 |---|---|---|
-| `smoke_test.py` | End-to-end check of the Docker stack: config, startup + health, React app and SPA routes, `/api` proxy, seeded policy, backend outage handling, shutdown, data persistence across restart. Standard library only. `python3 scripts/smoke_test.py [--keep-running]` | M1, implemented |
-| `deployment_smoke.py` | Read-only M1–M6 HTTP/auth smoke checks for a seeded local deployment. Uses GETs and one local demo login only; no workflow, prediction, explanation, or provider calls. `python3 scripts/deployment_smoke.py` | Deployment handover |
-| `replay_dataset.py` | Replay generated journeys through the ingestion API | M3, planned |
-| `demo/` | The four required demonstration scenarios | M8, planned |
-| `eval/` | Evaluation runners writing raw results to `docs/evaluation/runs/` | M9, planned |
-| `package_zip.sh` | Build the distributable ZIP and check it holds no secrets | M10, planned |
+| `setup_local_env.py` | Sinh cấu hình local, secret và tên Compose/image riêng trên macOS/Linux | Đang dùng bởi `start.command` |
+| `setup_local_env.ps1` | Tương tự cho Windows PowerShell | Đang dùng bởi `start.bat`; chưa xác minh trên Windows thật |
+| `deployment_smoke.py` | Smoke HTTP/auth chỉ đọc cho bản local đã khởi tạo; GET cùng một POST login, không chạy workflow, prediction hay LLM | Đang dùng trong handover |
+| `smoke_test.py` | Kiểm tra Compose/app, proxy, SPA và persistence; có thể khởi động/dừng stack theo tùy chọn | Công cụ kiểm thử; đọc help trước khi chạy |
+| `eval/` | Công cụ đánh giá nội bộ | Không chạy evaluation batch nếu chưa được giao nhiệm vụ và phê duyệt |
 
-The one-click start/stop scripts for students live in the repository root: `start.command` / `stop.command` (macOS) and `start.bat` / `stop.bat` (Windows).
+Các CLI import/replay nằm trong backend `app.dataset` và `app.monitoring`, gọi qua service `data-tools` như hướng dẫn cài đặt. Không có `scripts/replay_dataset.py` hoặc thư mục `scripts/demo/` trong phiên bản hiện tại. Script start/stop cho sinh viên nằm ở root: `start.command` / `stop.command` (macOS), `start.bat` / `stop.bat` (Windows).

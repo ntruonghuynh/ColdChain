@@ -1,24 +1,24 @@
-# ColdChain fresh-clone deployment handover
+# Bàn giao triển khai ColdChain từ bản clone sạch
 
-This guide starts a new local demo with its own Compose project, Docker image tags, network, PostgreSQL volume, and chain-deployment volume. Do not copy `.env`, database files, blockchain state, or evaluation evidence from another installation.
+Tài liệu mô tả cách chạy một bản demo mới với Compose project, image tags, network, PostgreSQL volume và chain deployment volume riêng. Không sao chép `.env`, database, blockchain state hoặc evaluation evidence từ bản cài khác.
 
-## Prerequisites
+## Điều kiện cần
 
-- Docker Desktop with Docker Compose v2 on Windows 10/11 or macOS, or Docker Engine and Compose v2 on Linux.
-- 4 GB or more available memory for Docker; additional disk space is needed for images and the dataset.
-- Git and internet access for the first clone and image/package downloads.
-- Windows: built-in Windows PowerShell. macOS/Linux: Python 3 and a POSIX shell for the setup helper.
+- Docker Desktop + Docker Compose v2 trên Windows 10/11 hoặc macOS; Linux cần Docker Engine + Compose v2.
+- Khuyến nghị ít nhất 4 GB RAM khả dụng cho Docker; cần thêm dung lượng cho image và dataset.
+- Git và internet để clone/tải image/package.
+- Windows dùng PowerShell có sẵn. macOS/Linux cần Python 3 và shell để chạy helper.
 
-The Windows scripts have not been exercised on a Windows host in this handover. Follow the PowerShell instructions below and treat them as documented, not Windows-verified.
+Windows scripts chưa được chạy trên máy Windows trong lần bàn giao này; các bước Windows dưới đây đã được rà soát nhưng chưa xác minh thực thi. Linux cũng chưa được kiểm thử.
 
-## Clone and configure
+## Clone và cấu hình
 
 ```text
 git clone https://github.com/ntruonghuynh/ColdChain.git
 cd ColdChain
 ```
 
-Do not reuse a working directory that contains another installation's `.env`. The start scripts copy `.env.example` on first run and call a helper that generates local credentials plus a unique Compose project and unique image tags. The helper does not print secrets. `.env` is ignored by Git.
+Không dùng lại thư mục đang chứa `.env` của lần cài khác. Start scripts tạo `.env` nếu chưa có và gọi helper để sinh secret cùng Compose project/image tags riêng; helper không in secret. `.env` được Git ignore.
 
 ### Windows PowerShell
 
@@ -28,7 +28,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup_local_env.ps
 docker compose config --quiet
 ```
 
-Then run `start.bat`, or start manually with `docker compose up -d --build --wait --wait-timeout 600`. Before a manual start, make sure `FRONTEND_PORT` and `CHAIN_PORT` in `.env` are free. `start.bat` checks both ports before starting.
+Sau đó chạy `start.bat`, hoặc `docker compose up -d --build --wait --wait-timeout 600`. Trước khi chạy thủ công, đảm bảo `FRONTEND_PORT` và `CHAIN_PORT` trống; `start.bat` kiểm tra hai cổng này.
 
 ### macOS / Linux shell
 
@@ -38,13 +38,11 @@ python3 scripts/setup_local_env.py
 docker compose config --quiet
 ```
 
-On macOS, run `./start.command` (or double-click it). On Linux, start with `docker compose up -d --build --wait --wait-timeout 600` after checking that both configured host ports are free. The web UI and local Hardhat RPC bind to `127.0.0.1` by default.
+Trên macOS chạy `./start.command` (hoặc mở bằng Finder). Linux chạy `docker compose up -d --build --wait --wait-timeout 600` sau khi kiểm tra cổng. UI và Hardhat RPC mặc định bind `127.0.0.1`.
 
-If a port is occupied, change `FRONTEND_PORT` or `CHAIN_PORT` in `.env`. Do not change `COMPOSE_PROJECT_NAME` or image tags to a name used by another project. The generated names are recorded in `.env`; rerunning setup preserves them.
+Nếu cổng bận, đổi `FRONTEND_PORT` hoặc `CHAIN_PORT` trong `.env`. Không đặt `COMPOSE_PROJECT_NAME` hoặc image tag trùng project khác. Helper ghi tên project vào `.env`; chạy lại helper giữ nguyên tên đã tạo. Compose yêu cầu project name và project-scoped image tags, không dùng `container_name` cố định. Backend và database không publish cổng host.
 
-The Compose file requires `COMPOSE_PROJECT_NAME` and project-scoped image tags from `.env`. It has no fixed `container_name`. New deployments receive their own network and named volumes. Backend and database ports are not published to the host.
-
-## First startup and migrations
+## Khởi động và migration
 
 ```bash
 docker compose config --quiet
@@ -52,9 +50,9 @@ docker compose up -d --build --wait --wait-timeout 600
 docker compose ps
 ```
 
-Compose builds the backend runtime image whose command starts Uvicorn, and the frontend image whose Nginx config serves the React SPA and proxies `/api` to `backend:8000`. Startup waits for PostgreSQL, the one-shot migration/reference-data service, the local Hardhat node and contract deployment, the backend, then the frontend.
+Backend image khởi động Uvicorn; frontend image dùng Nginx phục vụ React SPA và proxy `/api` tới `backend:8000`. Compose chờ PostgreSQL, migration/reference data một lần, Hardhat local node/contract deployment, backend rồi frontend.
 
-Check the same-origin readiness endpoint (replace `3000` with `FRONTEND_PORT` if changed):
+Thay `3000` bằng `FRONTEND_PORT` nếu đổi:
 
 ```text
 http://127.0.0.1:3000/api/health
@@ -63,98 +61,104 @@ http://127.0.0.1:3000/api/llm/readiness
 http://127.0.0.1:3000/api/docs
 ```
 
-The database readiness response reports the applied migration revision and expected head; both should be `0006_m6_llm_explanations`. LLM retrieval should be ready and `provider_status` should be `not_configured`. The sample `.env` disables the provider and has no API key. Do not add a paid provider key for the browser demo.
+Migration revision/head kỳ vọng là `0006_m6_llm_explanations`. M6 retrieval có thể sẵn sàng trong khi `provider_status=not_configured`; `.env.example` tắt provider và không có API key. Không cần key trả phí cho demo đọc.
 
-## Initialize the canonical demo data
+## Nhập dataset demo
 
-Migrations load the policy, organizations, and demo identities but do not import journeys automatically. Seed 11 is the tracked canonical development dataset with 200 simulated journeys. Reserved evaluation seeds 22, 33, 44, 55, and 66 are not used here.
-
-Run these from the repository root after startup:
+Migration nạp policy, organization và identities nhưng không tự import journeys. Seed 11 là fixture phát triển tracked gồm 200 hành trình mô phỏng. Không dùng seed đánh giá 22, 33, 44, 55, 66.
 
 ```bash
 docker compose --profile tools run --rm data-tools python -m app.dataset verify data/release/coldchain-sim-v1.0.0-seed11
 docker compose --profile tools run --rm data-tools python -m app.dataset import data/release/coldchain-sim-v1.0.0-seed11
 docker compose --profile tools run --rm data-tools python -m app.dataset status
 docker compose --profile tools run --rm data-tools python -m app.monitoring replay
-docker compose --profile tools run --rm data-tools python -m app.monitoring demo-ocean
+docker compose --profile tools run --rm data-tools python -m app.monitoring demo-ocean --source SIM-S11-J0154
 docker compose --profile tools run --rm data-tools python -m app.monitoring summary
 ```
 
-The import is idempotent and reports 200 journeys. Replay uses the recorded `event_at` and `received_at` values to construct causal incident history; it does not collapse event time into receipt time. The ocean demo creates an additional simulated shipment to show outage, UNKNOWN, delayed backfill, and revised evidence. Its stable `DEMO-OCEAN-...` identifier makes reruns idempotent. These commands write only to the current `.env` project's new database volume.
+Import idempotent theo fingerprint; replay dùng riêng `event_at` và `received_at` để tạo incident history. Ocean demo thêm một simulated shipment cho tình huống outage/UNKNOWN/backfill và evidence revision. Stable ID `DEMO-OCEAN-...` làm thao tác lặp lại idempotent. Các lệnh chỉ ghi vào database volume của project hiện tại.
 
-## Login and read-only smoke checks
+## Local demo login
 
-The local seed configures `shipper.demo`, `carrier.demo`, `quality.demo`, `warehouse.demo`, and `platform.admin`. Their passwords are generated in `.env` as `SHIPPER_DEMO_PASSWORD`, `CARRIER_DEMO_PASSWORD`, `QUALITY_DEMO_PASSWORD`, `WAREHOUSE_DEMO_PASSWORD`, and `ADMIN_DEMO_PASSWORD`. Enter them into the browser login form; do not paste them into shared docs, terminal commands, or screenshots. `platform.admin` is the seeded ADMIN identity. These are local teaching accounts, not production identities.
+Mặc định seeder tạo các user `shipper.demo`, `carrier.demo`, `quality.demo`, `warehouse.demo`, `platform.admin` với mật khẩu sinh trong `.env`: `SHIPPER_DEMO_PASSWORD`, `CARRIER_DEMO_PASSWORD`, `QUALITY_DEMO_PASSWORD`, `WAREHOUSE_DEMO_PASSWORD`, `ADMIN_DEMO_PASSWORD`.
 
-After data initialization, run:
+Với classroom demo disposable, bật `LOCAL_DEMO_MODE=true` trong `.env` trước startup/seed đầu tiên; giữ `APP_ENV=local` và `FRONTEND_BIND_ADDRESS=127.0.0.1`. DB trống sẽ được cấp thêm các alias bằng hệ thống PBKDF2 và role backend thông thường:
+
+| Username | Password | Role |
+|---|---|---|
+| `quality` | `123` | QUALITY |
+| `warehouse` | `123` | WAREHOUSE |
+| `carrier` | `123` | CARRIER |
+| `shipper` | `123` | SHIPPER |
+| `admin` | `123` | ADMIN |
+
+Provisioning idempotent, không reset user. Lần đầu bật mode trên DB đã có user bị từ chối; backend cũng yêu cầu `APP_ENV=local` và loopback bind. Khi mode tắt, aliases không đăng nhập được. Password ngắn chỉ dùng trên localhost riêng, không phải môi trường công khai. QUALITY mới ghi disposition; WAREHOUSE mới xin physical release sau QUALITY RELEASE đủ điều kiện.
+
+Kiểm tra trước đó trên database disposable: cả năm tài khoản login được, `/auth/me` trả đúng role, protected request chưa login trả 401, role không đủ quyền trả 403. Seed lại báo không tạo user mới và không thay đổi user đã có. Bộ test local-demo tập trung có 29 test pass. Không chạy lại test hoặc đụng database của project đang bảo vệ trong lần cập nhật tài liệu này.
+
+## Kiểm tra HTTP/auth chỉ đọc
+
+Sau khi import/replay:
 
 ```bash
 python3 scripts/deployment_smoke.py
 ```
 
-The script uses the configured `QUALITY_DEMO_PASSWORD` in memory. It checks SPA routes, readiness and migration 0006, active teaching policy, the 200 imported journeys, HIGH/LOW and DATA_GAP incidents, incident revision/evidence GETs, chain readiness, M4 model readiness, M6 offline retrieval readiness, authenticated ledger/history GETs, and role-based 401/403 responses. It makes one POST only: local demo login. It does not call ingestion, disposition, release, prediction scoring, explanation creation, or an external provider. An empty stored-explanation history or empty chain history is a valid fresh-demo state.
+Script kiểm tra SPA routes, readiness/migration 0006, policy, 200 journeys, HIGH/LOW/DATA_GAP, evidence/revision GET, chain readiness, M4 readiness, M6 offline readiness, ledger/audit GET, 401/403. Nó chỉ POST login cục bộ; không gọi ingestion, disposition, release, prediction scoring, explanation creation hay provider. Empty explanation history và chain history hợp lệ trên fresh demo.
 
-## Browser demonstration scope
+## Những gì có thể trình diễn
 
-- **M1–M3:** overview, shipments, policy limits, temperature timeline, excursion queue, incident evidence/revisions, confirmed data gaps, and the ocean outage/backfill scenario. Missing data stays UNKNOWN.
-- **M4:** model readiness is read-only in the frontend. No prediction is scored automatically. The scoring API is POST-only and prediction history has no GET endpoint.
-- **M5:** login, `/auth/me`, role-aware Quality Review, explicit disposition confirmation, separate WAREHOUSE release gate, ledger and signed-audit reads. Do not submit a disposition or release during read-only acceptance. A fresh import has no ledger events; M3 replay emits `INCIDENT_OPENED` business events into the outbox. Without a confirmed M5 shipment registration, those events remain pending and have no chain transaction. The disposable smoke run confirmed this state.
-- **M6:** readiness, stored explanation history/detail and SOP citations are read-only. A fresh database has no stored explanations; the empty state is expected. Opening an incident does not invoke inference. No provider call is part of setup or smoke testing.
+- **M1–M3:** overview, shipments, policy band, timeline, queue, incident evidence/revisions/gap và ocean outage/backfill. Thiếu telemetry vẫn UNKNOWN.
+- **M4:** frontend đọc model readiness; không tự score. Scoring là POST và prediction history không có GET endpoint.
+- **M5:** login, `/auth/me`, Quality Review, disposition confirm, WAREHOUSE release gate riêng, ledger/signed-audit reads. Không gửi mutation khi acceptance chỉ đọc. Fresh import không có ledger events đã xác nhận; M3 replay tạo `INCIDENT_OPENED` vào outbox. Chưa registration M5 thì events có thể pending, chưa có chain tx.
+- **M6:** readiness và stored explanation/history/citation chỉ đọc. Fresh DB thường chưa có explanation; mở incident không gọi inference.
 
-Use the browser for the available pages and read-only history. The causal replay, ocean-demo setup, and seed import are internal CLI operations. A populated M5 chain-history or M6 stored-citation demonstration requires prepared data in a separate disposable project; do not create those records in a protected environment.
+Import/replay/ocean setup là CLI. M5 chain-history hoặc M6 citation giàu dữ liệu cần fixture/records được chuẩn bị trong project disposable riêng; không tạo dữ liệu đó trên môi trường bảo vệ. Đăng ký shipment/custody hiện là API workflow, chưa có UI tương ứng.
 
-## Stop, restart, and remove only this demo
+## Dừng/chạy lại/xóa đúng project
 
-To stop and later start this specific installation without deleting PostgreSQL data:
+Giữ dữ liệu và process chain:
 
 ```bash
 docker compose stop
 docker compose start
 ```
 
-To remove only its containers and network while retaining named volumes:
+Gỡ container/network nhưng giữ named volume:
 
 ```bash
 docker compose down
 ```
 
-Hardhat's chain state is in memory and is lost when its container is removed. PostgreSQL remains in its named volume.
+Chain state Hardhat nằm trong RAM và mất khi container bị remove; PostgreSQL volume vẫn còn.
 
-To permanently remove this **disposable** installation and its named volumes, first verify the generated project name and the resources Compose resolves:
+Chỉ xóa volumes khi đã xác minh đây đúng project demo disposable của mình:
 
 ```bash
 grep '^COMPOSE_PROJECT_NAME=' .env       # PowerShell: Select-String '^COMPOSE_PROJECT_NAME=' .env
 docker compose config --format json
 docker compose ps -a
-```
-
-Only if the project name is the intended disposable demo, run:
-
-```bash
 docker compose down --volumes
 ```
 
-This deletes that project's PostgreSQL and chain-deployment volumes. Never run Docker-wide prune commands to clean up ColdChain; other projects may contain protected data.
+Lệnh cuối xóa PostgreSQL và chain deployment volumes của project đó. Không chạy Docker-wide prune.
 
-## Troubleshooting
+## Xử lý nhanh
 
-- **`docker compose config` asks for a project name:** copy `.env.example` and run the platform's setup helper.
-- **Port bind error:** choose free `FRONTEND_PORT` and `CHAIN_PORT` values in `.env`; rerun `docker compose config --quiet` before starting.
-- **Migration is behind 0006:** inspect `docker compose logs migrate db`; do not bypass the migration service or manually edit `alembic_version`.
-- **Backend readiness fails:** inspect `docker compose ps -a` and `docker compose logs backend migrate db chain chain-deploy`.
-- **Frontend opens but `/api` is unavailable:** inspect `docker compose logs frontend backend`; Nginx uses the Compose service name `backend:8000` on the project network.
-- **Login fails:** confirm `.env` contains generated nonempty secrets and restart/re-run the idempotent migration service. Existing user passwords are not rotated if a user already has a password hash.
-- **M6 provider shows not configured:** expected for this no-cost demo. Stored explanation GETs still work when stored records exist.
-- **Disk space is low:** inspect project resources first and remove only resources you can identify as disposable. Do not use global Docker Clean/Purge while other projects are running.
+- Compose thiếu project name: tạo `.env` từ mẫu và chạy helper đúng hệ điều hành.
+- Port bind lỗi: chọn `FRONTEND_PORT`/`CHAIN_PORT` trống và kiểm tra `docker compose config --quiet`.
+- Migration chưa 0006: xem `docker compose logs migrate db`; không sửa `alembic_version` thủ công.
+- Backend/API lỗi: xem `docker compose ps -a` và log `backend migrate db chain chain-deploy frontend`.
+- Login lỗi: kiểm tra host/port và trạng thái provisioning; seeder không thay hash password user cũ.
+- Provider M6 `not_configured`: đúng với demo offline; GET explanation vẫn hoạt động khi đã có record.
+- Thiếu dung lượng: xác định đúng resource disposable trước khi xử lý; tránh global cleanup.
 
-## Verification record
+## Biên bản kiểm chứng ngày 2026-11-19
 
-### Local verification on 2026-11-19
-
-- A clean local archive of committed `main` was created; the tracked startup scripts, `.env.example`, migration `0006`, and seed-11 fixture were present. The handover changes were overlaid into that clean temp checkout for testing. Remote GitHub clone was unavailable because this environment could not resolve `github.com`.
-- macOS startup script completed in that checkout with project `coldchain-demo-7c6f5608`, unique image tags, new volumes/network, frontend port 3287 and chain port 18551. Migration and reference-data services completed; backend, worker, database, chain, and frontend became healthy.
-- Canonical seed-11 verified/imported: 200 journeys, 114,969 readings, with both `event_at` and `received_at` stored as `timestamp with time zone`; 115,643 readings had a later receipt timestamp. Replay processed 200 shipments and produced 146 incidents. The ocean demo showed STALE → UNKNOWN → CURRENT after delayed backfill.
-- Backend/generator test container: 331 passed, 11 deselected, 0 failed. Frontend: 30 passed; typecheck and production build passed. React tests emit existing `act(...)` warnings; backend tests emit dependency deprecation warnings.
-- Deployment HTTP/auth smoke: 23 passed, 0 failed, 1 skipped (stored explanation detail, because the fresh demo has no stored explanations). Login and `/auth/me` returned 200; logged-out protected GET returned 401; QUALITY received 403 from ADMIN-only audit verification. Ledger/audit GETs returned 200. M4 model and offline M6 retrieval were ready; provider status was `not_configured`.
-- M3 replay left 147 `INCIDENT_OPENED` outbox events pending and 0 chain transactions because no M5 shipment-registration event was submitted. No disposition, warehouse release, prediction scoring, explanation generation, or paid provider call was made. Contract deployment used only the newly created local Hardhat chain.
-- macOS local deployment was tested. Windows and Linux execution were not tested. The remaining 35-case M6 evaluation was not run.
+- Tạo archive sạch từ `main`; các startup scripts, `.env.example`, migration `0006` và seed-11 fixture có trong source. Thay đổi handover được chép vào checkout tạm để kiểm thử. Clone GitHub trực tiếp không thực hiện được do môi trường không phân giải `github.com`.
+- Startup trên macOS dùng project riêng `coldchain-demo-7c6f5608`, image tags/network/volumes mới, frontend port 3287 và chain port 18551. Migration/reference-data hoàn tất; backend, worker, database, chain, frontend healthy.
+- Seed 11 verify/import thành công: 200 journeys, 114,969 readings; `event_at` và `received_at` đều `timestamp with time zone`, 115,643 reading có receipt muộn hơn event. Replay 200 shipments tạo 146 incidents. Ocean demo biểu diễn STALE → UNKNOWN → CURRENT sau delayed backfill.
+- Backend/generator: 331 passed, 11 deselected, 0 failed. Frontend: 30 passed; typecheck và production build passed. Có `act(...)` warnings hiện hữu trong frontend tests và deprecation warnings từ dependency backend.
+- HTTP/auth smoke: 23 passed, 0 failed, 1 skipped (explanation detail vì fresh DB không có stored explanation). Login và `/auth/me` 200; protected GET chưa login 401; QUALITY bị 403 khi gọi ADMIN-only audit verify. Ledger/audit GET 200. M4 readiness và offline M6 retrieval sẵn sàng; provider `not_configured`.
+- M3 replay để lại 147 `INCIDENT_OPENED` pending trong outbox và 0 confirmed chain transactions do chưa có shipment-registration event M5. Không tạo disposition, warehouse release, prediction score, explanation, hay provider call. Contract deploy chỉ lên Hardhat local chain mới.
+- Chỉ macOS đã test triển khai. Windows/Linux chưa test trên hệ điều hành tương ứng. 35 evaluation cases M6 còn lại không chạy.
