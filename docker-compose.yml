@@ -12,6 +12,8 @@ name: ${COMPOSE_PROJECT_NAME:?Run the local environment setup script to create a
 
 x-backend-env: &backend-env
   APP_ENV: ${APP_ENV:-local}
+  LOCAL_DEMO_MODE: ${LOCAL_DEMO_MODE:-false}
+  FRONTEND_BIND_ADDRESS: ${FRONTEND_BIND_ADDRESS:-127.0.0.1}
   TZ: UTC
   POSTGRES_HOST: db
   POSTGRES_PORT: "5432"
@@ -191,6 +193,7 @@ services:
     environment:
       <<: *backend-env
       APP_ENV: test
+      LOCAL_DEMO_MODE: "false"
       # Tests create and drop this separate database; the main database is never touched.
       TEST_POSTGRES_DB: ${POSTGRES_DB:-coldchain}_test
       # Generator package and committed dataset come from the read-only repository mount.

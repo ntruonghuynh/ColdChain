@@ -18,7 +18,7 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.db.models import (
@@ -28,6 +28,7 @@ from app.db.models.enums import OrgType, PolicyStatus, Role
 from app.domain.rules import DetectorConfigError, parse_detector_config
 from app.core.security import hash_password
 from app.core.config import get_settings
+from app.local_demo import provision_local_demo_accounts
 
 DATA_DIR = Path(__file__).parent / "data"
 
@@ -211,10 +212,19 @@ def load_detector_config_file(session: Session, path: Path, report: SeedReport) 
 
 def run_seed(session: Session, data_dir: Path = DATA_DIR) -> SeedReport:
     report = SeedReport()
+    settings = get_settings()
+    database_was_empty = session.scalar(select(func.count()).select_from(AppUser)) == 0
     load_organizations(session, data_dir / "organizations.json", report)
     for policy_file in sorted((data_dir / "policies").glob("*.json")):
         load_policy_file(session, policy_file, report)
     for config_file in sorted((data_dir / "detector").glob("*.json")):
         load_detector_config_file(session, config_file, report)
+    if settings.local_demo_mode:
+        try:
+            report.created.extend(provision_local_demo_accounts(
+                session, database_was_empty=database_was_empty
+            ))
+        except RuntimeError as exc:
+            raise SeedConflictError(str(exc)) from exc
     session.commit()
     return report
