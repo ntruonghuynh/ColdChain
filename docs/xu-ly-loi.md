@@ -1,0 +1,31 @@
+# Hướng dẫn xử lý lỗi
+
+Chẩn đoán ưu tiên các lệnh chỉ đọc. Chạy lệnh Compose trong thư mục ColdChain có `.env` tương ứng. Không xóa volume hoặc dùng Docker-wide prune như bước xử lý thông thường.
+
+| Hiện tượng | Nguyên nhân thường gặp | Chẩn đoán an toàn | Cách xử lý | Không nên làm |
+|---|---|---|---|---|
+| Docker không chạy | Docker Desktop chưa mở | `docker info` | Mở Docker Desktop, chờ Running rồi thử lại | Không xóa container/volume |
+| Lỗi quyền Docker | Tài khoản chưa được Docker Desktop/Engine cấp quyền | `docker compose version`; `docker info` | Mở Docker Desktop đúng user; Linux cần quyền Docker đã được quản trị viên cấp | Không chạy lệnh sửa quyền tùy tiện |
+| Compose build thất bại | Thiếu mạng/dung lượng hoặc dependency tải lỗi | `docker compose config --quiet`; `docker compose logs --tail 100` | Kiểm tra mạng, dung lượng, thử build lại sau khi xử lý nguyên nhân | Không xóa image/volume toàn máy |
+| Thiếu `.env` hoặc thiếu project name | Chưa copy mẫu/chưa chạy helper | PowerShell: `Test-Path .env`; shell: `test -f .env`; `docker compose config --quiet` | Copy `.env.example` thành `.env`, chạy setup helper phù hợp hệ điều hành | Không gửi `.env` vì có secret |
+| Cấu hình local demo bị từ chối | `APP_ENV` không phải local hoặc bind không loopback | Chỉ xem `LOCAL_DEMO_MODE`, `APP_ENV`, `FRONTEND_BIND_ADDRESS` trong `.env` | Đặt đúng `true`, `local`, `127.0.0.1` trước seed trên DB demo mới | Không bind `0.0.0.0` để dùng password `123` |
+| Cổng web/chain xung đột | Port đang được app khác dùng | macOS/Linux: `lsof -i :3000`; PowerShell: `Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue` | Đổi `FRONTEND_PORT` hoặc `CHAIN_PORT` sang cổng trống, rồi `docker compose config --quiet` | Không dừng app khác khi chưa biết nó là gì |
+| Database unhealthy | PostgreSQL chưa khởi động hoặc cấu hình sai | `docker compose ps`; `docker compose logs --tail 100 db` | Đợi healthcheck; kiểm tra cấu hình database trong `.env` | Không xóa volume database |
+| Migration lỗi / chưa tới 0006 | Migration service lỗi hoặc DB cũ không tương thích | `docker compose logs --tail 150 migrate backend db`; `GET /api/health` | Sửa nguyên nhân log rồi khởi động lại service phù hợp; dùng DB disposable mới nếu là thử nghiệm | Không sửa `alembic_version` bằng tay, không chạy migration bỏ qua thứ tự |
+| Frontend mở nhưng API lỗi | Backend chưa healthy hoặc proxy/service name sai | `docker compose ps`; `docker compose logs --tail 100 frontend backend`; mở `/api/health` | Chờ backend healthy; dùng Nginx cùng origin qua `/api`; kiểm tra cấu hình Compose | Không đổi frontend thành gọi một backend tùy tiện |
+| Không có shipment | Fixture chưa import | `docker compose --profile tools run --rm data-tools python -m app.dataset status` | Chạy lệnh `import` seed 11 trong hướng dẫn cài đặt | Không dùng seed đánh giá/private evidence |
+| Queue incident trống | Chưa replay, không có incident mở, hoặc đã superseded | `docker compose --profile tools run --rm data-tools python -m app.monitoring summary` | Chạy replay trong DB demo nếu cần trình diễn; xem filters trong queue | Không sửa trực tiếp incident records |
+| Login `quality/123` thất bại | Mode chưa bật trước seed, user đã được tạo, hoặc đang dùng DB khác | Xác nhận host/port; chỉ kiểm tra ba config local-demo; thử `GET /api/auth/me` sau login UI | Aliases chỉ tạo trên DB trống ở seed đầu; dùng `quality.demo` password đã sinh hoặc project disposable mới | Không reset user/password DB hiện hữu hoặc chia sẻ secret |
+| LOCAL_DEMO_MODE bật quá muộn | Seeder thấy user hiện hữu và từ chối aliases | Backend/migration logs; kiểm tra thời điểm mode được bật | Dùng credential generated `*.demo`; nếu cần classroom aliases, tạo project/database disposable riêng | Không xóa volume chưa xác minh |
+| `401 Unauthorized` | Chưa login, token hết hạn hoặc reload làm mất token RAM | Đăng nhập lại; xem user/role header | Login lại; Bearer token được giữ trong bộ nhớ trình duyệt | Không paste token vào log/tài liệu |
+| `403 Forbidden` | Role đã xác thực nhưng thiếu quyền | Kiểm tra role hiển thị ở header và yêu cầu nghiệp vụ | Dùng role hợp lệ: `QUALITY` cho disposition, `WAREHOUSE` cho release đủ điều kiện, `ADMIN` cho audit checks riêng | Không tìm cách bypass API authorization |
+| Đăng nhập mất sau reload | Token chỉ lưu trong memory | Thử `/api/auth/me` sau reload | Login lại | Không kỳ vọng token được lưu bền trong browser |
+| Không thấy M4 prediction | UI chỉ có model readiness; scoring không tự chạy | Xem model readiness card và `/api/predictions/model` qua app | Đây là giới hạn hiện tại; scoring POST là hành động riêng/internal | Không coi readiness là prediction/safe; không tự POST |
+| M6 báo provider chưa cấu hình | M6 provider disabled có chủ đích | Xem `/api/llm/readiness` | Đọc explanations đã lưu nếu có; provider không cần cho GET | Không thêm API key chỉ để xem trang |
+| Không có explanation/citation | DB mới chưa có explanation đã lưu | Xem history empty state | Nêu rõ chưa có dữ liệu chuẩn bị | Không tạo explanation/provider call để làm đầy trang |
+| Audit History rỗng | Chưa có business event được xác nhận lên chain | Xem ledger GET và `docker compose ps` | Đây là trạng thái hợp lệ; chuẩn bị state riêng nếu cần demo | Không tạo transaction giả |
+| Outbox đang pending | Chờ worker/retry hoặc thiếu prereq chain/business event | `docker compose logs --tail 100 worker backend chain`; xem Audit History | Chờ retry, kiểm tra readiness và references; pending chưa đồng nghĩa chain failure | UI không có nút retry; không sửa state bằng tay |
+| PowerShell không chạy helper | Cách gọi script hoặc execution policy hạn chế | `Get-ExecutionPolicy -List` | Dùng lệnh riêng trong cài đặt: `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup_local_env.ps1` | Không thay execution policy toàn máy |
+| Docker Desktop/WSL2 lỗi trên Windows | WSL2 chưa cài/cập nhật hoặc Docker integration tắt | `wsl --status`; xem Docker Desktop status | Bật/cập nhật WSL theo tài liệu Docker Desktop rồi khởi động lại Docker Desktop | Không xóa distro/data của WSL để thử vận may |
+
+Nếu lỗi vẫn còn, gửi phần log đã loại bỏ username, password, JWT, API key và dữ liệu cá nhân. Hướng dẫn setup đầy đủ ở [huong-dan-cai-dat.md](huong-dan-cai-dat.md).
